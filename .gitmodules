@@ -1,0 +1,3 @@
+[submodule "src/RPascal"]
+	path = src/RPascal
+	url = v:/swissrRepos/public/rpascal
