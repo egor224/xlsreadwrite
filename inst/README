@@ -1,0 +1,95 @@
+xlsReadWrite(Pro) packages for R
+================================
+
+. Overview
+. Resources
+. Source and compiling
+. xlsReadWritePro version
+. Contact/Feedback
+
+
+OVERVIEW
+--------
+
+xlsReadWrite and xlsReadWritePro are packages to natively read/write/manage Excel
+spreadsheet files. It's one choice among others: RODBC (drivers), gdata (Perl), 
+RExcel or COM (Excel), dataframes2xls (Python), Apache POI (Java) and - of course - 
+working with plain old csv files. 
+
+The xlsReadWrite(Pro) packages do not have any external dependencies (as indicated 
+in the brackets above). They are fast, have a nice simple interface and 'just work'.
+However they are - currently - windows only, contain proprietary 3rd party code and 
+are written in Pascal (great language, but a bit singular in the Rworld).
+
+
+RESOURCES
+---------
+
+- General info: 				http://www.swissr.org
+- Bugtracker:  					http://redmine.swissr.org
+
+- Downloads from swissr dropbox:
+
+  - listing:						http://dl.dropbox.com/u/2602516/swissrpkg/content
+  - individual parts:		http://dl.dropbox.com/u/2602516/swissrpkg/...
+	  - (binary package)	...bin/<os>/<majvers>/xlsReadWrite_<pkgvers>.zip
+		- (shlib)						...bin/<OS>/shlib/xlsReadWrite_<pkgvers>_dll.zip
+		- (src with shlib)	...bin/<os>/src/xlsReadWrite_<pkgvers>.tar.gz
+		- (src cran vers.)	...cran/xlsReadWrite_<pkgvers>.tar.gz.txt
+		- (actual src)			...src/xlsReadWrite_<pkgvers>.tar.gz.txt
+  -(placeholders:	<os>: win32, <majvers>: major R version, <pkgvers>: pkg version,
+    every file has a correspondent hash file with same name and '.md5.txt' suffix)
+  
+- Source code: 					http://github.com/swissr/xlsreadwrite.git
+
+
+SOURCE & COMPILING
+------------------
+
+Our own xlsReadWrite code is open source (see LICENSE). xlsReadWrite*Pro* is non-free 
+and a separate agreement is required for repository access. The 'Excel-work' is beeing
+done by Flexcel, a proprietary, well tested, high quality code library from TMS Software
+(http://www.tmssoftware.com). To compile the package from source you need a Flexcel license. 
+
+Compiling is easy enough, follow these steps:
+
+- (Current prerequisites: Delphi 2007, Flexcel license/code)
+- Clone the github repo and don't forget to initialize the RPascal submodule
+- Adapt paths in 'include.mk'
+- Make sure that the RTools are in your path (as first entries!)
+- Regarding Flexcel code:
+  - TFlexCelImport and TXLSAdapter derive from TObject instead of TComponent
+  - The Flexcel source files are originally stored in quite a lot of different folders. 
+    We copied all .pas, .inc and .res files in a single folder and set the Delphi path to this folder.
+  - Other minor changes (TODO: should be documented)
+- Compile:
+  - either open a console in the root folder and execute 'make check' and/or 'make build' or
+  - open the Delphi project file, adapt (paths, host application) and press F9...
+
+
+XLSREADWRITEPRO VERSION
+-----------------------
+
+By purchasing xlsReadWritePro you help support our development and maintenance effort. 
+We are grateful that quite some people and companies did, and both, the free and pro
+version shall benefit (e.g. crossplatform, which is not done on a lazy afternoon...).
+
+xlsReadWritePro is our second attempt. It has more features but also is considerably more 
+complex. We are commited to maintain both versions well and - maybe depending a little 
+on your support - to backport features from pro to the free version (if technically viable).
+  
+!! NOTE: xlsReadWritePro works well up to R 2.9.x but not yet on the new R 2.10 version!
+The reason is, that we are currently reorganizing internal things (git/redmine/web/distr/make).
+We started with the free version and the pro version will follow.
+
+Currently we are reorganizing some internal things (git/redmine/web/distrib/make). We
+started with the free version and the pro version will follow soon (TODO: update when done).
+
+
+CONTACT/FEEDBACK
+----------------
+
+The prefered 'communication channel' is the redmine.swissr.org forum. Otherwise you can reach
+me at 'chappi at swissr.org' or - for pro version users - at 'hans-peter.suter at treetron.ch'.
+
+7. Nov. 2009, Hans-Peter

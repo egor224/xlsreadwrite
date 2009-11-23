@@ -1,0 +1,10 @@
+*.dll
+*.dcu
+*.o
+*.eprj
+
+__gen/*
+
+src/pas/xlsReadWrite.dproj.local
+src/pas/xlsReadWrite.identcache
+src/pas/xlsReadWrite.res
