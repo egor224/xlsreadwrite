@@ -1,2 +1,0 @@
-* fix paths in include.mk and Makefile
-* submodule from local path but should come from github or redmine.swissr
