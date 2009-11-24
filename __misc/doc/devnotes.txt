@@ -1,33 +1,10 @@
-Later:
-* für pascal code eigenes Makefile machen, so das R CMD <xy> direkt auf pascal pkg angewendet werden kann
-** weiss noch nicht, ob/wie ich Variablen, z.B. Platform übergeben soll
+h3. git commands:
 
-Infos:
-* http://dl.dropbox.com/u/2602516/swissrpkg
+git init
+git add .
+git commit -m "Initial import"
+git submodule add v:/swissrRepos/public/rpascal src/RPascal
+git submodule init
 
-git commands:
-
-
-mkdir swissrpkg
-cd swissrpkg
-git --git-dir=../../swissrpkg.git init
-# von Hand:
-[remote "origin"]
-	fetch = +refs/heads/*:refs/remotes/origin/*
-	url = file:///V:/swissrRepos/public/swissrpkg
-[branch "master"]
-	remote = origin
-	merge = refs/heads/master
-	
-git --git-dir=../../swissrpkg.git --work-tree=. pull origin
-
-pushd "/d/DropboxSwissr/My Dropbox/Public/swissrpkg" && git --git-dir=../../swissrpkg.git --work-tree=. pull origin
-cd "/d/DropboxSwissr/My Dropbox/Public/swissrpkg" && git --git-dir=../../swissrpkg.git --work-tree=. pull origin
-
-Temp:
-
-[remote "origin"]
-	url = gitsr:git/public/xlsreadwrite.git
-	fetch = +refs/heads/*:refs/remotes/origin/*
-[submodule "src/RPascal"]
-	url = v:/swissrRepos/public/rpascal
+git push origin master
+--------------------------------------

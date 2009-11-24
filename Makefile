@@ -1,12 +1,13 @@
 # Makefile for xlsReadWrite
 # =========================
 #
-# use 'flags=<xy>' to pass arguments, e.g.
-# - check: 'flags' will be passed on to CHECK ('--no-latex' hard-coded)
+# use 'flags=<xy>' to pass arguments:
+# - check: the xy flags will be passed on to CHECK ('--no-latex' hard-coded)
 # - build: 'flags=--allow-dirty' to build if there are diffs in the workspace
 
 
-R_VERSION = 2.9.1
+#R_VERSION = 2.9.1
+R_VERSION = 2.10.0
 include include.mk
 
 .PHONY: pkg check build release
@@ -21,12 +22,12 @@ temp:
 
 pkg: check build release
 	
-check: clean populate
+check: clean-gen populate-gen
 	@echo "### check"
-	@cd $(GEN) && $(RCMD) CHECK --no-latex $(flags) $(PKG)
-	@$(MAKE) $(W) clean-src
+	@cd $(GEN) && $(RCMD) check --no-latex $(flags) $(PKG)
+	@$(MAKE) $(W) clean-gen-src
 	
-build: clean populate $(GENDIR_GEN)
+build: clean-gen populate-gen $(GENDIR_GEN)
 	@echo "### build"
 	# update COMMIT file
 	@$(GIT) rev-parse HEAD > $(GEN)/$(PKG)/inst/COMMIT
@@ -69,8 +70,8 @@ release: $(RELDIR_REL) build
 	# update dropbox listing
 	cd $(REL) && echo -e "Content of http://dl.dropbox.com/u/2602516/swissrpkg\n" > listing.txt && ls -1Rp >> listing.txt 
 	
-.PHONY: populate
-populate: $(PKGDIR_GEN) $(AUX_GEN) $(SRCPAS_GEN) $(SRCRPAS_GEN)
+.PHONY: populate-gen
+populate-gen: $(PKGDIR_GEN) $(AUX_GEN) $(SRCPAS_GEN) $(SRCRPAS_GEN)
 $(SRCPAS_GEN): $(GEN)/$(PKG)/src/%:$(DEV)/src/pas/%
 	@cp $< $@
 $(SRCRPAS_GEN): $(GEN)/$(PKG)/src/%:$(DEV)/src/RPascal/src/%
@@ -81,12 +82,12 @@ $(SRCRPAS_GEN): $(GEN)/$(PKG)/src/%:$(DEV)/src/RPascal/src/%
 
 cran: check-cran build-cran release-cran
 	
-check-cran: clean populatecran
+check-cran: clean-gen populate-gen-cran
 	@echo "### check-cran"
-	@cd $(GEN) && $(RCMD) CHECK --no-latex $(flags) $(PKG)
-	@$(MAKE) $(W) clean-src
+	@cd $(GEN) && $(RCMD) check --no-latex $(flags) $(PKG)
+	@$(MAKE) $(W) clean-gen-src
 
-build-cran: clean populatecran $(GENDIR_GEN)
+build-cran: clean-gen populate-gen-cran $(GENDIR_GEN)
 	@echo "### build-cran"
 	# update COMMIT file
 	@$(GIT) rev-parse HEAD > $(GEN)/$(PKG)/inst/COMMIT
@@ -113,22 +114,22 @@ release-cran: $(RELDIR_REL) build-cran
 	# update dropbox listing
 	@cd $(REL) && echo -e "Content of http://dl.dropbox.com/u/2602516/swissrpkg\n" > listing.txt && ls -1Rp >> listing.txt 
 
-.PHONY: populatecran
-populatecran: $(PKGDIR_GEN) $(AUX_GEN) $(GEN)/$(PKG)/src/$(SRCC)
+.PHONY: populate-gen-cran
+populate-gen-cran: $(PKGDIR_GEN) $(AUX_GEN) $(GEN)/$(PKG)/src/$(SRCC)
 $(GEN)/$(PKG)/src/$(SRCC): $(DEV)/src/c/$(SRCC)
 	@cp $< $@
 
 # common
 # ------
 
-.PHONY: clean clean-src
+.PHONY: clean-gen clean-gen-src
 
-clean:
-	@echo "### clean"
+clean-gen:
+	@echo "### clean-gen"
 	@rm -rf $(GEN)/*
 
-clean-src:
-	@echo "### clean-src"
+clean-gen-src:
+	@echo "### clean-gen-src"
 	@rm -f $(GEN)/$(PKG)/src/*.$(DCU) $(GEN)/$(PKG)/src/*.o $(GEN)/$(PKG)/src/$(PKG).$(DLL) 
 
 $(AUX_GEN): $(GEN)/$(PKG)/%:$(DEV)/%
@@ -149,11 +150,11 @@ test-dev:
 	@cd $(DEV)/__misc/debugtests && $(RSCRIPT) dynTest.R
 
 c-dev:
-	@echo "### compile-c"
+	@echo "### c-dev"
 	@cd $(DEV)/src/c && $(RCMD) SHLIB $(PKG).c
 
 pas-dev:
-	@echo "### compile-pas"
+	@echo "### pas-dev"
 	@$(MAKE) $(W) -C $(DEV)/src/pas -f Makevars
 
 clean-dev:
@@ -164,5 +165,5 @@ clean-dev:
 # Distribution
 # ------------
 
-update-dropbox:
+push-release:
 	@cd "$(DBOX)" && $(GIT) --git-dir=../../swissrpkg.git --work-tree=. pull origin
