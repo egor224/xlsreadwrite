@@ -40,7 +40,7 @@ endif
 	@cd $(GEN) && $(RCMD) build $(PKG)
 	@mv $(GEN)/$(PKG)_$(PKG_VERSION).tar.gz $(GEN)/src/$(PKG)_$(PKG_VERSION).tar.gz
 	# bin
-	@cd $(GEN) && $(RCMD) build --use-zip --binary $(PKG)
+	@cd $(GEN) && $(RCMD) build --auto-zip --binary $(PKG)
 	@mv $(GEN)/$(PKG)_$(PKG_VERSION).zip $(GEN)/bin/$(PKG)_$(PKG_VERSION).zip
 	# shlib
 	$(MAKE) -C $(GEN)/$(PKG)/src -f Makevars
@@ -100,7 +100,7 @@ endif
 	@cd $(GEN) && $(RCMD) build $(PKG)
 	@mv $(GEN)/$(PKG)_$(PKG_VERSION).tar.gz $(GEN)/src/$(PKG)_$(PKG_VERSION).tar.gz 
 	# bin
-	@cd $(GEN) && $(RCMD) build --use-zip --binary $(PKG)
+	@cd $(GEN) && $(RCMD) build --auto-zip --binary $(PKG)
 	@mv $(GEN)/$(PKG)_$(PKG_VERSION).zip $(GEN)/bin/$(PKG)_$(PKG_VERSION).zip
 
 release-cran: $(RELDIR_REL) build-cran
