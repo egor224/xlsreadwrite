@@ -15,7 +15,8 @@ include include.mk
 
 all: temp
 temp:
-	@cd "$(DBOX)" && $(GIT) --git-dir=../../swissrpkg.git --work-tree=. pull origin
+	@cd "$(REL)" && $(GIT) add .
+	@cd "$(REL)" && $(GIT) commit -m "commit updated files" --author="makefile <push@release>"
 	
 # actual (pascal) version
 # -----------------------
@@ -68,7 +69,7 @@ release: $(RELDIR_REL) build
 	@mv $(GEN)/bin/$(PKG)_$(PKG_VERSION).tar.gz $(REL)/bin/$(OS_FOLDER)/src
 	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/bin/$(OS_FOLDER)/src/$(PKG)_$(PKG_VERSION).tar.gz'), '$(REL)/bin/$(OS_FOLDER)/src/$(PKG)_$(PKG_VERSION).tar.gz.md5.txt')"
 	# update dropbox listing
-	cd $(REL) && echo -e "Content of http://dl.dropbox.com/u/2602516/swissrpkg\n" > listing.txt && ls -1Rp >> listing.txt 
+	@cd $(REL) && echo -e "=== Swissr dropbox ===\n(add folder/files to http://dl.dropbox.com/u/2602516/swissrpkg)\n" > listing.txt && ls -1Rp >> listing.txt 
 	
 .PHONY: populate-gen
 populate-gen: $(PKGDIR_GEN) $(AUX_GEN) $(SRCPAS_GEN) $(SRCRPAS_GEN)
@@ -112,7 +113,7 @@ release-cran: $(RELDIR_REL) build-cran
 	@mv $(GEN)/bin/$(PKG)_$(PKG_VERSION).zip $(REL)/cran/
 	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/cran/$(PKG)_$(PKG_VERSION).zip'), '$(REL)/cran/$(PKG)_$(PKG_VERSION).zip.md5.txt')"
 	# update dropbox listing
-	@cd $(REL) && echo -e "Content of http://dl.dropbox.com/u/2602516/swissrpkg\n" > listing.txt && ls -1Rp >> listing.txt 
+	@cd $(REL) && echo -e "=== Swissr dropbox ===\n(add folder/files to http://dl.dropbox.com/u/2602516/swissrpkg)\n" > listing.txt && ls -1Rp >> listing.txt 
 
 .PHONY: populate-gen-cran
 populate-gen-cran: $(PKGDIR_GEN) $(AUX_GEN) $(GEN)/$(PKG)/src/$(SRCC)
@@ -166,4 +167,6 @@ clean-dev:
 # ------------
 
 push-release:
+	@cd "$(REL)" && $(GIT) add .
+	@cd "$(REL)" && $(GIT) commit -m "commit updated files" --author="makefile <push@release>"
 	@cd "$(DBOX)" && $(GIT) --git-dir=../../swissrpkg.git --work-tree=. pull origin

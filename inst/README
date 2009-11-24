@@ -30,7 +30,7 @@ RESOURCES
 
 - Downloads from swissr dropbox:
 
-  - listing:						http://dl.dropbox.com/u/2602516/swissrpkg/content
+  - listing:						http://dl.dropbox.com/u/2602516/swissrpkg/listing.txt
   - individual parts:		http://dl.dropbox.com/u/2602516/swissrpkg/...
 	  - (binary package)	...bin/<os>/<majvers>/xlsReadWrite_<pkgvers>.zip
 		- (shlib)						...bin/<OS>/shlib/xlsReadWrite_<pkgvers>_dll.zip
