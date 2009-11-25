@@ -15,7 +15,8 @@ include include.mk
 
 all: temp
 temp:
-	
+	pushexec
+
 # actual (pascal) version
 # -----------------------
 
@@ -174,7 +175,8 @@ push-release:
 	else \
 	echo "Already up-to-date." ;\
 	fi
-	# push $(REL) to redmine.swissr (unable to fork; FIXME)
-	@echo "!!! execute 'push-rel2redmine.bat' manually"
+	# push $(REL) to redmine.swissr
+	@pushexec
+	@echo "In new console/process (to avoid 'unable to fork' error)"
 	# update local dropbox from $(REL)
 	@cd "$(DBOX)" && $(GIT) --git-dir=../../swissrpkg.git --work-tree=. pull origin
