@@ -15,8 +15,6 @@ include include.mk
 
 all: temp
 temp:
-	@cd "$(REL)" && $(GIT) add .
-	@cd "$(REL)" && $(GIT) commit -m "commit updated files" --author="makefile <push@release>"
 	
 # actual (pascal) version
 # -----------------------
@@ -167,6 +165,16 @@ clean-dev:
 # ------------
 
 push-release:
-	@cd "$(REL)" && $(GIT) add .
-	@cd "$(REL)" && $(GIT) commit -m "commit updated files" --author="makefile <push@release>"
+	@echo "### push-release"
+	# commit files in $(REL)
+	@HASDIFF="`cd "$(REL)" && $(GIT) diff HEAD 2> $(NULL)`" && if (test "$$HASDIFF"); then \
+	cd "$(REL)" ;\
+	$(GIT) add . ;\
+	&& $(GIT) commit -m "commit updated files" --author="makefile <push@release>" ;\
+	else \
+	echo "Already up-to-date." ;\
+	fi
+	# push $(REL) to redmine.swissr (unable to fork; FIXME)
+	@echo "!!! execute 'push-rel2redmine.bat' manually"
+	# update local dropbox from $(REL)
 	@cd "$(DBOX)" && $(GIT) --git-dir=../../swissrpkg.git --work-tree=. pull origin

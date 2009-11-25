@@ -7,4 +7,7 @@ git submodule add v:/swissrRepos/public/rpascal src/RPascal
 git submodule init
 
 git push origin master
---------------------------------------
+
+# local dropbox
+git --git-dir=../../swissrpkg.git --work-tree=. status
+git --git-dir=../../swissrpkg.git --work-tree=. log
