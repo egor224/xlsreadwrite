@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# myssh because:
-# - (historical) I wanted to use non-standard ports which was not possible in git config.
-#   Later I used hosts defined in .ssh/config and the myssh wouldn't be necessary any more.
-# - 'git push' doesn't work from the makefile, first there were 'unable to fork error' and 
-#   then the pushexec workaround didn't get the hosts from .ssh/config. Thus some hacks here.
+# myssh: some hacks for ssh.exe:
+# - swissrpkg_myssh_hack: 'git push' doesn't work from the makefile, first there were 'unable to fork error' and 
+#   then the pushexec workaround didn't get the hosts from .ssh/config.
+# - git@github.com: have to supply the key here
 
 if [ "$1" = "swissrpkg_myssh_hack" ]; then
   exec ssh.exe -l git -i /s/keys/gitree_rsa -p 64234 git.swissr.org git-receive-pack 'git/public/swissrpkg.git'
+elif [ "$1" = "git@github.com" ]; then
+  exec ssh.exe -i /s/keys/chappee_rsa "$@"
 else
   exec ssh.exe "$@"
 fi
