@@ -17,7 +17,7 @@ all: temp
 temp:
 	pushexec
 
-# actual (pascal) version
+# regular (pascal) version
 # -----------------------
 
 pkg: check build release

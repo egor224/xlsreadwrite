@@ -20,7 +20,7 @@ const char cranmsg[] =
   "Our own xlsReadWrite code is free, but we also use a proprietary code library (Flexcel,\n"
   "tmssoftware.com) which can only be distributed legally in precompiled, i.e. binary form. As\n"
   "cran 'generally does not accept submissions of precompiled binaries due to security reasons'\n"
-  "we provide the following command to download the actual shlib from our dropbox account:\n\n"
+  "we provide the following command to download the regular shlib from our dropbox account:\n\n"
   "   xls.getshlib()\n\n"
   "There have been thorough tests initially but we do not give ANY GUARANTEES AT ALL.\n"
   "You might want to revise the 'xls.getshlib' code and/or read '?xls.getshlib' first\n"

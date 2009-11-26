@@ -23,7 +23,7 @@
   	  	\item \bold{(shlib)} \kbd{...bin/<OS>/shlib/xlsReadWrite_<pkgvers>_dll.zip}
     		\item (source package with shlib) \kbd{...bin/<os>/src/xlsReadWrite_<pkgvers>.tar.gz}
     		\item (source package cran version) \kbd{...cran/xlsReadWrite_<pkgvers>.tar.gz.txt}
-	    	\item (source package actual version) \kbd{...src/xlsReadWrite_<pkgvers>.tar.gz.txt}
+	    	\item (source package regular version) \kbd{...src/xlsReadWrite_<pkgvers>.tar.gz.txt}
 	    }
 	    \item (placeholders:	<os>: win32, <majvers>: major R version, <pkgvers>: pkg version,\cr
   	  	every file has a correspondent hash file with same name and '.md5.txt' suffix)

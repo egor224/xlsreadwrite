@@ -36,7 +36,7 @@ RESOURCES
 		- (shlib)						...bin/<OS>/shlib/xlsReadWrite_<pkgvers>_dll.zip
 		- (src with shlib)	...bin/<os>/src/xlsReadWrite_<pkgvers>.tar.gz
 		- (src cran vers.)	...cran/xlsReadWrite_<pkgvers>.tar.gz.txt
-		- (actual src)			...src/xlsReadWrite_<pkgvers>.tar.gz.txt
+		- (regular src)			...src/xlsReadWrite_<pkgvers>.tar.gz.txt
   -(placeholders:	<os>: win32, <majvers>: major R version, <pkgvers>: pkg version,
     every file has a correspondent hash file with same name and '.md5.txt' suffix)
   

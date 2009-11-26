@@ -1,9 +1,9 @@
 \name{xls.getshlib}
 \alias{xls.getshlib}
-\title{Download actual shlib (dll/so)}
+\title{Download regular shlib (dll/so)}
 
 \description{
-  Downloads actual shlib from our swissr dropbox account and replaces
+  Downloads regular shlib from our swissr dropbox account and replaces
   cran placeholder version with it. For background info see details.
 }
 
@@ -29,7 +29,7 @@ xls.getshlib( pkgvers = NA, url = NA, md5 = TRUE, reload.shlib = TRUE,
 }
 
 \details{
-  \code{xls.getshlib()} will download, check and install the actual shlib just
+  \code{xls.getshlib()} will download, check and install the regular shlib just
   fine. You shouldn't need to provide additional arguments.
   
   The shlib file is hosted on our swissr dropbox account with the following url:

@@ -10,5 +10,5 @@ Description: Read and write Excelfiles natively (v97-2003/BIFF8).
 License: GPL-2
 LicenseDetails: With exception to link proprietary (Flexcel) code.
 OS_type: windows
-SystemRequirements: CRAN version has placeholder shlib. 'xls.getshlib()' actual shlib from swissr dropbox account (see README).
+SystemRequirements: Regular shlib must be downloaded from external source (with e.g. 'xls.getshlib()', CRAN pkg contains placeholder).
 URL: http://www.swissr.org
