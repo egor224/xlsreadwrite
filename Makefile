@@ -10,34 +10,36 @@ R_VERSION = 2.9.1
 include include.mk
 
 
-### list of important targets (build is prerequ. of release)
+### list of important targets - combined targets ##############################
 
 .PHONY: check release
+	
 .PHONY: check-reg build-reg release-reg
 .PHONY: check-cran build-cran release-cran
 .PHONY: push-release
 
 .PHONY: test-dev compile-dev clean-dev
-
-
-### common
+.PHONY: clean-gen clean-gen-src
 
 all:
 	@echo "!! Select a specific target !!"
-check: check-reg check-cran
-build: build-reg build-cran
-release: release-reg release-cran
+check:
+	$(MAKE) check-reg
+	$(MAKE) check-cran
+release:
+	$(MAKE) release-reg
+	$(MAKE) release-cran
 
 
-### regular (pascal) version
+### regular (pascal) version ##################################################
 
 check-reg: clean-gen populate-gen-reg
-	@echo "### check-reg"
+	@echo "### check-reg ###"
 	@cd $(GEN) && $(RCMD) check --no-latex $(flags) $(PKG)
 	@$(MAKE) $(W) clean-gen-src
 	
 build-reg: clean-gen populate-gen-reg $(GENDIR_GEN)
-	@echo "### build-reg"
+	@echo "### build-reg ###"
 	# update COMMIT file
 	@$(GIT) rev-parse HEAD > $(GEN)/$(PKG)/inst/COMMIT
 ifneq (,$(findstring --allow-dirty,$(flags))) 
@@ -62,7 +64,7 @@ endif
 	@mv $(GEN)/$(PKG)_$(PKG_VERSION).tar.gz $(GEN)/bin/$(PKG)_$(PKG_VERSION).tar.gz 
 
 release-reg: $(RELDIR_REL) build-reg
-	@echo "### release-reg"
+	@echo "### release-reg ###"
 	# src
 	@mv $(GEN)/src/$(PKG)_$(PKG_VERSION).tar.gz $(REL)/src
 	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/src/$(PKG)_$(PKG_VERSION).tar.gz'), '$(REL)/src/$(PKG)_$(PKG_VERSION).tar.gz.md5.txt')"
@@ -80,21 +82,22 @@ release-reg: $(RELDIR_REL) build-reg
 	
 .PHONY: populate-gen
 populate-gen-reg: $(PKGDIR_GEN) $(AUX_GEN) $(SRCPAS_GEN) $(SRCRPAS_GEN)
+	@echo "### populate-gen-reg"
 $(SRCPAS_GEN): $(GEN)/$(PKG)/src/%:$(DEV)/src/pas/%
 	@cp $< $@
 $(SRCRPAS_GEN): $(GEN)/$(PKG)/src/%:$(DEV)/src/RPascal/src/%
 	@cp $< $@
 
 
-### CRAN version
+### CRAN version ##############################################################
 
 check-cran: clean-gen populate-gen-cran
-	@echo "### check-cran"
+	@echo "### check-cran ###"
 	@cd $(GEN) && $(RCMD) check --no-latex $(flags) $(PKG)
 	@$(MAKE) $(W) clean-gen-src
 
 build-cran: clean-gen populate-gen-cran $(GENDIR_GEN)
-	@echo "### build-cran"
+	@echo "### build-cran ###"
 	# update COMMIT file
 	@$(GIT) rev-parse HEAD > $(GEN)/$(PKG)/inst/COMMIT
 ifneq (,$(findstring --allow-dirty,$(flags))) 
@@ -110,7 +113,7 @@ endif
 	@mv $(GEN)/$(PKG)_$(PKG_VERSION).zip $(GEN)/bin/$(PKG)_$(PKG_VERSION).zip
 
 release-cran: $(RELDIR_REL) build-cran
-	@echo "### release-cran"
+	@echo "### release-cran ###"
 	# src
 	@mv $(GEN)/src/$(PKG)_$(PKG_VERSION).tar.gz $(REL)/cran
 	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/cran/$(PKG)_$(PKG_VERSION).tar.gz'), '$(REL)/cran/$(PKG)_$(PKG_VERSION).tar.gz.md5.txt')"
@@ -122,18 +125,18 @@ release-cran: $(RELDIR_REL) build-cran
 
 .PHONY: populate-gen-cran
 populate-gen-cran: $(PKGDIR_GEN) $(AUX_GEN) $(GEN)/$(PKG)/src/$(SRCC)
+	@echo "### populate-gen-cran"
 $(GEN)/$(PKG)/src/$(SRCC): $(DEV)/src/c/$(SRCC)
 	@cp $< $@
 
 
-### helper
+### helper ####################################################################
 
 .PHONY: clean-gen clean-gen-src
 
 clean-gen:
 	@echo "### clean-gen"
 	@rm -rf $(GEN)/*
-
 clean-gen-src:
 	@echo "### clean-gen-src"
 	@rm -f $(GEN)/$(PKG)/src/*.$(DCU) $(GEN)/$(PKG)/src/*.o $(GEN)/$(PKG)/src/$(PKG).$(DLL) 
@@ -148,29 +151,24 @@ $(RELDIR_REL):
 	@mkdir -p $@
 
 
-### development targets
+### development and distribution targets ######################################
 
 test-dev:
+	@echo "### test-dev"
 	@cd $(DEV)/__misc/debugtests && $(RSCRIPT) dynTest.R
-
 c-dev:
 	@echo "### c-dev"
 	@cd $(DEV)/src/c && $(RCMD) SHLIB $(PKG).c
-
 pas-dev:
 	@echo "### pas-dev"
 	@$(MAKE) $(W) -C $(DEV)/src/pas -f Makevars
-
 clean-dev:
 	@echo "### clean-dev"
 	@$(MAKE) $(W) -C $(DEV)/src/pas -f Makevars clean
 	@rm -f $(DEV)/src/c/*.o $(DEV)/src/c/$(PKG).$(DLL) 
 
-
-### distribution
-
 push-release:
-	@echo "### push-release"
+	@echo "### push-release ###"
 	# commit files in $(REL)
 	@HASDIFF="`cd "$(REL)" && $(GIT) diff HEAD 2> $(NULL)`" && if (test "$$HASDIFF"); then \
 	cd "$(REL)" ;\

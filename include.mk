@@ -1,17 +1,17 @@
 # include.mk for xlsReadWrite Makefile
 # ====================================
 
-# settings
-# --------
+
+### settings
 
 ROOT = .
 DEV = $(ROOT)
 GEN = $(ROOT)/../__gen
 REL = $(ROOT)/../swissrpkg
-  # (ugly, FIXME)
+# (ugly, FIXME)
 DBOX = "D:/DropboxSwissr/My\ Dropbox/Public/swissrpkg"
 
-  # switch off directory printing
+# switch off directory printing
 W = --no-print-directory
 
 export PKG = xlsReadWrite
@@ -32,8 +32,8 @@ OS_FOLDER = win32
 export DCU = dcu
 export DLL = dll
 
-# files and directories
-# ---------------------
+
+### files and directories
 
 # directories
 PKGDIR = man R src tests \
