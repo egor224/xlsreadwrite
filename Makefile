@@ -5,8 +5,8 @@
 # - build: 'flags=--allow-dirty' to build if there are diffs in the workspace
 
 
-R_VERSION = 2.9.1
-# R_VERSION = 2.10.0
+#R_VERSION = 2.9.1
+R_VERSION = 2.10.0
 include include.mk
 
 
