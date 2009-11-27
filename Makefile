@@ -1,34 +1,43 @@
 # Makefile for xlsReadWrite
-# =========================
 #
 # use 'flags=<xy>' to pass arguments:
 # - check: the xy flags will be passed on to CHECK ('--no-latex' hard-coded)
 # - build: 'flags=--allow-dirty' to build if there are diffs in the workspace
 
 
-#R_VERSION = 2.9.1
-R_VERSION = 2.10.0
+R_VERSION = 2.9.1
+# R_VERSION = 2.10.0
 include include.mk
 
-.PHONY: pkg check build release
-.PHONY: cran check-cran build-cran release-cran
 
-all: temp
-temp:
-	pushexec
+### list of important targets (build is prerequ. of release)
 
-# regular (pascal) version
-# -----------------------
+.PHONY: check release
+.PHONY: check-reg build-reg release-reg
+.PHONY: check-cran build-cran release-cran
+.PHONY: push-release
 
-pkg: check build release
-	
-check: clean-gen populate-gen
-	@echo "### check"
+.PHONY: test-dev compile-dev clean-dev
+
+
+### common
+
+all:
+	@echo "!! Select a specific target !!"
+check: check-reg check-cran
+build: build-reg build-cran
+release: release-reg release-cran
+
+
+### regular (pascal) version
+
+check-reg: clean-gen populate-gen-reg
+	@echo "### check-reg"
 	@cd $(GEN) && $(RCMD) check --no-latex $(flags) $(PKG)
 	@$(MAKE) $(W) clean-gen-src
 	
-build: clean-gen populate-gen $(GENDIR_GEN)
-	@echo "### build"
+build-reg: clean-gen populate-gen-reg $(GENDIR_GEN)
+	@echo "### build-reg"
 	# update COMMIT file
 	@$(GIT) rev-parse HEAD > $(GEN)/$(PKG)/inst/COMMIT
 ifneq (,$(findstring --allow-dirty,$(flags))) 
@@ -52,9 +61,8 @@ endif
 	@cd $(GEN) && $(RCMD) build $(PKG)
 	@mv $(GEN)/$(PKG)_$(PKG_VERSION).tar.gz $(GEN)/bin/$(PKG)_$(PKG_VERSION).tar.gz 
 
-# release: $(RELDIR_REL) build
-release: $(RELDIR_REL) build
-	@echo "### release"
+release-reg: $(RELDIR_REL) build-reg
+	@echo "### release-reg"
 	# src
 	@mv $(GEN)/src/$(PKG)_$(PKG_VERSION).tar.gz $(REL)/src
 	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/src/$(PKG)_$(PKG_VERSION).tar.gz'), '$(REL)/src/$(PKG)_$(PKG_VERSION).tar.gz.md5.txt')"
@@ -71,17 +79,15 @@ release: $(RELDIR_REL) build
 	@cd $(REL) && echo -e "=== Swissr dropbox ===\n(add folder/files to http://dl.dropbox.com/u/2602516/swissrpkg)\n" > listing.txt && ls -1Rp >> listing.txt 
 	
 .PHONY: populate-gen
-populate-gen: $(PKGDIR_GEN) $(AUX_GEN) $(SRCPAS_GEN) $(SRCRPAS_GEN)
+populate-gen-reg: $(PKGDIR_GEN) $(AUX_GEN) $(SRCPAS_GEN) $(SRCRPAS_GEN)
 $(SRCPAS_GEN): $(GEN)/$(PKG)/src/%:$(DEV)/src/pas/%
 	@cp $< $@
 $(SRCRPAS_GEN): $(GEN)/$(PKG)/src/%:$(DEV)/src/RPascal/src/%
 	@cp $< $@
 
-# CRAN version
-# ------------
 
-cran: check-cran build-cran release-cran
-	
+### CRAN version
+
 check-cran: clean-gen populate-gen-cran
 	@echo "### check-cran"
 	@cd $(GEN) && $(RCMD) check --no-latex $(flags) $(PKG)
@@ -119,8 +125,8 @@ populate-gen-cran: $(PKGDIR_GEN) $(AUX_GEN) $(GEN)/$(PKG)/src/$(SRCC)
 $(GEN)/$(PKG)/src/$(SRCC): $(DEV)/src/c/$(SRCC)
 	@cp $< $@
 
-# common
-# ------
+
+### helper
 
 .PHONY: clean-gen clean-gen-src
 
@@ -141,10 +147,8 @@ $(GENDIR_GEN):
 $(RELDIR_REL):
 	@mkdir -p $@
 
-# Development targets
-# -------------------
 
-.PHONY: test-dev compile-dev clean-dev
+### development targets
 
 test-dev:
 	@cd $(DEV)/__misc/debugtests && $(RSCRIPT) dynTest.R
@@ -162,8 +166,8 @@ clean-dev:
 	@$(MAKE) $(W) -C $(DEV)/src/pas -f Makevars clean
 	@rm -f $(DEV)/src/c/*.o $(DEV)/src/c/$(PKG).$(DLL) 
 
-# Distribution
-# ------------
+
+### distribution
 
 push-release:
 	@echo "### push-release"
