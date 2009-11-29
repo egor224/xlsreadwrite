@@ -16,17 +16,18 @@ const char crmsg[] =
   "Copyright (C) 2009 Hans-Peter Suter, Treetron, Switzerland.\n\n";
 
 const char cranmsg[] = 
-  "!! Your installation still contains the cran placeholder shlib (dll/so). Please get\n"
-  "the regular shlib from our dropbox account by executing the following command:\n"
+  "!! Your installation contains the cran placeholder shlib (dll/so).\n"
+  "Please get the regular shlib by executing the following command:\n\n"
   "   xls.getshlib()\n\n"
-  "More info, forum and manual download (shlib, regular pkg) at http://www.swissr.org.\n\n"  
+  "Info, forum and manual download (shlib, reg.pkg) at http://www.swissr.org.\n\n"  
   "BACKGROUND: Our own xlsReadWrite code is free, but we also use proprietary code\n"
-  "(Flexcel, tmssoftware.com) which we may only distribute legally in precompiled,\n"
-  "i.e. binary form. Now CRAN 'generally does not accept submissions of precompiled\n"
-  "binaries due to security reasons'. NO GUARANTEES: We have done thorough tests\n"
+  "(Flexcel, tmssoftware.com) which can only be distributed legally in precompiled,\n"
+  "i.e. binary form. As CRAN 'generally does not accept submissions of precompiled\n"
+  "binaries due to security reasons' we only provide a placeholder and let you\n"
+  "choose to download the binary shlib. NO GUARANTEES: We have done thorough tests\n"
   "initially and there are integrity checks, but we do _not_ give any guarantees.\n"
-  "However you are free to check out the CODE at http://github.com/swissr/xlsreadwrite,\n"
-  "and in case of issues, we are happy to hear about them on our forum (www.swissr.org).";
+  "You may check out the SOURCE CODE at http://github.com/swissr/xlsreadwrite\n"
+  "and in case of any issues, we are happy to hear about them on our forum.\n\n";
 
 SEXP ReadXls( SEXP _file, SEXP _colNames, SEXP _sheet, SEXP _type, SEXP _from, SEXP _rowNames, SEXP _colClasses, SEXP _checkNames, SEXP _dateTimeAs, SEXP _stringsAsFactors )
 {

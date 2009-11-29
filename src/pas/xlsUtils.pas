@@ -223,7 +223,7 @@ function ReplaceVersionAndCommit( const _s: string ): string;
         if Count > 0 then c:= Strings[0];
         System.Delete( c, 11, 99 );
         if (Count > 1) and (Pos( 'dirty', Strings[1] ) > -1) then begin
-          c:= c + '-dirty';
+          c:= c + '-d)';
         end;
       finally
         Free();
