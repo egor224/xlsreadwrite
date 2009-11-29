@@ -41,7 +41,8 @@ PKGDIR = man R src tests \
 PKGDIR_GEN = $(addprefix $(GEN)/$(PKG)/,$(PKGDIR))
 GENDIR_GEN = $(GEN)/bin $(GEN)/src
 RELDIR = bin/$(OS_FOLDER)/shlib bin/$(OS_FOLDER)/src \
-    bin/$(OS_FOLDER)/$(R_MAJVER) cran src
+    bin/$(OS_FOLDER)/$(R_MAJVER) src \
+    cran/$(OS_FOLDER)/$(R_MAJVER)
 RELDIR_REL = $(addprefix $(REL)/,$(RELDIR))
 
 # files in non-source folders

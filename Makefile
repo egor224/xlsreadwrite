@@ -127,8 +127,8 @@ release-cran: $(RELDIR_REL) build-cran
 	@mv $(GEN)/src/$(PKG)_$(PKG_VERSION).tar.gz $(REL)/cran
 	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/cran/$(PKG)_$(PKG_VERSION).tar.gz'), '$(REL)/cran/$(PKG)_$(PKG_VERSION).tar.gz.md5.txt')"
 	# bin
-	@mv $(GEN)/bin/$(PKG)_$(PKG_VERSION).zip $(REL)/cran/
-	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/cran/$(PKG)_$(PKG_VERSION).zip'), '$(REL)/cran/$(PKG)_$(PKG_VERSION).zip.md5.txt')"
+	@mv $(GEN)/bin/$(PKG)_$(PKG_VERSION).zip $(REL)/cran/$(OS_FOLDER)/$(R_MAJVER)
+	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/cran/$(OS_FOLDER)/$(R_MAJVER)/$(PKG)_$(PKG_VERSION).zip'), '$(REL)/cran/$(OS_FOLDER)/$(R_MAJVER)/$(PKG)_$(PKG_VERSION).zip.md5.txt')"
 	# update dropbox listing
 	@cd $(REL) && echo -e "=== Swissr dropbox ===\n(add folder/files to http://dl.dropbox.com/u/2602516/swissrpkg)\n" > listing.txt && ls -1Rp >> listing.txt 
 
