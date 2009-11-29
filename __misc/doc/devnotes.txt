@@ -1,13 +1,31 @@
 h3. git commands:
 
+# init
 git init
 git add .
 git commit -m "Initial import"
 git submodule add v:/swissrRepos/public/rpascal src/RPascal
 git submodule init
 
+# push
 git push origin master
+git push github master
 
 # local dropbox
 git --git-dir=../../swissrpkg.git --work-tree=. status
 git --git-dir=../../swissrpkg.git --work-tree=. log
+
+# tags
+git tag -a -m "Tag version 1.4.5" v1.4.5
+git push --tags origin
+git push --tags github
+
+h3. check cran source package
+
+set Rver=2.9.1
+set Rver=2.10.0
+set Pver=1.4.5
+pushd V:\swissrRepos\public\swissrpkg\cran\
+set RCMD=C:/Programme/R/R-%Rver%/bin/Rcmd.exe
+%RCMD% INSTALL xlsReadWrite_%Pver%.tar.gz
+popd
