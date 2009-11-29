@@ -12,20 +12,21 @@
 #include <R_ext/Print.h>
 
 const char crmsg[] = 
-	"xlsReadWrite version (cran placeholder shlib\n"
+	"xlsReadWrite version (cran shlib)\n"
   "Copyright (C) 2009 Hans-Peter Suter, Treetron, Switzerland.\n\n";
 
 const char cranmsg[] = 
-  "!! PLEASE GET THE ACTUAL SHLIB\n"
-  "Our own xlsReadWrite code is free, but we also use a proprietary code library (Flexcel,\n"
-  "tmssoftware.com) which can only be distributed legally in precompiled, i.e. binary form. As\n"
-  "cran 'generally does not accept submissions of precompiled binaries due to security reasons'\n"
-  "we provide the following command to download the regular shlib from our dropbox account:\n\n"
+  "!! Your installation still contains the cran placeholder shlib (dll/so). Please get\n"
+  "the regular shlib from our dropbox account by executing the following command:\n"
   "   xls.getshlib()\n\n"
-  "There have been thorough tests initially but we do not give ANY GUARANTEES AT ALL.\n"
-  "You might want to revise the 'xls.getshlib' code and/or read '?xls.getshlib' first\n"
-  "Alternatively you can download the shlib or full package manually and/or compile the\n"
-	"library for yourself. Please find more info in the package help and the README file.\n";
+  "More info, forum and manual download (shlib, regular pkg) at http://www.swissr.org.\n\n"  
+  "BACKGROUND: Our own xlsReadWrite code is free, but we also use proprietary code\n"
+  "(Flexcel, tmssoftware.com) which we may only distribute legally in precompiled,\n"
+  "i.e. binary form. Now CRAN 'generally does not accept submissions of precompiled\n"
+  "binaries due to security reasons'. NO GUARANTEES: We have done thorough tests\n"
+  "initially and there are integrity checks, but we do _not_ give any guarantees.\n"
+  "However you are free to check out the CODE at http://github.com/swissr/xlsreadwrite,\n"
+  "and in case of issues, we are happy to hear about them on our forum (www.swissr.org).";
 
 SEXP ReadXls( SEXP _file, SEXP _colNames, SEXP _sheet, SEXP _type, SEXP _from, SEXP _rowNames, SEXP _colClasses, SEXP _checkNames, SEXP _dateTimeAs, SEXP _stringsAsFactors )
 {
