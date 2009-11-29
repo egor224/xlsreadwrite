@@ -4,9 +4,18 @@
 # - check: the xy flags will be passed on to CHECK ('--no-latex' hard-coded)
 # - build: 'flags=--allow-dirty' to build if there are diffs in the workspace
 
-
-#R_VERSION = 2.9.1
+# set R version
+ifneq (,$(findstring Rversion.mk,$(wildcard *.mk))) 
+  # (Rversion.mk is _not_ in git)
+include Rversion.mk
+  # warning as info doesn't display anything (why?)
+$(warning ***********************************)
+$(warning R version $(R_VERSION) will be used)
+$(warning ***********************************)
+else
 R_VERSION = 2.10.0
+endif
+	
 include include.mk
 
 
