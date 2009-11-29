@@ -34,7 +34,7 @@ xls.getshlib <- function( pkgvers = NA, url = NA, md5 = TRUE, reload.shlib = TRU
 	if (is.na( url )) {
 		url <- sub( "<os>", os, urltmpl, fixed = TRUE )
 		url <- sub( "<pkgvers>", pkgvers, url, fixed = TRUE )
-		#copyOrDownload( url ) #fixme
+		copyOrDownload( url )
 	} else {
 		copyOrDownload( url )
 	}
