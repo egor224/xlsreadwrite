@@ -322,7 +322,7 @@ function ReadDataframe(): pSExp; cdecl;
           result:= setNilSxp;      // 1st try to find a type, 2nd use RNaInt
         end else begin
           raise EXlsReadWrite.CreateFmt( '"%s" is not a valid colClasses entry ' +
-              '(use double, integer, logical, character, factor or NA)', [_type] );
+              '(use double, numeric, integer, logical, character, factor, isodate, isotime, isodatetime or NA)', [_type] );
         end;
       end {StrToColType};
 
