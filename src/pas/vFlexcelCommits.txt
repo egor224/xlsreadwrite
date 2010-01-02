@@ -1,0 +1,17 @@
+Common info
+-----------
+
+Flexcel repo used:	.../lib_delphi_repos/FlexCelVCL/.git
+xlsReadWrite includes: 	.../lib_delphi_repos/FlexCelVCL/Source
+
+
+Commit table (add new entry whenever Flexcel changes (doesn't happen often)):
+------------
+
+| Date		| xlsReadWrite/FlexCelVCL			| Flexcel version
+|		| 						|  
+|  2010-01-02	| ec7a93a86a0bec8fd5eef0eb0b81f3c6d9d3e797/	|
+| 		| 65869b63b25a269924f58ecf74f07c3a12dc1bae	| 3.2 						| 
+|		| 						|  
+|  yyyy-mm-dd	| <xlsReadWrite-sha1>/	|
+| 		| <Flexcel-sha1>	| <version> 						| 
