@@ -319,8 +319,8 @@ procedure WriteDataframe(); cdecl;
       skipLines:= riInteger( riCoerceVector( _skipLines, setIntSxp ) )[0];
 
         { create writer }
-      writer:= TFlexCelImport.Create();
-      writer.Adapter:= TXLSAdapter.Create();
+      writer:= TFlexCelImport.Create( nil );
+      writer.Adapter:= TXLSAdapter.Create( nil );
       try
           { open template file }
         tmpl:= ShlibPath() + '\template\TemplateNew.xls';

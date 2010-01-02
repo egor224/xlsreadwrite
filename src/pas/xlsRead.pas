@@ -587,8 +587,8 @@ function ReadDataframe(): pSExp; cdecl;
       SetTrueFalse( _stringsAsFactors, stringsAsFactors, 'stringsAsFactors' );
 
         { create reader }
-      reader:= TFlexCelImport.Create();
-      reader.Adapter:= TXLSAdapter.Create();
+      reader:= TFlexCelImport.Create( nil );
+      reader.Adapter:= TXLSAdapter.Create( nil );
       try
           { open existing file }
         reader.OpenFile( riChar( riStringElt( _file, 0 ) ) );
