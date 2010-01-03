@@ -35,7 +35,6 @@ function WriteXls( _data, _file, _colNames, _sheet, _skipLines, _rowNames: pSExp
     writer: TFlexCelImport;
     colcnt, rowcnt, offsetRow: integer;
     colheadertype: aColheadertype;
-    colnames, dimnames: pSExp;
     skipLines: integer;
     rownameKind: aRowNameKind;
     rowNameAsFirstCol: boolean;
@@ -105,50 +104,72 @@ function CheckForAutoRow: boolean;
 procedure ApplyColHeader();
   var
     i: integer;
+    cn, dim: pSExp;
   begin
-    colnames:= nil;
+    cn:= nil;
     if colheadertype = chtString then begin
-      colnames:= _colNames;
+      cn:= _colNames;
     end else if colheadertype = chtLogical then begin
       if riTypeOf( _data ) = setVecSxp then begin
           { frame }
-        colnames:= riGetAttrib( _data, RNamesSymbol );
-        if riIsNull( colnames ) then colnames:= nil;
+        cn:= riGetAttrib( _data, RNamesSymbol );
+        if riIsNull( cn ) then cn:= nil;
       end else begin
           { matrix }
-        dimnames:= riGetAttrib( _data, RDimNamesSymbol );
-        if not riIsNull( dimnames ) then begin
-          colnames:= riVectorElt( dimnames, 1 );
-          if riIsNull( colnames ) then colnames:= nil;
+        dim:= riGetAttrib( _data, RDimNamesSymbol );
+        if not riIsNull( dim ) then begin
+          cn:= riVectorElt( dim, 1 );
+          if riIsNull( cn ) then cn:= nil;
+        end else begin
+          cn:= nil;
         end;
       end;
     end {if};
 
-    for i:= integer(rowNameAsFirstCol) to colcnt - 1 + integer(rowNameAsFirstCol) do begin
-      if Assigned( colnames ) then begin
+    if Assigned( cn ) then begin
+      for i:= integer(rowNameAsFirstCol) to colcnt - 1 + integer(rowNameAsFirstCol) do begin
         writer.CellValue[skiplines + 1, i + 1]:=
-            string(riChar( riStringElt( colnames, i - integer(rowNameAsFirstCol) ) ));
-      end else begin
+            string(riChar( riStringElt( cn, i - integer(rowNameAsFirstCol) ) ));
+      end;
+    end else begin
+      for i:= integer(rowNameAsFirstCol) to colcnt - 1 + integer(rowNameAsFirstCol) do begin
         writer.CellValue[skiplines + 1, i + 1]:=
             'V' + IntToStr( i - integer(rowNameAsFirstCol) + 1 );
-      end {if};
-    end {for};
+      end;
+    end;
   end;
 
 procedure ApplyRowNames();
   var
     r: integer;
-    myrownames: pSExp;
+    rn, dim: pSExp;
   begin
     if rownameKind = rnSupplied then begin
-      myrownames:= _rowNames;
+      rn:= _rowNames;
     end else begin
-      myrownames:= riGetAttrib( _data, RRowNamesSymbol );
+      assert( rownameKind = rnTrue, 'ApplyRowNames: rownameKind <> rnTrue' );
+      if riIsFrame( _data ) then begin
+        rn:= riGetAttrib( _data, RRowNamesSymbol );
+      end else begin
+        dim:= riGetAttrib( _data, RDimNamesSymbol );
+        if (not riIsNull( dim )) then begin
+          rn:= riVectorElt( dim, 0 );
+          if riIsNull( rn ) then rn:= nil;
+        end else begin
+          rn:= nil;
+        end;
+      end {is frame};
     end;
 
-    for r:= 0 to rowcnt - 1 do begin
-      writer.CellValue[r + 1 + offsetRow, 1]:=
-        string(riChar( riStringElt( myrownames, r ) ));
+    if Assigned( rn ) then begin
+      for r:= 0 to rowcnt - 1 do begin
+        writer.CellValue[r + 1 + offsetRow, 1]:=
+          string(riChar( riStringElt( rn, r ) ));
+      end;
+    end else begin
+      for r:= 0 to rowcnt - 1 do begin
+        writer.CellValue[r + 1 + offsetRow, 1]:= IntToStr( r + 1 );
+      end;
     end;
   end {ApplyRowNames};
 
@@ -218,9 +239,7 @@ procedure WriteDataframe(); cdecl;
     valint: integer;
     valreal: double;
   begin
-    if rownameKind = rnTrue then begin
-      rowNameAsFirstCol:= True;
-    end else if rownameKind = rnNA then begin
+    if rownameKind = rnNA then begin
       if CheckForAutoRow then begin
         rowNameAsFirstCol:= True;
         rownameKind:= rnTrue;
@@ -351,6 +370,10 @@ procedure WriteDataframe(); cdecl;
         if colcnt > 256 then raise ExlsReadWrite.CreateFmt( 'Only up to %f columns supported (Excel <V2007))', [256] );
         if colheadertype <> chtNone then Inc( offsetRow );
 
+        if (rownameKind in [rnTrue, rnSupplied]) then begin
+          rowNameAsFirstCol:= True;
+        end;
+            
         { -- write matrix }
 
         case riTypeOf( _data ) of
