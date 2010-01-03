@@ -27,7 +27,7 @@ test.read1ColDataFrame <- function() {
 test.readWithBadFrom <- function() {
 	checkException( read.xls( rfile, from = "bad" ), silent = TRUE )
 	  # check if wrong type has been catched correctly
-	checkTrue( 1 == grep( "must be a scalar integer or double", geterrmessage() ) )
+	checkEquals( grep( "must be a scalar integer or double", geterrmessage() ), 1 )
 }
 
 

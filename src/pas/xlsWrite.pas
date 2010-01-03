@@ -154,18 +154,28 @@ procedure ApplyRowNames();
         dim:= riGetAttrib( _data, RDimNamesSymbol );
         if (not riIsNull( dim )) then begin
           rn:= riVectorElt( dim, 0 );
-          if riIsNull( rn ) then rn:= nil;
         end else begin
           rn:= nil;
         end;
       end {is frame};
+      
+      if riIsNull( rn ) then begin
+        rWarning( 'The data does not contain rownames, we will write plain row numbers' );
+        rn:= nil;
+      end;
     end;
 
     if Assigned( rn ) then begin
-      for r:= 0 to rowcnt - 1 do begin
-        writer.CellValue[r + 1 + offsetRow, 1]:=
-          string(riChar( riStringElt( rn, r ) ));
-      end;
+      if riTypeOf( rn ) = setStrSxp then begin
+        for r:= 0 to rowcnt - 1 do begin
+          writer.CellValue[r + 1 + offsetRow, 1]:=
+            string(riChar( riStringElt( rn, r ) ));
+        end;
+      end else if riTypeOf( rn ) = setIntSxp then begin
+        for r:= 0 to rowcnt - 1 do begin
+          writer.CellValue[r + 1 + offsetRow, 1]:= riInteger( rn )[r];
+        end;
+      end else assert( False, 'ApplyRowNames: rownames whould be setStrSxp or setIntSxp' );
     end else begin
       for r:= 0 to rowcnt - 1 do begin
         writer.CellValue[r + 1 + offsetRow, 1]:= IntToStr( r + 1 );

@@ -40,28 +40,37 @@ test.readRowlNamesNormal <- function() {
 
 ###{{ test: write rowNames
 
-xMatrix <- matrix( 1:12, 3, 4, dimnames = list( letters[1:3], LETTERS[1:4] ) )
-xFrame <- data.frame( xMatrix )
+xMatrix1 <- xMatrix2 <- matrix( 1:12, 3, 4, dimnames = list( letters[1:3], LETTERS[1:4] ) )
 
 test.writeRowNamesTrueForMatrix <- function() {
-	write.xls( xMatrix, wfile, colNames = TRUE, rowNames = TRUE )
+	write.xls( xMatrix1, wfile, colNames = TRUE, rowNames = TRUE )
   rdata <- read.xls( wfile, type = "integer" )
-  checkIdentical( xMatrix, rdata )
+  checkIdentical( xMatrix1, rdata )
 }
 
 test.writeRowNamesTrueForBareMatrix <- function() {
-	rownames(xMatrix) <- NULL
-	write.xls( xMatrix, wfile, colNames = TRUE, rowNames = TRUE )
+	rownames(xMatrix2) <- NULL
+  mywarn <- 0
+  withCallingHandlers( write.xls( xMatrix2, wfile, colNames = TRUE, rowNames = TRUE ), 
+      warning = function(w) { mywarn <<- mywarn + 1; invokeRestart("muffleWarning") } )
+  checkIdentical( mywarn, 1 )
   rdata <- read.xls( wfile, type = "integer", rowNames = TRUE )
-	rownames(xMatrix) <- as.character( 1:3 )
-  checkIdentical( xMatrix, rdata )
+	rownames(xMatrix2) <- as.character( 1:3 )
+  checkIdentical( xMatrix2, rdata )
 }
 
 test.writeRowNamesTrueForFrame <- function() {
+  xFrame <- data.frame( xMatrix1 )
 	write.xls( xFrame, wfile, colNames = TRUE, rowNames = TRUE )
   rdata <- read.xls( wfile, colClasses = "integer" )
   identical( xFrame, rdata )
   checkIdentical( xFrame, rdata )
+}
+
+test.writeIntegerRowNamesTrue <- function() {
+	x <- data.frame( BD = 1:3, BF = 4:6, BO = 12:14 )
+	# (earlier this broke because rownames ended as (unsupported) integer types
+	write.xls( x, wfile, rowNames = TRUE )
 }
 
 ###}}
