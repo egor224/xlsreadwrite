@@ -27,7 +27,7 @@ include include.mk
 .PHONY: check-cran build-cran release-cran
 .PHONY: push-release
 
-.PHONY: test-dev compile-dev clean-dev
+.PHONY: test-dev c-dev pas-dev clean-dev
 .PHONY: clean-gen clean-gen-src
 
 all:

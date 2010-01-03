@@ -1,4 +1,5 @@
 __gen/*
+__misc/debugtests/temp/*
 *.dll
 *.dcu
 *.o
