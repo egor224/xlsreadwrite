@@ -579,6 +579,12 @@ function ReadDataframe(): pSExp; cdecl;
     SetLength( colnames, 0 );
     SetLength( rownames, 0 );
     try
+        { check if is scalar number }
+      if not ((riLength( _from ) = 1) and
+             (riTypeOf( _from ) in [setIntSxp, setRealSxp]))
+      then begin
+        raise ExlsReadWrite.Create('ReadXls: "from" must be a scalar integer or double');
+      end;
       from:= riInteger( riCoerceVector( _from, setIntSxp ) )[0];
       SetColNames( _colNames );
       SetRowNames( _rowNames );
