@@ -64,7 +64,6 @@ test.readColClassesAuto <- function() {
 }
 
 test.readColClassesAutoFirst16Rows <- function() {
-  # TODO: I thought/documented it's 15. What does Excel? What is the default?
   mywarn <- 0
   withCallingHandlers( rdata <- read.xls( rfile, sheet = "autoCls", from = 2, stringsAsFactors = FALSE ), 
     warning = function(w) { mywarn <<- mywarn + 1; invokeRestart("muffleWarning") } )
@@ -76,8 +75,8 @@ test.readColClassesAutoFirst16Rows <- function() {
 }
 
 test.readColClassesAutoProgression <- function() {
-    # on the free version there is no progression, the first found cell value determines class
-    # (this is stupid, free/pro should behave equal in this regard, TODO)
+    # the first found cell value determines class
+    # (there's a progression on the pro version but it's too complicated to implement here)
     # check first row and...
   myclsOutClass <- c( "factor", rep( "numeric", 8 ), "factor", "logical" )
   myclsOutStorageMode <- c( "integer", rep( "double", 8 ), "integer", "logical" )

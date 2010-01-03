@@ -44,7 +44,7 @@ read.xls( file,
     \code{isodatetime} a "YYYY-MM-DD hh:mm:ss" character string.
     
     With \code{NA} a suitable column type will be determined based on the 
-    \emph{first non-empty entry} of the first 16 rows of the Excelsheet.}
+    \emph{first} non-empty entry of the 16 rows following \{from} (starting row).}
   \item{checkNames}{with \code{TRUE} the colNames are guaranteed to be 
     syntactically valid variable names (by \code{make.names}).}
   \item{dateTimeAs}{controls how to determine a column class for columns which are 
