@@ -597,7 +597,7 @@ function ReadDataframe(): pSExp; cdecl;
       reader.Adapter:= TXLSAdapter.Create( nil );
       try
           { open existing file }
-        reader.OpenFile( riChar( riStringElt( _file, 0 ) ) );
+        reader.OpenFile( GetScalarString( _file, 'file must be a character string' ) );
         SelectSheet();
 
           { counts and offsets }

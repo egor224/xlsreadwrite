@@ -325,7 +325,7 @@ procedure WriteDataframe(); cdecl;
   begin {WriteXls}
     result:= RNilValue;
     try
-      filename:= riChar( riStringElt( _file, 0 ) );
+      filename:= GetScalarString( _file, 'file must be a character string' );
 
         { _colNames }
       colheadertype:= chtNone;
