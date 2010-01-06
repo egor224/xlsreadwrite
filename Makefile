@@ -1,14 +1,10 @@
+#
 # Makefile for xlsReadWrite
 #
-# use 'flags=<xy>' to pass arguments:
-# - check: the xy flags will be passed on to CHECK ('--no-latex' hard-coded)
-# - build: 'flags=--allow-dirty' to build if there are diffs in the workspace
 
-# set R version
+# R version (Rversion.mk _not_ in git, warning to force output)
 ifneq (,$(findstring Rversion.mk,$(wildcard *.mk))) 
-  # (Rversion.mk is _not_ in git)
-include Rversion.mk
-  # warning as info doesn't display anything (why?)
+include Rversion.mk 
 $(warning ***********************************)
 $(warning R version $(R_VERSION) will be used)
 $(warning ***********************************)
@@ -19,28 +15,21 @@ endif
 include include.mk
 
 
-### list of important targets - combined targets ##############################
+### list of important targets #################################################
+### (use 'flags=<xy>' to pass arguments for check and build) ##################
 
 .PHONY: check release
 	
 .PHONY: check-reg build-reg release-reg
 .PHONY: check-cran build-cran release-cran
+
 .PHONY: push-release
 
 .PHONY: test-dev c-dev pas-dev clean-dev
-.PHONY: clean-gen clean-gen-src
+  
 
-all:
-	@echo "!! Select a specific target !!"
-check:
-	$(MAKE) check-reg
-	$(MAKE) check-cran
-release:
-	$(MAKE) release-reg
-	$(MAKE) release-cran
-
-
-### regular (pascal) version ##################################################
+### reg - regular/pascal version ##############################################
+###############################################################################
 
 check-reg: clean-gen populate-gen-reg
 	@echo "### check-reg ###"
@@ -87,7 +76,9 @@ release-reg: $(RELDIR_REL) build-reg
 	@mv $(GEN)/bin/$(PKG)_$(PKG_VERSION).tar.gz $(REL)/bin/$(OS_FOLDER)/src
 	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/bin/$(OS_FOLDER)/src/$(PKG)_$(PKG_VERSION).tar.gz'), '$(REL)/bin/$(OS_FOLDER)/src/$(PKG)_$(PKG_VERSION).tar.gz.md5.txt')"
 	# update dropbox listing
-	@cd $(REL) && echo -e "=== Swissr dropbox ===\n(add folder/files to http://dl.dropbox.com/u/2602516/swissrpkg)\n" > listing.txt && ls -1Rp >> listing.txt 
+	@cd $(REL) && echo -e "# Listing of SwissR' swissrpkg dropbox folder\n# URL root: http://dl.dropbox.com/u/2602516/swissrpkg\n# URL text listing: http://dl.dropbox.com/u/2602516/swissrpkg/listing.txt\n# URL html listing: http://dl.dropbox.com/u/2602516/swissrpkg/listing.html\n# More info at: http://www.swissr.org\n" > listing.txt && ls -1Rp >> listing.txt 
+	# generate html listing
+	$(GENLISTEXE) $(REL)/listing.txt $(GENLIST)/listing.html.template $(REL)/listing.html
 	
 .PHONY: populate-gen
 populate-gen-reg: $(PKGDIR_GEN) $(AUX_GEN) $(SRCPAS_GEN) $(SRCRPAS_GEN)
@@ -98,7 +89,8 @@ $(SRCRPAS_GEN): $(GEN)/$(PKG)/src/%:$(DEV)/src/RPascal/src/%
 	@cp $< $@
 
 
-### CRAN version ##############################################################
+### cran - CRAN version #######################################################
+###############################################################################
 
 check-cran: clean-gen populate-gen-cran
 	@echo "### check-cran ###"
@@ -124,13 +116,15 @@ endif
 release-cran: $(RELDIR_REL) build-cran
 	@echo "### release-cran ###"
 	# src
-	@mv $(GEN)/src/$(PKG)_$(PKG_VERSION).tar.gz $(REL)/cran
-	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/cran/$(PKG)_$(PKG_VERSION).tar.gz'), '$(REL)/cran/$(PKG)_$(PKG_VERSION).tar.gz.md5.txt')"
+	@mv $(GEN)/src/$(PKG)_$(PKG_VERSION).tar.gz $(REL)/cran/src
+	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/cran/src/$(PKG)_$(PKG_VERSION).tar.gz'), '$(REL)/cran/src/$(PKG)_$(PKG_VERSION).tar.gz.md5.txt')"
 	# bin
 	@mv $(GEN)/bin/$(PKG)_$(PKG_VERSION).zip $(REL)/cran/$(OS_FOLDER)/$(R_MAJVER)
 	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/cran/$(OS_FOLDER)/$(R_MAJVER)/$(PKG)_$(PKG_VERSION).zip'), '$(REL)/cran/$(OS_FOLDER)/$(R_MAJVER)/$(PKG)_$(PKG_VERSION).zip.md5.txt')"
 	# update dropbox listing
 	@cd $(REL) && echo -e "=== Swissr dropbox ===\n(add folder/files to http://dl.dropbox.com/u/2602516/swissrpkg)\n" > listing.txt && ls -1Rp >> listing.txt 
+	# generate html listing
+	$(GENLISTEXE) $(REL)/listing.txt $(GENLIST)/listing.html.template $(REL)/listing.html
 
 .PHONY: populate-gen-cran
 populate-gen-cran: $(PKGDIR_GEN) $(AUX_GEN) $(GEN)/$(PKG)/src/$(SRCC)
@@ -139,28 +133,8 @@ $(GEN)/$(PKG)/src/$(SRCC): $(DEV)/src/c/$(SRCC)
 	@cp $< $@
 
 
-### helper ####################################################################
-
-.PHONY: clean-gen clean-gen-src
-
-clean-gen:
-	@echo "### clean-gen"
-	@rm -rf $(GEN)/*
-clean-gen-src:
-	@echo "### clean-gen-src"
-	@rm -f $(GEN)/$(PKG)/src/*.$(DCU) $(GEN)/$(PKG)/src/*.o $(GEN)/$(PKG)/src/$(PKG).$(DLL) 
-
-$(AUX_GEN): $(GEN)/$(PKG)/%:$(DEV)/%
-	@cp $< $@
-$(PKGDIR_GEN):
-	@mkdir -p $@
-$(GENDIR_GEN):
-	@mkdir -p $@
-$(RELDIR_REL):
-	@mkdir -p $@
-
-
 ### development and distribution targets ######################################
+###############################################################################
 
 test-dev:
 	@echo "### test-dev"
@@ -182,7 +156,7 @@ push-release:
 	@HASDIFF="`cd "$(REL)" && $(GIT) diff HEAD 2> $(NULL)`" && if (test "$$HASDIFF"); then \
 	cd "$(REL)" ;\
 	$(GIT) add . ;\
-	&& $(GIT) commit -m "commit updated files" --author="makefile <push@release>" ;\
+	&& $(GIT) commit -m "Commit updated files" --author="makefile <push@release>" ;\
 	else \
 	echo "Already up-to-date." ;\
 	fi
@@ -191,3 +165,33 @@ push-release:
 	@echo "In new console/process (to avoid 'unable to fork' error)"
 	# update local dropbox from $(REL)
 	@cd "$(DBOX)" && $(GIT) --git-dir=../../swissrpkg.git --work-tree=. pull origin
+
+
+### combined & helper #########################################################
+###############################################################################
+
+all:
+	@echo "!! Select a specific target !!"
+check:
+	$(MAKE) check-reg
+	$(MAKE) check-cran
+release:
+	$(MAKE) release-reg
+	$(MAKE) release-cran
+
+.PHONY: clean-gen clean-gen-src
+clean-gen:
+	@echo "### clean-gen"
+	@rm -rf $(GEN)/*
+clean-gen-src:
+	@echo "### clean-gen-src"
+	@rm -f $(GEN)/$(PKG)/src/*.$(DCU) $(GEN)/$(PKG)/src/*.o $(GEN)/$(PKG)/src/$(PKG).$(DLL) 
+
+$(AUX_GEN): $(GEN)/$(PKG)/%:$(DEV)/%
+	@cp $< $@
+$(PKGDIR_GEN):
+	@mkdir -p $@
+$(GENDIR_GEN):
+	@mkdir -p $@
+$(RELDIR_REL):
+	@mkdir -p $@

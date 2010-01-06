@@ -8,6 +8,9 @@ ROOT = .
 DEV = $(ROOT)
 GEN = $(ROOT)/../__gen
 REL = $(ROOT)/../swissrpkg
+
+GENLIST = $(DEV)/__misc/genListing
+GENLISTEXE = $(GENLIST)/genlisting.exe
 # (ugly, FIXME)
 DBOX = "D:/DropboxSwissr/My\ Dropbox/Public/swissrpkg"
 
