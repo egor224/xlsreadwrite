@@ -15,7 +15,7 @@ type
     Idxs: aIdxArr;
   end;
     { a bit ugly/complicated but with integers it would be even worse }
-  aNodeEntry = ( nod_bw32shlib, nod_bw32src, nod_bw32, nod_cw32, nod_src );
+  aNodeEntry = ( nod_bw32shlib, nod_bw32src, nod_bw32, nod_csrc, nod_cw32, nod_src );
 
 var
   idx: integer;
@@ -25,6 +25,7 @@ var
       (Node:'./bin/win32/shlib:'; Idxs:nil),
       (Node:'./bin/win32/src:'; Idxs:nil),
       (Node:'./bin/win32/'; Idxs:nil),
+      (Node:'./cran/src:'; Idxs:nil),
       (Node:'./cran/win32/'; Idxs:nil),
       (Node:'./src:'; Idxs:nil));
   Listing, ListingGen: TStringList;
@@ -140,11 +141,6 @@ begin
     ListingGen.Text:= ReplaceStr( ListingGen.Text, '<%VAR_BINWIN32_VERSIONFILE%>',
         GenVersionFile( nod_bw32 ) );
 
-		  { handle <%VAR_CRANWIN32_VERSIONFILE%> }
-    IncreaseVersion( Nodes[nod_cw32].Idxs );
-    ListingGen.Text:= ReplaceStr( ListingGen.Text, '<%VAR_CRANWIN32_VERSIONFILE%>',
-        GenVersionFile( nod_cw32 ) );
-
 		  { handle <%VAR_BINWIN32_SHLIB_FILE%> }
     assert( Length( Nodes[nod_bw32shlib].Idxs ) = 1, 'array length - <%VAR_BINWIN32_SHLIB_FILE%>' );
     assert( Nodes[nod_bw32shlib].Idxs[0] < Listing.Count, 'idx value - <%VAR_BINWIN32_SHLIB_FILE%>' );
@@ -156,6 +152,17 @@ begin
     assert( Nodes[nod_bw32src].Idxs[0] < Listing.Count, 'idx value - <%VAR_BINWIN32_SRC_FILE%>' );
     ListingGen.Text:= ReplaceStr( ListingGen.Text, '<%VAR_BINWIN32_SRC_FILE%>',
         GenFile( Nodes[nod_bw32src].Idxs[0] + 1, 'bin/win32/src', '              '  ) );
+
+		  { handle <%VAR_CRANSRC_FILE%> }
+    assert( Length( Nodes[nod_csrc].Idxs ) = 1, 'array length - <%VAR_CRANSRC_FILE%>' );
+    assert( Nodes[nod_src].Idxs[0] < Listing.Count, 'idx value - <%VAR_CRANSRC_FILE%>' );
+    ListingGen.Text:= ReplaceStr( ListingGen.Text, '<%VAR_CRANSRC_FILE%>',
+        GenFile( Nodes[nod_csrc].Idxs[0] + 1, 'cran/src', '      '  ) );
+
+		  { handle <%VAR_CRANWIN32_VERSIONFILE%> }
+    IncreaseVersion( Nodes[nod_cw32].Idxs );
+    ListingGen.Text:= ReplaceStr( ListingGen.Text, '<%VAR_CRANWIN32_VERSIONFILE%>',
+        GenVersionFile( nod_cw32 ) );
 
 		  { handle <%VAR_SRC_FILE%> }
     assert( Length( Nodes[nod_src].Idxs ) = 1, 'array length - <%VAR_SRC_FILE%>' );

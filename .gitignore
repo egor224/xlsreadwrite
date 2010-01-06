@@ -1,5 +1,7 @@
 __gen/*
 __misc/debugtests/temp/*
+*.local
+*.identcache
 *.dll
 *.dcu
 *.o

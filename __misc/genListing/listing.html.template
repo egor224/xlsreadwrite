@@ -65,6 +65,10 @@ div.bottom {position:relative;top:0px;color:#444444;background-color:#fadee2;pad
   </li>
   <li>cran - with C-based placeholder shlib (incl. cmd to dl regular shlib)
     <ul>
+      <li>src
+        <ul>
+<%VAR_CRANSRC_FILE%>        </ul>
+      </li>
       <li>win32
         <ul>
 <%VAR_CRANWIN32_VERSIONFILE%>        </ul>
