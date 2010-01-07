@@ -1,14 +1,14 @@
 Package: xlsReadWrite
-Version: 1.4.5
+Version: 1.5.0
 Title: Natively read and write Excel files
-Date: 2009-11-23
+Date: 2010-01-06
 Author: Hans-Peter Suter
 Maintainer: Hans-Peter Suter <chappi@swissr.org>
 Depends: R (>= 2.4.1)
 Suggests: tools
-Description: Read and write Excelfiles natively (v97-2003/BIFF8).
+Description: Read and write Excelfiles natively (.xls/BIFF8).
 License: GPL-2
-LicenseDetails: With exception to link proprietary (Flexcel) code.
+LicenseDetails: With exception to allow linking of proprietary (Flexcel) code.
 OS_type: windows
-SystemRequirements: Regular shlib must be downloaded from external source (with e.g. 'xls.getshlib()', CRAN pkg contains placeholder).
+SystemRequirements: Regular shlib must be obtained from an external source (use 'xls.getshlib()' or dl manually).
 URL: http://www.swissr.org

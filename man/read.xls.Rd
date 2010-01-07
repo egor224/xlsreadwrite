@@ -76,7 +76,7 @@ read.xls( file,
   The trial (http://www.swissr.org) is free and the two versions can easily be switched 
   and coexist just fine. So, why not check out xlsReadWritePro and see for yourself? 
   
-  !! NOTE: xlsReadWritePro works well up to R 2.9.x but not yet on the new R 2.10 version!
+  !! NOTE: xlsReadWritePro works well up to R 2.9.x but not yet on R 2.10 version.
   The reason is, that we are currently reorganizing internal things (git/redmine/web/distr/make).
   We started with the free version and the pro version will follow.
 }
