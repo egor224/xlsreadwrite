@@ -5,12 +5,12 @@
 # R version (Rversion.mk _not_ in git, warning to force output)
 ifneq (,$(findstring Rversion.mk,$(wildcard *.mk))) 
 include Rversion.mk 
+else
+R_VERSION = 2.10.1
+endif
 $(warning ***********************************)
 $(warning R version $(R_VERSION) will be used)
 $(warning ***********************************)
-else
-R_VERSION = 2.10.0
-endif
 	
 include include.mk
 
