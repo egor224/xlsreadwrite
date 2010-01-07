@@ -76,7 +76,7 @@ release-reg: $(RELDIR_REL) build-reg
 	@mv $(GEN)/bin/$(PKG)_$(PKG_VERSION).tar.gz $(REL)/bin/$(OS_FOLDER)/src
 	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/bin/$(OS_FOLDER)/src/$(PKG)_$(PKG_VERSION).tar.gz'), '$(REL)/bin/$(OS_FOLDER)/src/$(PKG)_$(PKG_VERSION).tar.gz.md5.txt')"
 	# update dropbox listing
-	@cd $(REL) && echo -e "# Listing of SwissR' swissrpkg dropbox folder\n# URL root: http://dl.dropbox.com/u/2602516/swissrpkg\n# URL text listing: http://dl.dropbox.com/u/2602516/swissrpkg/listing.txt\n# URL html listing: http://dl.dropbox.com/u/2602516/swissrpkg/listing.html\n# More info at: http://www.swissr.org\n" > listing.txt && ls -1Rp >> listing.txt 
+	@cd $(REL) && echo -e "# Listing of SwissR' swissrpkg dropbox folder\n# URL root: http://dl.dropbox.com/u/2602516/swissrpkg\n# URL text listing: http://dl.dropbox.com/u/2602516/swissrpkg/listing.txt\n# URL html listing: http://dl.dropbox.com/u/2602516/swissrpkg/listing.html\n# More info at: http://www.swissr.org\n" > listing.txt && ls -1rRp >> listing.txt 
 	# generate html listing
 	$(GENLISTEXE) $(REL)/listing.txt $(GENLIST)/listing.html.template $(REL)/listing.html
 	
@@ -122,7 +122,7 @@ release-cran: $(RELDIR_REL) build-cran
 	@mv $(GEN)/bin/$(PKG)_$(PKG_VERSION).zip $(REL)/cran/$(OS_FOLDER)/$(R_MAJVER)
 	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/cran/$(OS_FOLDER)/$(R_MAJVER)/$(PKG)_$(PKG_VERSION).zip'), '$(REL)/cran/$(OS_FOLDER)/$(R_MAJVER)/$(PKG)_$(PKG_VERSION).zip.md5.txt')"
 	# update dropbox listing
-	@cd $(REL) && echo -e "=== Swissr dropbox ===\n(add folder/files to http://dl.dropbox.com/u/2602516/swissrpkg)\n" > listing.txt && ls -1Rp >> listing.txt 
+	@cd $(REL) && echo -e "=== Swissr dropbox ===\n(add folder/files to http://dl.dropbox.com/u/2602516/swissrpkg)\n" > listing.txt && ls -1rRp >> listing.txt 
 	# generate html listing
 	$(GENLISTEXE) $(REL)/listing.txt $(GENLIST)/listing.html.template $(REL)/listing.html
 
