@@ -46,15 +46,19 @@ const
 
 { --------------------------------------------------------- helpers }
 
-procedure IncreaseVersion( _arr: aIdxArr );
+procedure DecreaseVersion( _arr: aIdxArr );
   var
     i, j, idx: integer;
   begin
-    for j:= Low( _arr ) + 1 to High( _arr ) do begin
-      for i:= j to High( _arr ) do begin
-        if StrToInt( ReplaceStr( Listing[_arr[i]], '.', '' ) ) < StrToInt( ReplaceStr( Listing[_arr[i - 1]], '.', '' ) ) then begin
-          idx:= _arr[i]; _arr[i]:= _arr[i - 1]; _arr[i - 1]:= idx;
+    for j:= Low( _arr ) to High( _arr ) do begin
+      idx:= j;
+      for i:= j + 1 to High( _arr ) do begin
+        if StrToInt( ReplaceStr( Listing[_arr[i]], '.', '' ) ) > StrToInt( ReplaceStr( Listing[_arr[j]], '.', '' ) ) then begin
+          idx:= i;
         end;
+      end;
+      if idx <> j then begin
+        i:= _arr[j]; _arr[j]:= _arr[idx]; _arr[idx]:= i;
       end;
     end;
   end;
@@ -99,7 +103,7 @@ function GenVersionFile( _nodeIdx: aNodeEntry ): string;
     tmpl: string;
   begin
     result:= '';
-    for i:= High( Nodes[_nodeIdx].Idxs ) downto Low( Nodes[_nodeIdx].Idxs ) do begin
+    for i:= Low( Nodes[_nodeIdx].Idxs ) to High( Nodes[_nodeIdx].Idxs ) do begin
       listidx:= Nodes[_nodeIdx].Idxs[i];
       tmpl:= ReplaceStr( TheVersionFile, '<%VAR_VERSION%>', Listing[listidx] );
       tmpl:= ReplaceStr( tmpl, '<%VAR_INDENT%>', '          ' );
@@ -137,7 +141,7 @@ begin
     ListingGen:= TStringList.Create(); ListingGen.LoadFromFile( ParamStr( 2 ) );
 
 		  { handle <%VAR_BINWIN32_VERSIONFILE%> }
-    IncreaseVersion( Nodes[nod_bw32].Idxs );
+    DecreaseVersion( Nodes[nod_bw32].Idxs );
     ListingGen.Text:= ReplaceStr( ListingGen.Text, '<%VAR_BINWIN32_VERSIONFILE%>',
         GenVersionFile( nod_bw32 ) );
 
@@ -160,7 +164,7 @@ begin
         GenFile( Nodes[nod_csrc].Idxs[0] + 1, 'cran/src', '      '  ) );
 
 		  { handle <%VAR_CRANWIN32_VERSIONFILE%> }
-    IncreaseVersion( Nodes[nod_cw32].Idxs );
+    DecreaseVersion( Nodes[nod_cw32].Idxs );
     ListingGen.Text:= ReplaceStr( ListingGen.Text, '<%VAR_CRANWIN32_VERSIONFILE%>',
         GenVersionFile( nod_cw32 ) );
 
