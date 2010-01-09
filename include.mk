@@ -13,6 +13,7 @@ GENLIST = $(DEV)/__misc/genListing
 GENLISTEXE = $(GENLIST)/genlisting.exe
 # (ugly, FIXME)
 DBOX = "D:/DropboxSwissr/My\ Dropbox/Public/swissrpkg"
+DTEMP = "D:/Temp"
 
 # switch off directory printing
 W = --no-print-directory

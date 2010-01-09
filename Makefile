@@ -2,31 +2,33 @@
 # Makefile for xlsReadWrite
 #
 
-# R version (Rversion.mk _not_ in git, warning to force output)
 ifneq (,$(findstring Rversion.mk,$(wildcard *.mk))) 
 include Rversion.mk 
 else
 R_VERSION = 2.10.1
 endif
-$(warning ***********************************)
-$(warning R version $(R_VERSION) will be used)
-$(warning ***********************************)
-	
 include include.mk
 
 
 ### list of important targets #################################################
-### (use 'flags=<xy>' to pass arguments for check and build) ##################
+### ('flags=<xy>' to optionally pass arguments for check and build) ###########
+### (go from old to new R versions, src pkgs will always be overwritten) ######
+###############################################################################
 
-.PHONY: check release
+.PHONY: check
+.PHONY: release
+.PHONY: push-release
 	
 .PHONY: check-reg build-reg release-reg
 .PHONY: check-cran build-cran release-cran
-
-.PHONY: push-release
+.PHONY: check-cran-final
 
 .PHONY: test-dev c-dev pas-dev clean-dev
-  
+
+$(warning ***********************************)
+$(warning R version $(R_VERSION) will be used)
+$(warning ***********************************)
+
 
 ### reg - regular/pascal version ##############################################
 ###############################################################################
@@ -150,6 +152,12 @@ clean-dev:
 	@$(MAKE) $(W) -C $(DEV)/src/pas -f Makevars clean
 	@rm -f $(DEV)/src/c/*.o $(DEV)/src/c/$(PKG).$(DLL) 
 
+check-cran-final:
+	@rm -fr $(DTEMP)/xlsReadWriteCranFinal
+	@mkdir $(DTEMP)/xlsReadWriteCranFinal
+	@cp $(REL)/cran/src/$(PKG)_$(PKG_VERSION).tar.gz $(DTEMP)/xlsReadWriteCranFinal
+	@cd $(DTEMP)/xlsReadWriteCranFinal && $(RCMD) check --no-latex $(DTEMP)/xlsReadWriteCranFinal/$(PKG)_$(PKG_VERSION).tar.gz
+
 push-release:
 	@echo "### push-release ###"
 	# commit files in $(REL)
@@ -165,6 +173,7 @@ push-release:
 	@echo "In new console/process (to avoid 'unable to fork' error)"
 	# update local dropbox from $(REL)
 	@cd "$(DBOX)" && $(GIT) --git-dir=../../swissrpkg.git --work-tree=. pull origin
+	@$(MAKE) $(W) check-cran-final
 
 
 ### combined & helper #########################################################
