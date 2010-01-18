@@ -12,7 +12,7 @@ xls.getshlib <- function( pkgvers = NA, url = NA, md5 = TRUE, reload.shlib = TRU
 	  # file name
 	fn <- paste( "xlsReadWrite", .Platform$dynlib.ext, sep = "" )
 	  # file paths
-	fp <- file.path( lib.loc, "xlsReadWrite/libs", fn )
+	fp <- file.path( lib.loc[1], "xlsReadWrite/libs", fn )
 	fp.backup <- paste( fp, "~", sep = "" )
 	fp.temp <- file.path( tmpdir, fn )
 	fpzip.temp <- file.path( tmpdir, "xlsReadWrite.zip" )
