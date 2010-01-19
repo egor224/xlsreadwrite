@@ -1,5 +1,6 @@
 __gen/*
-__misc/debugtests/temp/*
+__misc/debug/temp/*
+__misc/debug/out/*
 *.local
 *.identcache
 *.dll

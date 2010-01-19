@@ -95,7 +95,7 @@ shortly. Please see http://www.swissr.org for current state).
 
 ### Cran version
 
-Besides the regular xlsReadWrite package there is a special cran version:
+Besides the regular xlsReadWrite package there is a special cran version, reason:
 
 	(copied from the cran version startup message)
 	

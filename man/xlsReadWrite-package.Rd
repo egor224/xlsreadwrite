@@ -2,16 +2,16 @@
 \alias{xlsReadWrite-package}
 \alias{xlsReadWrite}
 \docType{package}
-\title{Natively read and write Excel files.}
+\title{Read and write Excel files (.xls).}
 
 \description{
-  \pkg{xlsReadWrite} allows to read and write Excel files natively, 
-  without any dependencies such as Excel, ODBC drivers, Perl, Python or Java. 
-  Currently supported is the .xls (BIFF8) file format.
+  Natively read and write Excel files (.xls/BIFF8) without any
+  dependencies such as Excel, ODBC drivers, Perl, Python or Java. 
 }
 
 \details{
-  Please check \code{\link{read.xls}}, \code{\link{write.xls}} or the README file 
+  See \code{\link{read.xls}} and \code{\link{write.xls}} for the
+  commands and the README file or \url{http://www.swissr.org}
   for more info.
 }
 

@@ -1,9 +1,9 @@
 \name{read.xls}
 \alias{read.xls}
-\title{Read Excelfiles}
+\title{Read Excel files}
 
 \description{
-  Reads an Excelsheet and returns a data.frame or a matrix. 
+  Reads an Excel sheet and returns a data.frame or a matrix. 
 	Currently supported is the .xls (BIFF8) file format.
 }
 

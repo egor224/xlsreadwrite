@@ -1,9 +1,9 @@
 \name{write.xls}
 \alias{write.xls}
-\title{Write Excelfiles}
+\title{Write Excel files}
 
 \description{
-  Saves a data.frame, matrix or vector as an Excelfile.
+  Saves a data.frame, matrix or vector as an Excel file.
   Currently supported is the .xls (BIFF8) file format.
 
 }
