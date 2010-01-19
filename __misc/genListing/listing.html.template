@@ -91,10 +91,11 @@ div.bottom {position:relative;top:0px;color:#444444;background-color:#fadee2;pad
   </li>
 </ul>
 <div class="bottom">
-Note: all download resources are currently hosted on a dropbox account. This page has been auto-generated from 
+This page has been auto-generated from 
 the 'swissrpkg' folder <a href="http://dl.dropbox.com/u/2602516/swissrpkg/listing.txt" target="_blank">listing.txt</a>.
-Please advice us if something has gone wrong. Contact info, package details (atm mainly xlsReadWrite and xlsReadWritePro), 
-issue tracker and repository can be found on our main page: <a href="http://www.swissr.org" target="_blank">www.swissr.org</a>.
+Please advice us if something has gone wrong. The _0.0.0 suffix denotes development versions, see NEWS for details. All resources are currently hosted on a dropbox account.<br><br>
+For package, redmine (NEWS, forum, issue tracker), github mirror and contact info please visit: <a href="http://www.swissr.org" target="_blank">www.swissr.org</a>.<br><br>
+
 </div>
 </body>
 </html>
