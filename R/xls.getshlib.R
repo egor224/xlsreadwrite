@@ -1,18 +1,17 @@
-xls.getshlib <- function( pkgvers = NA, url = NA, md5 = TRUE, reload.shlib = TRUE, lib.loc = .libPaths(), tmpdir = tempdir() )
+xls.getshlib <- function( pkgvers = NA, url = NA, md5 = TRUE, reload.shlib = TRUE, tmpdir = tempdir() )
 {
 	require( tools )
 	printmsg <- function(x) {cat(x, "\n"); flush.console()}
 	printmsg( "--- xls.getshlib running... ---" )
 
-  # url template and other settings
+  # url template, settings and paths
 
 	urltmpl <- "http://dl.dropbox.com/u/2602516/swissrpkg/bin/<os>/shlib/xlsReadWrite_<pkgvers>_dll.zip"
 	if (is.na( pkgvers )) pkgvers <- packageDescription( "xlsReadWrite" )$Version
 	os <- if (R.version$os == "mingw32") "win32" else stop( "currently only windows (32 bit) supported" )
-	  # file name
-	fn <- paste( "xlsReadWrite", .Platform$dynlib.ext, sep = "" )
-	  # file paths
-	fp <- file.path( lib.loc[1], "xlsReadWrite/libs", fn )
+
+	fp <- getLoadedDLLs()$xlsReadWrite[["path"]]
+	fn <- basename(fp)
 	fp.backup <- paste( fp, "~", sep = "" )
 	fp.temp <- file.path( tmpdir, fn )
 	fpzip.temp <- file.path( tmpdir, "xlsReadWrite.zip" )
