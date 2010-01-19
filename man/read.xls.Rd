@@ -19,8 +19,9 @@ read.xls( file,
 }
 
 \arguments{
-  \item{file}{the name of a file. If it does not contain an absolute path, the 
-    file name is relative to the current working directory.}
+  \item{file}{file name as an absolute path. Relative paths should work
+    too, because when opening \code{file} fails, we try a second time with
+    \code{getwd} prepended.}
   \item{colNames}{a character vector or a logical. \code{TRUE} takes a title row
     from the spreadsheet. The default is "V" followed by the column number.}
   \item{sheet}{to read from. A case sensitive character string or a number.}

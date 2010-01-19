@@ -1,11 +1,10 @@
-###{{ setup
+### setup
 
   # xyDir variables from 'runner.R' or define manually in .GlobalEnv
 rfile <- file.path( dataDir, "origData.xls" )
 wfile <- file.path( outputDir, "tmpWriteData.xls" )
 
-###}}
-###{{ test: read and write/read
+### test: read and write/read
 
 test.readWriteDouble <- function() {
   myval <- cbind( c( 42.345000000000000,2.131852701746450,5.196028573821160,4.052032658276100,5.455442814521230,0.920121101217604,4.320537450438270,9.228986838061070,3.495177339311360,7.162184977985050,0.079735376876580,0.190438423685664,6.947886357716580 ),
@@ -87,4 +86,4 @@ test.readWriteDataFrame <- function() {
 
 # more data.frame tests in 'testColClasses.R'
 
-###}}
+

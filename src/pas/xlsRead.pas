@@ -1,3 +1,4 @@
+
 unit xlsRead;
 
 { Read functionality.
@@ -17,7 +18,7 @@ unit xlsRead;
 {==============================================================================}
 interface
 uses
-  rhRInternals, rhxTypesAndConsts, xlsUtils;
+  rhRInternals, rhxTypesAndConsts, xlsUtils, xlsHelpR;
 
 function ReadXls( _file, _colNames, _sheet, _type,
     _from, _rowNames, _colClasses,
@@ -597,7 +598,7 @@ function ReadDataframe(): pSExp; cdecl;
       reader.Adapter:= TXLSAdapter.Create( nil );
       try
           { open existing file }
-        reader.OpenFile( GetScalarString( _file, 'file must be a character string' ) );
+        reader.OpenFile( EventuallyCreateFilename( GetScalarString( _file, 'file must be a character string' ) ) );
         SelectSheet();
 
           { counts and offsets }

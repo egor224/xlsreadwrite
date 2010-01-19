@@ -17,7 +17,7 @@ unit xlsUtils;
 {==============================================================================}
 interface
 uses
-  SysUtils, rhRInternals, rhxTypesAndConsts;
+  SysUtils, rhRInternals, rhxTypesAndConsts, xlsHelpR;
 
 type
   ExlsReadWrite = class( Exception );
@@ -52,11 +52,10 @@ function ShlibPath: string;
 
 function ReplaceVersionAndCommit( const _s: string ): string;
 
+function GetWdString(): string;
+function EventuallyCreateFilename( const fn: string ): string;
 
 function GetScalarString( _val: pSExp; const _err: string ): string;
-
-function AsFactor( _val: pSExp ): pSExp; cdecl;
-function MakeNames( _names: pSExp ): pSExp; cdecl;
 
 {==============================================================================}
 implementation
@@ -238,6 +237,26 @@ function ReplaceVersionAndCommit( const _s: string ): string;
     result:= StringReplace( result, '@commit@', c, [] );
   end;
 
+function GetWdString(): string;
+  var
+    wd: pSExp;
+  begin
+    wd:= GetWd();
+    result:= GetScalarString( wd, 'GetWdString: could not retrieve "getwd"' );
+  end;
+
+function EventuallyCreateFilename( const fn: string ): string;
+
+  begin
+    result:= fn;
+    if not ((ExtractFileDrive( fn ) <> '') or
+            (Length( fn ) > 0) and (fn[1] = PathDelim))
+    then begin
+        { construct absolute path using getwd from R }
+      result:= GetWdString() + PathDelim + fn;
+    end;
+  end;
+
 function GetScalarString( _val: pSExp; const _err: string ): string;
   begin
     if riIsString( _val ) and (riLength( _val ) = 1) then begin
@@ -246,23 +265,5 @@ function GetScalarString( _val: pSExp; const _err: string ): string;
       raise ExlsReadWrite.Create( _err );
     end;
   end;
-
-function AsFactor( _val: pSExp ): pSExp; cdecl;
-  var
-    fcall: pSExp;
-  begin
-    fcall:= riProtect( riLang2( riInstall( 'as.factor' ), _val ) );
-    result:= riProtect( riEval( fcall, RGlobalEnv ) );
-    riUnprotect( 2 );
-  end {AsFactor};
-
-function MakeNames( _names: pSExp ): pSExp; cdecl;
-  var
-    fcall: pSExp;
-  begin
-    fcall:= riProtect( riLang2( riInstall( 'make.names' ), _names ) );
-    result:= riProtect( riEval( fcall, RGlobalEnv ) );
-    riUnprotect( 2 );
-  end {MakeNames};
 
 end {xlsUtils}.

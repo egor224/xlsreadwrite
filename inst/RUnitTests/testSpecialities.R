@@ -1,11 +1,11 @@
-###{{ setup
+### setup
 
   # xyDir variables from 'runner.R' or define manually in .GlobalEnv
 rfile <- file.path( dataDir, "origData.xls" )
 wfile <- file.path( outputDir, "tmpWriteData.xls" )
 
-###}}
-###{{ tests
+
+### tests: misc
 
 test.readRKCellValue <- function() {
     # in an old (library) version RKRecord value was not divided by 100
@@ -31,4 +31,19 @@ test.readWithBadFrom <- function() {
 }
 
 
-###}}
+### tests: relative paths
+
+test.readRelativePathNames <- function() {
+    oldwd <- getwd()
+    rf1 <- "origData.xls"
+      # note: the following two  may fail for non-standard dataDir
+    rf2 <- "..\\..\\RUnitTests\\data\\origData.xls"
+    rf3 <- "../../RUnitTests/data/origData.xls"
+    setwd(dataDir)
+
+    rdata <- read.xls(rf1)
+    rdata <- read.xls(rf2)
+    rdata <- read.xls(rf3)
+
+    setwd(oldwd)
+}

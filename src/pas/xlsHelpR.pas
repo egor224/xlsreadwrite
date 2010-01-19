@@ -17,11 +17,12 @@ unit xlsHelpR;
 {==============================================================================}
 interface
 uses
-  Variants, rhRInternals, rhxTypesAndConsts, xlsUtils;
+  Variants, rhRInternals, rhxTypesAndConsts;
 
-  { call R functions (in the global R environment) } 
-function AsFactor( _val: pSExp ): pSExp; cdecl;
-function MakeNames( _names: pSExp ): pSExp; cdecl;
+  { call R functions (in the global R environment) }
+function GetWd(): pSExp;
+function AsFactor( _val: pSExp ): pSExp;
+function MakeNames( _names: pSExp ): pSExp;
 
 
 {==============================================================================}
@@ -30,7 +31,16 @@ uses
   rhR;
 
 
-function AsFactor( _val: pSExp ): pSExp; cdecl;
+function GetWd(): pSExp;
+  var
+    fcall: pSExp;
+  begin
+    fcall:= riProtect( riLang1( riInstall( 'getwd' ) ) );
+    result:= riProtect( riEval( fcall, RGlobalEnv ) );
+    riUnprotect( 2 );
+  end;
+
+function AsFactor( _val: pSExp ): pSExp;
   var
     fcall: pSExp;
   begin
@@ -39,7 +49,7 @@ function AsFactor( _val: pSExp ): pSExp; cdecl;
     riUnprotect( 2 );
   end {AsFactor};
 
-function MakeNames( _names: pSExp ): pSExp; cdecl;
+function MakeNames( _names: pSExp ): pSExp;
   var
     fcall: pSExp;
   begin
