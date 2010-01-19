@@ -18,7 +18,7 @@ include include.mk
 .PHONY: check
 .PHONY: release
 .PHONY: push-release
-	
+
 .PHONY: check-reg build-reg release-reg
 .PHONY: check-cran build-cran release-cran
 .PHONY: check-cran-final
@@ -37,7 +37,7 @@ check-reg: clean-gen populate-gen-reg
 	@echo "### check-reg ###"
 	@cd $(GEN) && $(RCMD) check --no-latex $(flags) $(PKG)
 	@$(MAKE) $(W) clean-gen-src
-	
+
 build-reg: clean-gen populate-gen-reg $(GENDIR_GEN)
 	@echo "### build-reg ###"
 	# update COMMIT file
@@ -81,7 +81,7 @@ release-reg: $(RELDIR_REL) build-reg
 	@cd $(REL) && echo -e "# Listing of SwissR' swissrpkg dropbox folder\n# URL root: http://dl.dropbox.com/u/2602516/swissrpkg\n# URL text listing: http://dl.dropbox.com/u/2602516/swissrpkg/listing.txt\n# URL html listing: http://dl.dropbox.com/u/2602516/swissrpkg/listing.html\n# More info at: http://www.swissr.org\n" > listing.txt && ls -1rRp >> listing.txt 
 	# generate html listing
 	$(GENLISTEXE) $(REL)/listing.txt $(GENLIST)/listing.html.template $(REL)/listing.html
-	
+
 .PHONY: populate-gen
 populate-gen-reg: $(PKGDIR_GEN) $(AUX_GEN) $(SRCPAS_GEN) $(SRCRPAS_GEN)
 	@echo "### populate-gen-reg"
@@ -141,10 +141,10 @@ $(GEN)/$(PKG)/src/$(SRCC): $(DEV)/src/c/$(SRCC)
 test-dev:
 	@echo "### test-dev"
 	@cd $(DEV)/__misc/debugtests && $(RSCRIPT) dynTest.R
-c-dev:
+shlib-c:
 	@echo "### c-dev"
 	@cd $(DEV)/src/c && $(RCMD) SHLIB $(PKG).c
-pas-dev:
+shlib-pas:
 	@echo "### pas-dev"
 	@$(MAKE) $(W) -C $(DEV)/src/pas -f Makevars
 clean-dev:

@@ -1,19 +1,21 @@
 #
-# 'runner.R' is used to easily invoke the runit tests. Source it and
+# 'runner.R' is used to invoke runit tests. It will overwrite/create
+# global variables dataDir and outputDir. Commands:
 #
-# - runTest           run a single 'testfile' (optionally with fctname)
-# - runTests          run ~all testfiles in the 'dir' (RUnitTests) directory
-# - runTestsForCHECK  only use for CHECK (stops on errors and makes file layout/naming assumptions)
+# - runTest           run a single testfile
+# - runTests          run ~all testfiles in the directory indicated
+# - runTestsForCHECK  for CHECK (stops on errors and makes some assumptions)
+#
 
 library( RUnit )
 library( tools )
 
-runTest <- function( testfile, dir = dirname( testfile ), 
-    dataDir = file.path( dir, "data" ), outputDir = file.path( dir, "output"),
-    fctname = "^test.+" )
+runTest <- function( testfile,
+    dir = dirname( testfile ), dataDir = file.path( dir, "data" ),
+    outputDir = file.path( dir, "output"), fctname = "^test.+" )
 {
   fct <- if (is.na( fctname )) "^test.+" else paste( "^", fctname, "$", sep = "" )
-  res <- runTestFile( .checkAndSetup( file.path( dir, testfile ), dataDir, outputDir ), testFuncRegexp = fct )
+  res <- runTestFile( .checkAndSetup( testfile, dataDir, outputDir ), testFuncRegexp = fct )
   .printResults( res )
 }
 
@@ -27,7 +29,8 @@ runTests <- function( dir,
   .printResults( res )
 }
 
-runTestsForCHECK <- function( dir ) {
+runTestsForCHECK <- function( dir )
+{
   .checkAndSetup( dir, file.path( dir, "data" ), file.path( dir, "output") )
 	pkg <- sub( "\\.Rcheck$", '', basename( dirname( getwd() ) ) )
   library( package = pkg, character.only = TRUE )
@@ -42,15 +45,18 @@ runTestsForCHECK <- function( dir ) {
   }
 }
 
-.checkAndSetup <- function( target, dataDir, outputDir ) {
+.checkAndSetup <- function( target, dataDir, outputDir )
+{
   stopifnot( file.exists( target ) )
   stopifnot( file.exists( dataDir ) )
-  if (!file.exists( outputDir )) dir.create( outputDir ) 
-  if (!exists( "dataDir", envir = .GlobalEnv )) assign( "dataDir", dataDir, envir = .GlobalEnv )
-  if (!exists( "outputDir", envir = .GlobalEnv )) assign( "outputDir", outputDir, envir = .GlobalEnv )
+  if (!file.exists( outputDir )) dir.create( outputDir )
+  assign( "dataDir", dataDir, envir = .GlobalEnv )
+  assign( "outputDir", outputDir, envir = .GlobalEnv )
   target
 }
-.printResults <- function( res ) {
+
+.printResults <- function( res )
+{
   printTextProtocol( res, showDetails = FALSE, fileName = file.path( outputDir, "Results.txt" ) )
   printTextProtocol( res, showDetails = TRUE, fileName = file.path( outputDir, "Details.txt" ) )
   tmp <- getErrors( res )
