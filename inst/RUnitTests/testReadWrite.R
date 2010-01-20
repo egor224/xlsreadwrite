@@ -4,6 +4,7 @@
 rfile <- file.path( dataDir, "origData.xls" )
 wfile <- file.path( outputDir, "tmpWriteData.xls" )
 
+
 ### test: read and write/read
 
 test.readWriteDouble <- function() {
@@ -85,5 +86,4 @@ test.readWriteDataFrame <- function() {
 }
 
 # more data.frame tests in 'testColClasses.R'
-
 

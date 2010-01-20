@@ -1,11 +1,11 @@
-###{{ setup
+### setup
 
   # xyDir variables from 'runner.R' or define manually in .GlobalEnv
 rfile <- file.path( dataDir, "origData.xls" )
 wfile <- file.path( outputDir, "tmpWriteData.xls" )
 
-###}}
-###{{ test: read with given colClasses
+
+### test: read with given colClasses
 
 test.readColClassesGivenDateTime <- function() {
   myidx <- c( 1, 19 )
@@ -51,8 +51,8 @@ test.readColClassesGivenLogicalFactorNA <- function() {
   checkEquals( rdata, myval )
 }
 
-###}}
-###{{ test: read with auto-determined colClasses
+
+### test: read with auto-determined colClasses
 
 test.readColClassesAuto <- function() {
   myclsOutClass <-    c( "numeric", "numeric", "character", "numeric", "numeric", "numeric", "character" )
@@ -89,5 +89,3 @@ test.readColClassesAutoProgression <- function() {
   }
 }
 
-
-##}}

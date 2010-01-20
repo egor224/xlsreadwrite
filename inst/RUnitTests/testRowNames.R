@@ -1,11 +1,11 @@
-###{{ setup
+### setup
 
   # xyDir variables from 'runner.R' or define manually in .GlobalEnv
 rfile <- file.path( dataDir, "origData.xls" )
 wfile <- file.path( outputDir, "tmpWriteData.xls" )
 
-###}}
-###{{ test: read rowNames
+
+### test: read rowNames
 
 test.readRowNamesTrue <- function() {
   rdata <- read.xls( rfile, from = 2, rowNames = TRUE, type = "double" )
@@ -36,9 +36,9 @@ test.readRowlNamesNormal <- function() {
   checkIdentical( rownames( rdata ), myrow )
 }
 
-###}}
 
-###{{ test: write rowNames
+
+### test: write rowNames
 
 xMatrix1 <- xMatrix2 <- matrix( 1:12, 3, 4, dimnames = list( letters[1:3], LETTERS[1:4] ) )
 
@@ -73,4 +73,3 @@ test.writeIntegerRowNamesTrue <- function() {
 	write.xls( x, wfile, rowNames = TRUE )
 }
 
-###}}

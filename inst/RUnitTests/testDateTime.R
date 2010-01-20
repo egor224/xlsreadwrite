@@ -1,9 +1,9 @@
-###{{ setup
+### setup
 
 myd <- c( 38429, 38432, 38433, 38434, 38435, 38440, 38441, 38442, 38443 )
 
-##}}
-###{{ test: basic date time functions (tests in 'TestColClasses.R')
+
+### test: basic date time functions (tests in 'TestColClasses.R')
 
 test.dateTimeToStr_strToDateTime <- function() {
   s <- dateTimeToStr( myd )
@@ -27,4 +27,3 @@ test.isoStrToDateTime <- function() {
   checkEquals( res, c( 39160, 39160, 39160.98, 39160.98 ) )
 }
 
-###}}

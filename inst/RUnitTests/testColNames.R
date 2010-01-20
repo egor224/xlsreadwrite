@@ -1,12 +1,11 @@
-###{{ setup
+### setup
 
   # xyDir variables from 'runner.R' or define manually in .GlobalEnv
 rfile <- file.path( dataDir, "origData.xls" )
 wfile <- file.path( outputDir, "tmpWriteData.xls" )
 
 
-###}}
-###{{ test: read colNames
+### test: read colNames
 
 test.readColNamesGiven <- function() {
   mycol <- c( "one", "two", "three" )
@@ -80,4 +79,3 @@ test.readColNamesNormalAutoRowNames <- function() {
   checkIdentical( colnames( rdata ), mycol )
 }
 
-###}}
