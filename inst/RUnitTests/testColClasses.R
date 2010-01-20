@@ -77,12 +77,12 @@ test.readColClassesAutoFirst16Rows <- function() {
 test.readColClassesAutoProgression <- function() {
     # the first found cell value determines class
     # (there's a progression on the pro version but it's too complicated to implement here)
-    # check first row and...
+    # check first row and then...
   myclsOutClass <- c( "factor", rep( "numeric", 8 ), "factor", "logical" )
   myclsOutStorageMode <- c( "integer", rep( "double", 8 ), "integer", "logical" )
   checkIdentical( as.vector( sapply( suppressWarnings( read.xls( rfile, sheet = "autoCls", from = 2 ) ), class ) ), myclsOutClass )
   checkIdentical( as.vector( sapply( suppressWarnings( read.xls( rfile, sheet = "autoCls", from = 2 ) ), storage.mode ) ), myclsOutStorageMode )
-    # ...each row separately (on free version)
+    # ...loop and check each row separately (on free version)
   mycls <- c( "double", "double", rep( "character", 4 ), rep( "double", 4 ), rep( "character", 6 ) )
   for (ro in 3:18) {
     checkIdentical( storage.mode( suppressWarnings( read.xls( rfile, colNames = FALSE, sheet = "autoCls", from = ro, stringsAsFactors = FALSE ) )[,2] ), mycls[ro - 2] )
