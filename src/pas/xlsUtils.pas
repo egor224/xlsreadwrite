@@ -10,7 +10,7 @@ unit xlsUtils;
   express or implied warranties, including, but not without limitation, the
   implied warranties of merchantability and fitness for a particular purpose.
                               ---
-  Copyright (C) 2006 - 2009 by Hans-Peter Suter, Treetron, Switzerland.
+  Copyright (C) 2006 - 2010 by Hans-Peter Suter, Treetron, Switzerland.
   All rights reserved.
                               ---                                              }
 
@@ -210,6 +210,7 @@ function ReplaceVersionAndCommit( const _s: string ): string;
         LoadFromFile( descr );
         NameValueSeparator:= ':';
         v:= Trim( Values['Version'] );
+        if v = '0.0.0' then v:= '0.0.0/devel';
       finally
         Free();
       end;
@@ -222,7 +223,7 @@ function ReplaceVersionAndCommit( const _s: string ): string;
         if Count > 0 then c:= Strings[0];
         System.Delete( c, 11, 99 );
         if (Count > 1) and (Pos( 'dirty', Strings[1] ) > -1) then begin
-          c:= c + '-d)';
+          c:= c + '-d';
         end;
       finally
         Free();

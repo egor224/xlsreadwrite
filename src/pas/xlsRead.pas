@@ -11,7 +11,7 @@ unit xlsRead;
   express or implied warranties, including, but not without limitation, the
   implied warranties of merchantability and fitness for a particular purpose.
                               ---
-  Copyright (C) 2006 - 2009 by Hans-Peter Suter, Treetron, Switzerland.
+  Copyright (C) 2006 - 2010 by Hans-Peter Suter, Treetron, Switzerland.
   All rights reserved.
                               ---                                              }
 
