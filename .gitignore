@@ -1,12 +1,12 @@
 __gen/*
-__misc/debug/temp/*
+__misc/debug/*
 __misc/debug/out/*
 *.local
 *.identcache
 *.dll
 *.dcu
 *.o
-*.eprj
+eproject.cfg
 TODO
 Rversion.mk
 src/pas/xlsReadWrite.dproj.local
