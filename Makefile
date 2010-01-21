@@ -164,7 +164,7 @@ push-release:
 	@HASDIFF="`cd "$(REL)" && $(GIT) diff HEAD 2> $(NULL)`" && if (test "$$HASDIFF"); then \
 	cd "$(REL)" ;\
 	$(GIT) add . ;\
-	&& $(GIT) commit -m "Commit updated files" --author="makefile <push@release>" ;\
+	&& $(GIT) commit -m "Commit updated files" --author="makefile (push-release target)" ;\
 	else \
 	echo "Already up-to-date." ;\
 	fi
