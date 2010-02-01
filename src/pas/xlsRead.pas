@@ -595,7 +595,7 @@ function ReadDataframe(): pSExp; cdecl;
 
         { create reader }
       reader:= TFlexCelImport.Create( nil );
-      reader.Adapter:= TXLSAdapter.Create( nil );
+      reader.Adapter:= TXLSAdapter.Create( reader );
       try
           { open existing file }
         reader.OpenFile( EventuallyCreateFilename( GetScalarString( _file, 'file must be a character string' ) ) );

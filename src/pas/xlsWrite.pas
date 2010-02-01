@@ -349,7 +349,7 @@ procedure WriteDataframe(); cdecl;
 
         { create writer }
       writer:= TFlexCelImport.Create( nil );
-      writer.Adapter:= TXLSAdapter.Create( nil );
+      writer.Adapter:= TXLSAdapter.Create( writer );
       try
           { open template file }
         tmpl:= ShlibPath() + '\template\TemplateNew.xls';
