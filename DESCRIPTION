@@ -6,7 +6,7 @@ Author: Hans-Peter Suter
 Maintainer: Hans-Peter Suter <chappi@swissr.org>
 Depends: R (>= 2.4.1)
 Suggests: tools
-Description: Natively read and write Excelfiles (.xls/BIFF8)
+Description: Natively read and write Excel files (.xls/BIFF8)
 License: GPL-2
 LicenseDetails: With exception to allow linking of proprietary (Flexcel) code
 OS_type: windows
