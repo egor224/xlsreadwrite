@@ -140,7 +140,7 @@ $(GEN)/$(PKG)/src/$(SRCC): $(DEV)/src/c/$(SRCC)
 
 test-dev:
 	@echo "### test-dev"
-	@cd $(DEV)/__misc/debugtests && $(RSCRIPT) dynTest.R
+	@cd $(DEV)/__misc/debug && $(RSCRIPT) -e "source('../dynRunner/dynRunner.R');dynTests()"
 shlib-c:
 	@echo "### c-dev"
 	@cd $(DEV)/src/c && $(RCMD) SHLIB $(PKG).c
