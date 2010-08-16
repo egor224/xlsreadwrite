@@ -47,6 +47,8 @@ function VarAsInt(const _v: variant; _default, _navalue: integer): integer;
 function VarAsString( const _v: variant ): string; overload;
 function VarAsString( const _v: variant; const _def: string ): string; overload;
 
+function IsLogicalString(const _val: string ): boolean;
+
 function ShlibPath: string;
 
 function ReplaceVersionAndCommit( const _s: string ): string;
@@ -195,6 +197,21 @@ function VarAsString( const _v: variant; const _def: string ): string;
       result:= string(_v);
     end;
   end {VarAsString};
+
+function IsLogicalString(const _val: string ): boolean;
+  const
+    theLogical: array[0..1] of string = ( 'true', 'false' );
+  var
+    i: Integer;
+  begin
+    result:= False;
+    for i := Low( theLogical ) to High( theLogical ) do begin
+      if AnsiSameText( _val, theLogical[i]) then begin
+        result := True;
+        Break;
+      end;
+    end;
+  end;
 
 function ShlibPath: string;
   begin

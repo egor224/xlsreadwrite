@@ -53,6 +53,9 @@ read.xls(file,
 
         With \code{NA} a suitable column type will be determined based on
         the first non-empty cell of the 16 rows following the starting (from) row.
+        An integer will be recognised as 'numeric' (this is different to the pro
+        version where we examine all 16 values and keep integers as 'integers').
+
         If nothing can be determined, all values become NA (logical) and a warning
         message will be printed. \code{NA} can be used together with other entries,
         e.g. \code{c(NA, "double", NA, "isodate").

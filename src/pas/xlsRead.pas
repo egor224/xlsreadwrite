@@ -202,18 +202,24 @@ procedure ReadColNames( _idx: integer );
     end;
   end {SetColNames};
 
+
 procedure ApplyMatrixRowColNames( _result: pSExp);
   var
     dim: pSExp;
     i: integer;
     r: integer;
     myrownames, mycolnames: pSExp;
+    unprotcnt: integer; // ugly, todo
   begin
     dim:= riProtect( riAllocVector( setVecSxp, 2 ) );
+    unprotcnt:= 1;
 
       { rownames }
-    if firstColAsRowName or (rownameKind = rnSupplied) then begin
+    if rownameKind = rnFalse then begin
+      myrownames:= RNilValue;
+    end else begin
       myrownames:= riProtect( riAllocVector( setStrSxp, rowcnt ) );
+      Inc( unprotcnt );
       if rownameKind = rnSupplied then begin
         for r:= 0 to rowcnt - 1 do begin
           riSetStringElt( myrownames, r, riMkChar( pChar(rownames[r]) ) );
@@ -228,19 +234,23 @@ procedure ApplyMatrixRowColNames( _result: pSExp);
           end;
         end {for};
       end;
-    end else begin
-      myrownames:= RNilValue;
     end;
 
       { colnames }
+    mycolnames:= riProtect( riAllocVector( setStrSxp, colcnt - integer(firstColAsRowName) ));
+    Inc( unprotcnt );
     if hasColNames then begin
-      mycolnames:= riProtect( riAllocVector( setStrSxp, colcnt - integer(firstColAsRowName) ));
       for i:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
         riSetStringElt( mycolnames, i, riMkChar( pChar(colnames[i + integer(firstColAsRowName)]) ) );
       end;
-      if checkNames then mycolnames:= riProtect( MakeNames( mycolnames ) );
+      if checkNames then begin
+        mycolnames:= riProtect( MakeNames( mycolnames ) );
+        Inc( unprotcnt );
+      end;
     end else begin
-      mycolnames:= RNilValue;
+      for i:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
+        riSetStringElt( mycolnames, i, riMkChar( pChar('V' + IntToStr( i + 1 )) ) );
+      end;
     end;
 
       { apply }
@@ -248,9 +258,7 @@ procedure ApplyMatrixRowColNames( _result: pSExp);
     riSetVectorElt( dim, 1, mycolnames );
     riSetAttrib( result, RDimNamesSymbol, dim );
 
-    riUnprotect( 1 + integer(CheckNames) );
-    if firstColAsRowName or (rownameKind = rnSupplied) then riUnprotect( 1 );
-    if hasColNames then riUnprotect( 1 );
+    riUnprotect( unprotcnt );
   end {ApplyColNames};
 
 procedure ApplyFrameRowNames( _result: pSExp);
@@ -535,7 +543,11 @@ function ReadDataframe(): pSExp; cdecl;
             end;
             varOleStr,
             varString: begin
-              if stringsAsFactors then begin
+              if IsLogicalString( v ) then begin
+                coltypes[c]:= setLglSxp;
+                riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
+                Break;
+              end else if stringsAsFactors then begin
                 coltypes[c]:= setSpecialSxp;  // misuse of aSExpType
               end else begin
                 coltypes[c]:= setStrSxp;
@@ -704,9 +716,7 @@ function ReadDataframe(): pSExp; cdecl;
               end;
 
                 { colNames and rownames }
-              if hasColNames or firstColAsRowName or (rownameKind = rnSupplied) then begin
-                ApplyMatrixRowColNames( result );
-              end;
+              ApplyMatrixRowColNames( result );
 
             end else begin
               raise ExlsReadWrite.Create( 'The types "' + AllOutputTypes +
