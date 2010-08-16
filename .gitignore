@@ -9,6 +9,6 @@ __misc/debug/out/*
 eproject.cfg
 TODO
 Rversion.mk
-src/pas/xlsReadWrite.dproj.local
+src/pas/xlsReadWrite.dproj*
 src/pas/xlsReadWrite.identcache
 src/pas/xlsReadWrite.res
