@@ -53,7 +53,7 @@ function ShlibPath: string;
 function ReplaceVersionAndCommit( const _s: string ): string;
 
 function GetWdString(): string;
-function EventuallyCreateFilename( const fn: string ): string;
+function EnsureAbsolutePath( const fn: string ): string;
 
 function GetScalarString( _val: pSExp; const _err: string ): string;
 
@@ -246,8 +246,7 @@ function GetWdString(): string;
     result:= GetScalarString( wd, 'GetWdString: could not retrieve "getwd"' );
   end;
 
-function EventuallyCreateFilename( const fn: string ): string;
-
+function EnsureAbsolutePath( const fn: string ): string;
   begin
     result:= fn;
     if not ((ExtractFileDrive( fn ) <> '') or

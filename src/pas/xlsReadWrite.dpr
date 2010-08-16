@@ -37,7 +37,7 @@ const
     'This package can be freely distributed and used for any' + #13#10 +
     'purpose. It comes with ABSOLUTELY NO GUARANTEE at all.' + #13#10 +
     'xlsReadWrite has been written in Pascal and contains binary' + #13#10 +
-    'code from a 3rd party library. Our own code is free (GPLv2).' + #13#10 +
+    'code from a proprietary library. Our own code is free (GPL-2).' + #13#10#13#10 +
     'Updates, issue tracker and more info at http://www.swissr.org.' + #13#10#13#10;
 
 procedure MyDllProc( _reason: integer );
