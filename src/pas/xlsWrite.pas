@@ -19,7 +19,7 @@ interface
 uses
   rhRInternals, rhxTypesAndConsts;
 
-function WriteXls( _data, _file, _colNames, _sheet, _skipLines, _rowNames: pSExp ): pSExp; cdecl;
+function WriteXls( _data, _file, _colNames, _sheet, _skipLines, _rowNames, _naStrings: pSExp ): pSExp; cdecl;
 
 {==============================================================================}
 implementation
@@ -30,7 +30,7 @@ uses
 type
   aColheadertype = ( chtNone, chtLogical, chtString );
 
-function WriteXls( _data, _file, _colNames, _sheet, _skipLines, _rowNames: pSExp ): pSExp; cdecl;
+function WriteXls( _data, _file, _colNames, _sheet, _skipLines, _rowNames, _naStrings: pSExp ): pSExp; cdecl;
   var
     writer: TFlexCelImport;
     colcnt, rowcnt, offsetRow: integer;

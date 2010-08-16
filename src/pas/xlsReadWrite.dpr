@@ -19,12 +19,12 @@ uses
   rhR,
   rhRInternals,
   rhRDynload,
-  xlsRegister,
-  xlsUtils,
-  xlsWrite,
-  xlsRead,
-  xlsHelpR,
-  xlsDateTime;
+  xlsWrite in 'xlsWrite.pas',
+  xlsDateTime in 'xlsDateTime.pas',
+  xlsHelpR in 'xlsHelpR.pas',
+  xlsRead in 'xlsRead.pas',
+  xlsRegister in 'xlsRegister.pas',
+  xlsUtils in 'xlsUtils.pas';
 
 var
   DllProcNext: procedure( _reason: integer ) = nil;

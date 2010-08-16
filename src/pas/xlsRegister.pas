@@ -35,10 +35,10 @@ procedure R_init_xlsReadWrite( _info: pDllInfo ); cdecl;
     theCallMethods: array[0..4] of aCallMethodDef
                     = ( ( cadName: 'ReadXls'
                         ; cadFunc: @xlsRead.ReadXls
-                        ; cadNumArgs: 10 )
+                        ; cadNumArgs: 11 )
                       , ( cadName: 'WriteXls'
                         ; cadFunc: @xlsWrite.WriteXls
-                        ; cadNumArgs: 6 )
+                        ; cadNumArgs: 7 )
                       , ( cadName: 'DateTimeXls'
                         ; cadFunc: @xlsDateTime.DateTimeXls
                         ; cadNumArgs: 3 )

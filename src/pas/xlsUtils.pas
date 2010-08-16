@@ -41,10 +41,9 @@ function DateTimeToStrFmt( const _format: string; _dateTime: TDateTime ): string
 function StrToOutputType( const _type: string ): aOutputType;
 function AllOutputTypes(): string;
 
-function VarAsBool( const _v: variant; _default: boolean ): boolean;
-function VarAsDouble( const _v: variant; _default: double ): double; overload;
-function VarAsDouble( const _v: variant; _default: double; _nullvalue: double ): double; overload;
-function VarAsInt( const _v: variant; _default: integer ): integer;
+function VarAsBool(const _v: variant; _default: boolean; _navalue: integer): integer;
+function VarAsDouble(const _v: variant; _default: double; _nanvalue: double; _navalue: double): double;
+function VarAsInt(const _v: variant; _default, _navalue: integer): integer;
 function VarAsString( const _v: variant ): string; overload;
 function VarAsString( const _v: variant; const _def: string ): string; overload;
 
@@ -91,31 +90,39 @@ function AllOutputTypes(): string;
     if Length( result ) > 3 then Delete( result, 1, 3 );
   end {AllOutputTypes};
 
-function VarAsBool( const _v: variant; _default: boolean ): boolean;
+function VarAsBool(const _v: variant; _default: boolean; _navalue: integer): integer;
+  const
+    eps: double = 1e-17;
+    zero: double = 0;
   begin
     case VarType( _v ) of
-      varBoolean:       result:= _v;
+      varBoolean:       result:= integer(_v);
 
       varSmallint,
       varInteger,
       varInt64,
       varByte,
       varWord,
-      varLongWord:      result:= _v <> 0;
+      varLongWord:      result:= integer(_v <> 0);
 
       varSingle,
       varDouble,
-      varCurrency,
-      varDate:          result:= Trunc( _v ) <> 0;
+      varDate:          result:= integer(Abs( zero - double(_v) ) >= eps);
+      varCurrency:      result:= integer(Abs( zero - currency(_v) ) >= eps);
 
       varOleStr,
-      varString:        result:= StrToBoolDef( _v, _default );
+      varString:        begin
+        result:= integer(StrToBoolDef( _v, _default ));
+      end;
+
+      varEmpty,
+      varNull: 	        result:= _navalue;
     else
-      result:= _default;
+      result:= integer(_default);
     end;
   end {VarAsBool};
 
-function VarAsInt( const _v: variant; _default: integer ): integer;
+function VarAsInt(const _v: variant; _default, _navalue: integer): integer;
   begin
     case VarType( _v ) of
       varShortInt,
@@ -133,18 +140,19 @@ function VarAsInt( const _v: variant; _default: integer ): integer;
       varDate:          result:= Trunc( _v );
 
       varOleStr,
-      varString:        result:= StrToIntDef( _v, _default );
+      varString:        begin
+        result:= StrToIntDef( _v, _default );
+      end;
+
+      varEmpty,
+      varNull: 	        result:= _navalue;
     else
       result:= _default;
     end {case};
   end {VarAsInt};
 
-function VarAsDouble( const _v: variant; _default: double ): double;
-  begin
-    result:= VarAsDouble( _v, _default, _default );
-  end {VarAsDouble};
-
-function VarAsDouble( const _v: variant; _default, _nullvalue: double ): double;
+function VarAsDouble(const _v: variant; _default: double; _nanvalue: double;
+    _navalue: double): double;
   begin
     case VarType( _v ) of
       varSmallint,
@@ -160,8 +168,13 @@ function VarAsDouble( const _v: variant; _default, _nullvalue: double ): double;
       varLongWord,
       varInt64:           result:= _v;
 
+      varOleStr,
+      varString:        begin
+        result:= StrToFloatDef( _v, _nanvalue );
+      end;
+
       varEmpty,
-      varNull: 	          result:= _nullvalue;
+      varNull: 	          result:= _navalue;
     else
       result:= _default;
     end {case};
