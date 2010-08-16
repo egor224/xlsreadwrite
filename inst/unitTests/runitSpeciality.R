@@ -1,26 +1,24 @@
 ### tests: misc
 
 test.readRKCellValue <- function() {
-    # in an old flexcel version RKRecord values were not divided by 100
-  rdata <- read.xls(rfile, sheet = "specialities", type = "double", from = 12)[1]
-  checkIdentical(rdata, 143.28)
+        # in an old flexcel version RKRecord values were not divided by 100
+    rdata <- read.xls(rfile, sheet = "spec_1", type = "double", from = 12)[1]
+    checkIdentical(rdata, 143.28)
 }
 
 test.read1ColDataFrame <- function() {
-  myval <- c("Courtelary", "Delemont", "Franches-Mnt", "Moutier", "Neuveville", "Porrentruy",
-            "", "", "OLD BUG WITH RKRecord:", "143.28")
-  rdata <- read.xls(rfile, FALSE, sheet = "specialities", from = 4, stringsAsFactor = FALSE)
-  checkIdentical(rdata[,1], myval)
-  
-  write.xls(rdata, wfile, colNames = FALSE)
-  wdata <- read.xls(wfile, FALSE, stringsAsFactor = FALSE)
-  checkIdentical(rdata, wdata)
-}  
+    myval <- c("Courtelary", "Delemont", "Franches-Mnt", "Moutier", "Neuveville", "Porrentruy",
+               "", "", "OLD BUG WITH RKRecord:", "143.28")
+    rdata <- read.xls(rfile, FALSE, sheet = "spec_1", from = 4, stringsAsFactor = FALSE)
+    checkIdentical(rdata[,1], myval)
+
+    write.xls(rdata, wfile, colNames = FALSE)
+    wdata <- read.xls(wfile, FALSE, stringsAsFactor = FALSE)
+    checkIdentical(rdata, wdata)
+}
 
 test.readWithBadFrom <- function() {
-	checkException(read.xls(rfile, from = "bad"), silent = TRUE)
-	  # check if wrong type has been catched correctly
-	checkEquals(grep("be NA or an integer/double", geterrmessage()), 1)
+    checkException(read.xls(rfile, from = "bad"), silent = TRUE)
 }
 
 
@@ -29,7 +27,7 @@ test.readWithBadFrom <- function() {
 test.readRelativePathNames <- function() {
     oldwd <- getwd()
     rf1 <- "origData.xls"
-      # (the following two paths may fail for non-standard dataDir)
+        # (the following two paths may fail for non-standard dataDir)
     rf2 <- "..\\..\\unitTests\\data\\origData.xls"
     rf3 <- "../../unitTests/data/origData.xls"
     setwd(dirname(rfile))
