@@ -52,10 +52,12 @@ function AsFactor( _val: pSExp ): pSExp;
 function MakeNames( _names: pSExp ): pSExp;
   var
     fcall: pSExp;
+    unique: pSExp;
   begin
-    fcall:= riProtect( riLang2( riInstall( 'make.names' ), _names ) );
+    unique:= riProtect( riScalarLogical( 1 ) );
+    fcall:= riProtect( riLang3( riInstall( 'make.names' ), _names, unique ) );
     result:= riProtect( riEval( fcall, RGlobalEnv ) );
-    riUnprotect( 2 );
+    riUnprotect( 3 );
   end {MakeNames};
 
 
