@@ -41,7 +41,7 @@ export DLL = dll
 
 # directories
 PKGDIR = man R src tests \
-    inst/RUnitTests/data inst/libs/template
+    inst/RUnitTests/data inst/template
 PKGDIR_GEN = $(addprefix $(GEN)/$(PKG)/,$(PKGDIR))
 GENDIR_GEN = $(GEN)/bin $(GEN)/src
 RELDIR = bin/$(OS_FOLDER)/shlib bin/$(OS_FOLDER)/src \
@@ -53,7 +53,7 @@ RELDIR_REL = $(addprefix $(REL)/,$(RELDIR))
 AUX_DEV = $(DEV) $(DEV)/DESCRIPTION $(DEV)/NAMESPACE \
     $(DEV)/tests/runRUnitTests.R \
     $(DEV)/inst/LICENSE $(DEV)/inst/README \
-    $(DEV)/inst/RUnitTests/Data/origData.xls $(DEV)/inst/libs/template/TemplateNew.xls \
+    $(DEV)/inst/RUnitTests/Data/origData.xls $(DEV)/inst/template/TemplateNew.xls \
     $(wildcard $(DEV)/inst/RUnitTests/*.R) \
     $(wildcard $(DEV)/man/*) $(wildcard $(DEV)/R/*)
 AUX = $(subst $(DEV)/,,$(AUX_DEV))
