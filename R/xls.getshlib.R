@@ -13,7 +13,7 @@ xls.getshlib <- function(
 
     urltmpl <- "http://dl.dropbox.com/u/2602516/swissrpkg/bin/<os>/shlib/xlsReadWrite_<pkgvers>_dll.zip"
     if (is.na(pkgvers)) pkgvers <- packageDescription("xlsReadWrite")$Version
-    os <- if (R.version$os == "mingw32") "win32" else stop("currently only windows (32 bit) supported")
+    os <- if (R.version$platform == "i386-pc-mingw32") "win32" else stop("currently only windows (32 bit) supported")
 
     fp <- getLoadedDLLs()$xlsReadWrite[["path"]]
     fn <- basename(fp)
@@ -91,7 +91,7 @@ xls.getshlib <- function(
                   "unloaded and renamed to '", fp.backup, "'")
         if (!file.remove(fp.backup)) 
             warning("Existing shlib has been unloaded, renamed and replaced with the downloaded shlib.\n",
-                  "However backuped file (", fp.backup, ") could not be deleted ",
+                  "However the backuped file (", fp.backup, ") could not be deleted ",
                   "(do this manually). After restarting R everything should be ok.")
 
             # load again
