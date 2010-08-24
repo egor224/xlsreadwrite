@@ -23,6 +23,7 @@ uses
 function GetWd(): pSExp;
 function AsFactor( _val: pSExp ): pSExp;
 function MakeNames( _names: pSExp ): pSExp;
+function IsNaScalar( _x: pSExp ): boolean;
 
 
 {==============================================================================}
@@ -59,6 +60,13 @@ function MakeNames( _names: pSExp ): pSExp;
     result:= riProtect( riEval( fcall, RGlobalEnv ) );
     riUnprotect( 3 );
   end {MakeNames};
+
+function IsNaScalar( _x: pSExp ): boolean;
+  begin
+    result:= (riLength( _x ) = 1) and
+             (riTypeOf( _x ) in [setLglSxp, setRealSxp]) and
+             (rIsNa( riReal( riCoerceVector( _x, setRealSxp ) )[0] ) <> 0);
+  end;
 
 
 end {xlsHelpR}.

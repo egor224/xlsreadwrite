@@ -34,6 +34,11 @@ write.xls(x, file,
     \item{rowNames}{with \code{TRUE} the data rownames will be written into
         the first column of the sheet. Provide a character vector to write
         custom rownames. With \code{FALSE} no rownames will be written..}
+
+        With \code{NA} the first column will be considered to receive the
+        rownames under the following conditions: 1) \code{colNames} is \code{TRUE}
+        or contains a character vector, 2) there are character rownames (supplied or
+        in the data) and 3) the first entry thereof is not \code{"1"}.}
     \item{naStrings}{the string to be used for \code{NA} values. An empty string
         clears (blanks) the cell, with \code{NA} cell value will not be changed.}
 }

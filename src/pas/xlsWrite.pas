@@ -24,8 +24,8 @@ function WriteXls( _data, _file, _colNames, _sheet, _skipLines, _rowNames, _naSt
 {==============================================================================}
 implementation
 uses
-  Windows, SysUtils, Variants, Classes, UFlexCelImport, xlsUtils, XlsAdapter,
-  rhR;
+  Windows, SysUtils, Variants, Types, Classes, UFlexCelImport, xlsUtils, XlsAdapter,
+  xlsHelpR, rhR;
 
 type
   aColheadertype = ( chtNone, chtLogical, chtString );
@@ -35,6 +35,7 @@ function WriteXls( _data, _file, _colNames, _sheet, _skipLines, _rowNames, _naSt
     writer: TFlexCelImport;
     colcnt, rowcnt, offsetRow: integer;
     colheadertype: aColheadertype;
+    nastrings: TStringDynArray;
     skipLines: integer;
     rownameKind: aRowNameKind;
     rowNameAsFirstCol: boolean;
@@ -70,10 +71,28 @@ procedure SelectOrInsertSheet();
     end {if};
   end {SelectOrInsertSheet};
 
+procedure SetNaStrings(_naStrings: pSExp);
+  var
+    i: integer;
+  begin
+    if IsNaScalar( _naStrings ) then begin
+      naStrings:= nil;
+    end else begin
+      if riIsString( _naStrings ) then begin
+        SetLength( naStrings, riLength( _naStrings ) );
+        for i := 0 to riLength( _naStrings ) - 1 do begin
+          naStrings[i]:= string(riChar( riStringElt( _naStrings, i ) ));
+        end;
+      end else begin
+        raise ExlsReadWrite.Create('"naStrings" must be a string or NA');
+      end;
+    end;
+  end;
+
 procedure SetRowNames(_rowNames: pSExp);
   begin
       { check if is NA scalar }
-    rowNameAsFirstCol:= False;  
+    rowNameAsFirstCol:= False;
     if (riLength( _rowNames ) = 1) and
        (riTypeOf( _rowNames ) in [setLglSxp, setRealSxp]) and
        (rIsNa( riReal( riCoerceVector( _rowNames, setRealSxp ) )[0] ) <> 0)
@@ -90,12 +109,22 @@ procedure SetRowNames(_rowNames: pSExp);
 
 function CheckForAutoRow: boolean;
   var
-    myrownames: pSExp;
+    dim, myrownames: pSExp;
   begin
     result:= False;
+    myrownames:= nil;
+
     if colheadertype <> chtNone then begin
-      myrownames:= riGetAttrib( _data, RRowNamesSymbol );
-      result:= (not riIsNull( myrownames)) and
+
+      if riIsFrame( _data ) then begin
+        myrownames:= riGetAttrib( _data, RRowNamesSymbol );
+      end else begin
+        dim:= riGetAttrib( _data, RDimNamesSymbol );
+        if (not riIsNull( dim )) then begin
+          myrownames:= riVectorElt( dim, 0 );
+        end;
+      end;
+      result:= Assigned( myrownames) and (not riIsNull( myrownames)) and
           (riTypeOf( myrownames ) = setStrSxp) and
           (string(riChar( riStringElt( myrownames, 0 ) )) <> '1' );
     end;
@@ -105,10 +134,15 @@ procedure ApplyColHeader();
   var
     i: integer;
     cn, dim: pSExp;
+    dropEntry: boolean;
   begin
     cn:= nil;
+    dropEntry:= False;
+
     if colheadertype = chtString then begin
       cn:= _colNames;
+      dropEntry:= rowNameAsFirstCol and
+          (riLength( _colNames ) = colcnt + integer(rowNameAsFirstCol))
     end else if colheadertype = chtLogical then begin
       if riTypeOf( _data ) = setVecSxp then begin
           { frame }
@@ -129,7 +163,7 @@ procedure ApplyColHeader();
     if Assigned( cn ) then begin
       for i:= integer(rowNameAsFirstCol) to colcnt - 1 + integer(rowNameAsFirstCol) do begin
         writer.CellValue[skiplines + 1, i + 1]:=
-            string(riChar( riStringElt( cn, i - integer(rowNameAsFirstCol) ) ));
+            string(riChar( riStringElt( cn, i - integer(rowNameAsFirstCol) + integer(dropEntry) ) ));
       end;
     end else begin
       for i:= integer(rowNameAsFirstCol) to colcnt - 1 + integer(rowNameAsFirstCol) do begin
@@ -183,6 +217,12 @@ procedure ApplyRowNames();
     end;
   end {ApplyRowNames};
 
+procedure EventuallyApplyNaString(_row, _col: integer);
+  begin
+    if (Assigned( naStrings )) and (Length( naStrings ) = 1) then begin
+      writer.CellValue[_row, _col]:= naStrings[0];
+    end {if};
+  end;
 
 procedure WriteDouble(); cdecl;
   var
@@ -192,9 +232,9 @@ procedure WriteDouble(); cdecl;
     for r := 0 to rowcnt - 1 do begin
       for c:= integer(rowNameAsFirstCol) to colcnt - 1 + integer(rowNameAsFirstCol) do begin
         valreal:= riReal( _data )[r + rowcnt*(c - integer(rowNameAsFirstCol))];
-        if (rIsNA( valreal ) = 0) then begin
-          writer.CellValue[r + 1 + offsetRow, c + 1]:= valreal;
-        end;
+        if (rIsNan( valreal ) <> 0) then writer.CellValue[r + 1 + offsetRow, c + 1]:= 'NaN'
+        else if (rIsNa( valreal ) = 0) then writer.CellValue[r + 1 + offsetRow, c + 1]:= valreal
+        else EventuallyApplyNaString( r + 1 + offsetRow, c + 1 );
       end {for};
     end {for};
   end {WriteDouble};
@@ -207,9 +247,8 @@ procedure WriteInteger(); cdecl;
     for r := 0 to rowcnt - 1 do begin
       for c:= integer(rowNameAsFirstCol) to colcnt - 1 + integer(rowNameAsFirstCol) do begin
         valint:= riInteger( _data )[r + rowcnt*(c - integer(rowNameAsFirstCol))];
-        if not (valint = RNaInt) then begin
-          writer.CellValue[r + 1 + offsetRow, c + 1]:= valint;
-        end;
+        if valint <> RNaInt then writer.CellValue[r + 1 + offsetRow, c + 1]:= valint
+        else EventuallyApplyNaString( r + 1 + offsetRow, c + 1);
       end {for};
     end {for};
   end {WriteInteger};
@@ -222,9 +261,8 @@ procedure WriteLogical(); cdecl;
     for r := 0 to rowcnt - 1 do begin
       for c:= integer(rowNameAsFirstCol) to colcnt - 1 + integer(rowNameAsFirstCol) do begin
         valint:= riLogical( _data )[r + rowcnt*(c - integer(rowNameAsFirstCol))];
-        if not (valint = RNaInt) then begin
-          writer.CellValue[r + 1 + offsetRow, c + 1]:= valint;
-        end;
+        if valint <> RNaInt then writer.CellValue[r + 1 + offsetRow, c + 1]:= valint
+        else EventuallyApplyNaString( r + 1 + offsetRow, c + 1);
       end {for};
     end {for};
   end {WriteLogical};
@@ -232,11 +270,14 @@ procedure WriteLogical(); cdecl;
 procedure WriteString(); cdecl;
   var
     r, c: integer;
+    val: string;
   begin
     for r := 0 to rowcnt - 1 do begin
       for c:= integer(rowNameAsFirstCol) to colcnt - 1 + integer(rowNameAsFirstCol) do begin
-        writer.CellValue[r + 1 + offsetRow, c + 1 - integer(rowNameAsFirstCol)]:=
-          string(riChar( riStringElt( _data, r + rowcnt*c ) ));
+        if riStringElt( _data, r + rowcnt*c ) <> RNAString then begin
+          val:= string(riChar( riStringElt( _data, r + rowcnt*c ) ));
+          writer.CellValue[r + 1 + offsetRow, c + 1 - integer(rowNameAsFirstCol)]:= val;
+        end else EventuallyApplyNaString( r + 1 + offsetRow, c + 1 - integer(rowNameAsFirstCol) );
       end {for};
     end {for};
   end {WriteString};
@@ -248,13 +289,8 @@ procedure WriteDataframe(); cdecl;
     r, c: integer;
     valint: integer;
     valreal: double;
+    val: string;
   begin
-    if rownameKind = rnNA then begin
-      if CheckForAutoRow then begin
-        rowNameAsFirstCol:= True;
-        rownameKind:= rnTrue;
-      end;
-    end {if};
     SetLength( coltypes, colcnt + integer(rowNameAsFirstCol) );
     SetLength( lev, colcnt + integer(rowNameAsFirstCol) );
 
@@ -284,33 +320,37 @@ procedure WriteDataframe(); cdecl;
         case coltypes[c - integer(rowNameAsFirstCol)] of
           setIntSxp: begin
             valint:= riInteger( riVectorElt( _data, c - integer(rowNameAsFirstCol) ) )[r];
-            if not (valint = RNaInt) then begin
-              writer.CellValue[r + 1 + offsetRow, c + 1]:= valint;
-            end;
+              // todo: code copied from above (ugly, needs refactoring)
+            if valint <> RNaInt then writer.CellValue[r + 1 + offsetRow, c + 1]:= valint
+            else EventuallyApplyNaString( r + 1 + offsetRow, c + 1);
           end;
           setCplxSxp: begin  // setCplxSxp used for factors (WARNING: levels 1-based, riStringElt 0-based)
             valint:= riInteger( riVectorElt( _data, c - integer(rowNameAsFirstCol) ) )[r];
-            if not (valint = RNaInt) then begin
+            if valint <> RNaInt then begin
                 { levels 1-based, riStringElt 0-based: subtract 1 from valint }
               writer.CellValue[r + 1 + offsetRow, c + 1]:=
                   string(riChar( riStringElt( lev[c - integer(rowNameAsFirstCol)], valint - 1 ) ));
-            end;
+            end else EventuallyApplyNaString( r + 1 + offsetRow, c + 1);
           end;
           setRealSxp: begin
             valreal:= riReal( riVectorElt( _data, c - integer(rowNameAsFirstCol) ) )[r];
-            if (rIsNA( valreal ) = 0) then begin
-              writer.CellValue[r + 1 + offsetRow, c + 1]:= valreal;
-            end;
+              // todo: code copied from above (ugly, needs refactoring)
+            if (rIsNan( valreal ) <> 0) then writer.CellValue[r + 1 + offsetRow, c + 1]:= 'NaN'
+            else if (rIsNa( valreal ) = 0) then writer.CellValue[r + 1 + offsetRow, c + 1]:= valreal
+            else EventuallyApplyNaString( r + 1 + offsetRow, c + 1 );
           end;
           setLglSxp: begin
             valint:= riLogical( riVectorElt( _data, c - integer(rowNameAsFirstCol) ) )[r];
-            if not (valint = RNaInt) then begin
-              writer.CellValue[r + 1 + offsetRow, c + 1]:= valint;
-            end;
+              // todo: code copied from above (ugly, needs refactoring)
+            if valint <> RNaInt then writer.CellValue[r + 1 + offsetRow, c + 1]:= valint
+            else EventuallyApplyNaString( r + 1 + offsetRow, c + 1);
           end;
           setStrSxp: begin
-            writer.CellValue[r + 1 + offsetRow, c + 1]:=
-                string(riChar( riStringElt( riVectorElt( _data, c - integer(rowNameAsFirstCol) ), r ) ));
+              // todo: code copied from above (ugly, needs refactoring)
+            if riStringElt( _data, r + rowcnt*c ) <> RNAString then begin
+              val:= string(riChar( riStringElt( _data, r + rowcnt*c ) ));
+              writer.CellValue[r + 1 + offsetRow, c + 1]:= val;
+            end else EventuallyApplyNaString( r + 1 + offsetRow, c + 1 );
           end;
         else
           assert( True, 'WriteDataframe: coltype not supported' );
@@ -327,25 +367,39 @@ procedure WriteDataframe(); cdecl;
     try
       filename:= GetScalarString( _file, 'file must be a character string' );
 
+        { _skipLines }
+      skipLines:= riInteger( riCoerceVector( _skipLines, setIntSxp ) )[0];
+
+        { row and column count }
+      offsetRow:= skipLines;
+      if riIsFrame( _data ) then begin
+        rowcnt:= riLength( riVectorElt( _data, 0 ) );
+        colcnt:= riLength( _data );
+      end else begin
+        rowcnt:= riNrows( _data );
+        colcnt:= riNcols( _data );
+      end;
+      if rowcnt > 65536 then raise ExlsReadWrite.CreateFmt( 'Only up to %d rows supported (Excel <V2007))', [65536] );
+      if colcnt > 256 then raise ExlsReadWrite.CreateFmt( 'Only up to %f columns supported (Excel <V2007))', [256] );
+
         { _colNames }
       colheadertype:= chtNone;
       if riIsLogical( _colNames ) then begin
         if riLogical( _colNames )[0] <> 0 then colheadertype:= chtLogical;
       end else if riIsString( _colNames ) then begin
-        if riLength( _colNames ) = colcnt then begin
-          colheadertype:= chtString;
-        end else begin
-          rWarning( 'Length of character colheader must be equal to length of ' +
-              'columns (%d). Logical colheader will be used.', [colcnt] );
-          colheadertype:= chtLogical;
-        end;
+        colheadertype:= chtString;
       end else begin
         raise ExlsReadWrite.Create('colHeader must be of type logical or string');
       end;
+
         { _rowNames }
       SetRowNames( _rowNames );
-        { _skipLines }
-      skipLines:= riInteger( riCoerceVector( _skipLines, setIntSxp ) )[0];
+      if rownameKind = rnNA then begin
+        if CheckForAutoRow then begin
+          rowNameAsFirstCol:= True;
+          rownameKind:= rnTrue;
+        end;
+      end {if};
 
         { create writer }
       writer:= TFlexCelImport.Create( nil );
@@ -364,25 +418,23 @@ procedure WriteDataframe(); cdecl;
         writer.OpenFile( tmpl );
         SelectOrInsertSheet();
 
-          { row and column count }
-        offsetRow:= skipLines;
-        if riIsFrame( _data ) then begin
-          rowcnt:= riLength( riVectorElt( _data, 0 ) );
-        end else begin
-          rowcnt:= riNrows( _data );
-        end;
-        if rowcnt > 65536 then raise ExlsReadWrite.CreateFmt( 'Only up to %d rows supported (Excel <V2007))', [65536] );
-        if riIsFrame( _data ) then begin
-          colcnt:= riLength( _data );
-        end else begin
-          colcnt:= riNcols( _data );
-        end;
-        if colcnt > 256 then raise ExlsReadWrite.CreateFmt( 'Only up to %f columns supported (Excel <V2007))', [256] );
         if colheadertype <> chtNone then Inc( offsetRow );
 
         if (rownameKind in [rnTrue, rnSupplied]) then begin
           rowNameAsFirstCol:= True;
         end;
+
+        if (colheadertype = chtString) and
+            not ((riLength( _colNames ) = colcnt) or
+                 (riLength( _colNames ) = colcnt + integer(rowNameAsFirstCol)))
+        then begin
+          raise EXlsReadWrite.CreateFmt( 'colNames must be a vector with ' +
+            'equal length as the column count (incl./excl. column for rownames;' + #13#10 +
+            '(length: %d/colcnt: %d/has rownames: %b)',
+            [riLength( _colNames ), colCnt, rowNameAsFirstCol] );
+        end;
+
+
             
         { -- write matrix }
 

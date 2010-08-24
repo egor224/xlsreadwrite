@@ -186,8 +186,8 @@ procedure ReadColNames( _idx: integer );
   begin
     if hasColNames and (Length( colNames ) > 0) then begin
       if Length( colNames ) <> colcnt then begin
-        raise EXlsReadWrite.CreateFmt( 'colNames must be a vector of ' +
-          'equal length than the column count (length: %d/colcnt: %d)',
+        raise EXlsReadWrite.CreateFmt( 'colNames must be a vector with ' +
+          'equal length as the column count (length: %d/colcnt: %d)',
           [Length( colNames ), colCnt] );
       end;
       Exit;
@@ -473,106 +473,110 @@ function ReadDataframe(): pSExp; cdecl;
 
     { loop columns (get type and name) }
 
-   consideredRows:= Min( rowcnt - 1, 15 );
+    consideredRows:= Min( rowcnt - 1, 15 );
+    for c:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
 
-   for c:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
+      if rowcnt > 0 then begin
 
-      if coltypes[c] <> setNilSxp then begin
+        if coltypes[c] <> setNilSxp then begin
 
-          { type already determined }
-        case coltypes[c] of
-          setRealSxp:    riSetVectorElt( result, c, riAllocVector( setRealSxp, rowcnt ) );
-          setIntSxp:     riSetVectorElt( result, c, riAllocVector( setIntSxp, rowcnt ) );
-          setLglSxp:     riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
-          setCplxSxp,
-          setDotSxp,
-          setAnySxp,
-          setSpecialSxp,
-          setStrSxp:     riSetVectorElt( result, c, riAllocVector( setStrSxp, rowcnt ) );
-        else
-          assert( False, 'coltype not supported (bug)' );
-        end {case};
-      end else begin
+            { type already determined }
+          case coltypes[c] of
+            setRealSxp:    riSetVectorElt( result, c, riAllocVector( setRealSxp, rowcnt ) );
+            setIntSxp:     riSetVectorElt( result, c, riAllocVector( setIntSxp, rowcnt ) );
+            setLglSxp:     riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
+            setCplxSxp,
+            setDotSxp,
+            setAnySxp,
+            setSpecialSxp,
+            setStrSxp:     riSetVectorElt( result, c, riAllocVector( setStrSxp, rowcnt ) );
+          else
+            assert( False, 'coltype not supported (bug)' );
+          end {case};
+        end else begin
 
-          { read row and determine type }
-        for r:= 0 to consideredRows do begin
-          v:= reader.CellValue[from + r, c + 1 + integer(firstColAsRowName)];
-          case VarType( v ) of
-            varSmallint,
-            varInteger,
-            varShortInt,
-            varByte,
-            varWord,
-            varLongWord,
-            varInt64: begin
-              coltypes[c]:= setIntSxp;
-              riSetVectorElt( result, c, riAllocVector( setIntSxp, rowcnt ) );
-              Break;
-            end;
-            varSingle,
-            varDouble,
-            varCurrency,
-            varDate: begin
-              if dateTimeAsNumeric then begin
-                coltypes[c]:= setRealSxp;
-                riSetVectorElt( result, c, riAllocVector( setRealSxp, rowcnt ) );
+            { read row and determine type }
+          for r:= 0 to consideredRows do begin
+            v:= reader.CellValue[from + r, c + 1 + integer(firstColAsRowName)];
+            case VarType( v ) of
+              varSmallint,
+              varInteger,
+              varShortInt,
+              varByte,
+              varWord,
+              varLongWord,
+              varInt64: begin
+                coltypes[c]:= setIntSxp;
+                riSetVectorElt( result, c, riAllocVector( setIntSxp, rowcnt ) );
                 Break;
-              end else begin
-                reader.GetCellFormatDef( from, c + 1 + integer(firstColAsRowName), flexfmt );
-                HasXlsDateTime( flexfmt.Format, hasDate, hasTime );
-                if hasDate and hasTime then begin
-                  coltypes[c]:= setAnySxp; // WARNING: misuse
-                  riSetVectorElt( result, c, riAllocVector( setStrSxp, rowcnt ) );
-                end else if hasDate then begin
-                  coltypes[c]:= setCplxSxp; // WARNING: misuse
-                  riSetVectorElt( result, c, riAllocVector( setStrSxp, rowcnt ) );
-                end else if hasTime then begin
-                  coltypes[c]:= setDotSxp; // WARNING: misuse
-                  riSetVectorElt( result, c, riAllocVector( setStrSxp, rowcnt ) );
-                end else begin
+              end;
+              varSingle,
+              varDouble,
+              varCurrency,
+              varDate: begin
+                if dateTimeAsNumeric then begin
                   coltypes[c]:= setRealSxp;
                   riSetVectorElt( result, c, riAllocVector( setRealSxp, rowcnt ) );
                   Break;
-                end;
-              end {if use oleDateTime};
-            end;
-            varBoolean: begin
-              coltypes[c]:= setLglSxp;
-              riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
-              Break;
-            end;
-            varOleStr,
-            varString: begin
-              if IsLogicalString( v ) then begin
+                end else begin
+                  reader.GetCellFormatDef( from, c + 1 + integer(firstColAsRowName), flexfmt );
+                  HasXlsDateTime( flexfmt.Format, hasDate, hasTime );
+                  if hasDate and hasTime then begin
+                    coltypes[c]:= setAnySxp; // WARNING: misuse
+                    riSetVectorElt( result, c, riAllocVector( setStrSxp, rowcnt ) );
+                  end else if hasDate then begin
+                    coltypes[c]:= setCplxSxp; // WARNING: misuse
+                    riSetVectorElt( result, c, riAllocVector( setStrSxp, rowcnt ) );
+                  end else if hasTime then begin
+                    coltypes[c]:= setDotSxp; // WARNING: misuse
+                    riSetVectorElt( result, c, riAllocVector( setStrSxp, rowcnt ) );
+                  end else begin
+                    coltypes[c]:= setRealSxp;
+                    riSetVectorElt( result, c, riAllocVector( setRealSxp, rowcnt ) );
+                    Break;
+                  end;
+                end {if use oleDateTime};
+              end;
+              varBoolean: begin
                 coltypes[c]:= setLglSxp;
                 riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
                 Break;
-              end else if stringsAsFactors then begin
-                coltypes[c]:= setSpecialSxp;  // misuse of aSExpType
-              end else begin
-                coltypes[c]:= setStrSxp;
               end;
-              riSetVectorElt( result, c, riAllocVector( setStrSxp, rowcnt ) );
-              Break;
-            end;
-          end {case};
-        end {for considered rows};
+              varOleStr,
+              varString: begin
+                if IsLogicalString( v ) then begin
+                  coltypes[c]:= setLglSxp;
+                  riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
+                  Break;
+                end else if stringsAsFactors then begin
+                  coltypes[c]:= setSpecialSxp;  // misuse of aSExpType
+                end else begin
+                  coltypes[c]:= setStrSxp;
+                end;
+                riSetVectorElt( result, c, riAllocVector( setStrSxp, rowcnt ) );
+                Break;
+              end;
+            end {case};
+          end {for considered rows};
 
-        if coltypes[c] = setNilSxp then begin
-          rWarning( pChar('Could not determine a column type from first ' + IntToStr( consideredRows ) + ' rows. Infos:' + #13#10 +
-              '- colCnt: ' + IntToStr( colcnt ) + ', rowCnt: ' + IntToStr( rowcnt ) + ', ' +
-              'rowIdx of first data row: ' + IntToStr( from ) + #13#10 +
-              '- colIdx: ' + IntToStr( c + 1 ) + #13#10 +
-              '"LOGICAL" will be assumed and all values will be NA' + #13#10 +
-              '(Often it works if you delete the superfluous rows/columns (*not only* the cell *content*))' + #13#10#13#10));
-          coltypes[c]:= setNilSxp;  // riLogical and RNaInt will be used;
-          riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
-        end {if nothing found in considered rows};
-      end {if};
+          if coltypes[c] = setNilSxp then begin
+            rWarning( pChar('Could not determine a column type from first ' + IntToStr( consideredRows ) + ' rows. Infos:' + #13#10 +
+                '- colCnt: ' + IntToStr( colcnt ) + ', rowCnt: ' + IntToStr( rowcnt ) + ', ' +
+                'rowIdx of first data row: ' + IntToStr( from ) + #13#10 +
+                '- colIdx: ' + IntToStr( c + 1 ) + #13#10 +
+                '"LOGICAL" will be assumed and all values will be NA' + #13#10 +
+                '(Often it works if you delete the superfluous rows/columns (*not only* the cell *content*))' + #13#10#13#10));
+            coltypes[c]:= setNilSxp;  // riLogical and RNaInt will be used;
+            riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
+          end {if nothing found in considered rows};
+        end {if};
+      end else begin
+        riSetVectorElt( result, c, riAllocVector( setLglSxp, 0 ) );
+      end {if rowcnt > 0};
 
         { set mynames (colnames) }
       tempname:= colnames[c + integer(firstColAsRowName)];
-      if tempname = '' then tempname:= 'V' + IntToStr( c + 1 );
+      if (tempname = '') and (not hasColNames) then tempname:= 'V' + IntToStr( c + 1 );
       riSetStringElt( mynames, c, riMkChar( pChar(tempname) ) );
     end {for each column};
 
@@ -689,8 +693,8 @@ function ReadDataframe(): pSExp; cdecl;
           { read column header (empty if not hasColNames ) }
         ReadColNames( from );
 
-          { read matrix }
-        if (rowcnt > 0) and (colcnt > 0) then begin
+          { read data }
+        if colcnt > 0 then begin
           outputtype:= StrToOutputType( riChar( riStringElt( _type, 0 ) ) );
 
             { data.frame }
