@@ -107,7 +107,7 @@ procedure SelectSheet();
     end {if};
   end {SelectSheet};
 
-procedure SetColNames(_colNames: pSExp);
+procedure ArgColNames(_colNames: pSExp);
   var
     i: integer;
   begin
@@ -125,7 +125,7 @@ procedure SetColNames(_colNames: pSExp);
     end {if colHeader};
   end;
 
-procedure SetTrueFalse(_val: pSExp; var _res: boolean; const _what: string );
+procedure ArgTrueFalse(_val: pSExp; var _res: boolean; const _what: string );
   begin
     if riIsLogical( _val ) and (riLength( _val ) = 1) then begin
       _res:= riLogical( _val )[0] <> 0;
@@ -134,13 +134,13 @@ procedure SetTrueFalse(_val: pSExp; var _res: boolean; const _what: string );
     end;
   end;
 
-procedure SetDateTimeAs( _dateTimeAs: pSExp );
+procedure ArgDateTimeAs( _dateTimeAs: pSExp );
   begin
     dateTimeAsNumeric:= GetScalarString( _dateTimeAs,
         'dateTimeAs must be a character string' ) = 'numeric';
   end;
 
-procedure SetRowNames(_colNames: pSExp);
+procedure ArgRowNames(_colNames: pSExp);
   var
     i: integer;
   begin
@@ -162,7 +162,7 @@ procedure SetRowNames(_colNames: pSExp);
     end;
   end;
 
-procedure SetNaStrings(_naStrings: pSExp);
+procedure ArgNaStrings(_naStrings: pSExp);
   var
     i: integer;
   begin
@@ -180,24 +180,33 @@ procedure SetNaStrings(_naStrings: pSExp);
     end;
   end;
 
-procedure ReadColNames( _idx: integer );
+procedure PrepareColNames( _idx: integer );
   var
     i: integer;
+    s: string;
   begin
     if hasColNames and (Length( colNames ) > 0) then begin
-      if Length( colNames ) <> colcnt then begin
+      if (Length( colNames ) <> colcnt) and
+         (Length( colNames ) <> (colcnt - integer(firstColAsRowName)))
+      then begin
+        raise EXlsReadWrite.CreateFmt( 'colNames must be a vector of ' +
+          'equal (or when having rownames: equal - 1) length as the column count ' +
+          '(length: %d/colcnt: %d/has rownames: %d)',
+          [riLength( _colClasses ), colCnt, integer(firstColAsRowName)] );
         raise EXlsReadWrite.CreateFmt( 'colNames must be a vector with ' +
           'equal length as the column count (length: %d/colcnt: %d)',
           [Length( colNames ), colCnt] );
       end;
       Exit;
     end;
+
+      { has colnames to be taken from sheet or created }
     SetLength( colnames, colcnt );
     for i:= 0 to colcnt - 1 do begin
+      colnames[i]:= 'V' + IntToStr( i + 1 - integer(firstColAsRowName) );
       if hasColNames then begin
-        colnames[i]:= VarAsString( reader.CellValue[_idx - 1, i + 1], '' );
-      end else begin
-        colnames[i]:= '';
+        s:= VarAsString( reader.CellValue[_idx - 1, i + 1] );
+        if s <> '' then colnames[i]:= s;
       end;
     end;
   end {SetColNames};
@@ -208,6 +217,7 @@ procedure ApplyMatrixRowColNames( _result: pSExp);
     dim: pSExp;
     i: integer;
     r: integer;
+    entry: pchar;
     myrownames, mycolnames: pSExp;
     unprotcnt: integer; // ugly, todo
   begin
@@ -218,21 +228,31 @@ procedure ApplyMatrixRowColNames( _result: pSExp);
     if rownameKind = rnFalse then begin
       myrownames:= RNilValue;
     end else begin
-      myrownames:= riProtect( riAllocVector( setStrSxp, rowcnt ) );
       Inc( unprotcnt );
       if rownameKind = rnSupplied then begin
+        myrownames:= riProtect( riAllocVector( setStrSxp, rowcnt ) );
         for r:= 0 to rowcnt - 1 do begin
           riSetStringElt( myrownames, r, riMkChar( pChar(rownames[r]) ) );
         end;
       end else begin
+        if firstColAsRowName then begin
+          myrownames:= riProtect( riAllocVector( setStrSxp, rowcnt ) );
+        end else begin
+          myrownames:= riProtect( riAllocVector( setIntSxp, rowcnt ) )
+        end;
         for r:= 0 to rowcnt - 1 do begin
           if firstColAsRowName then begin
             riSetStringElt( myrownames, r, riMkChar( pChar(VarAsString(
                 reader.CellValue[r + from, 1], IntToStr( r + 1 ) ) )) );
           end else begin
-            riSetStringElt( myrownames, r, riMkChar( pChar(IntToStr( r + 1 )) ) );
+            riInteger( myrownames )[r]:= r + 1;
           end;
         end {for};
+      end;
+
+      if anyDuplicated(myrownames) then begin
+        riUnprotect( unprotcnt );
+        raise ExlsReadWrite.Create('rownames must be unique');
       end;
     end;
 
@@ -241,7 +261,9 @@ procedure ApplyMatrixRowColNames( _result: pSExp);
     Inc( unprotcnt );
     if hasColNames then begin
       for i:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
-        riSetStringElt( mycolnames, i, riMkChar( pChar(colnames[i + integer(firstColAsRowName)]) ) );
+        entry:= pChar(colnames[i + integer(firstColAsRowName)]);
+        if entry = '' then entry:= pchar('V' + IntToStr( i + 1 ));
+        riSetStringElt( mycolnames, i, riMkChar( entry ) );
       end;
       if checkNames then begin
         mycolnames:= riProtect( MakeNames( mycolnames ) );
@@ -261,36 +283,56 @@ procedure ApplyMatrixRowColNames( _result: pSExp);
     riUnprotect( unprotcnt );
   end {ApplyColNames};
 
+  // todo: could/should be merged with matrix case?
 procedure ApplyFrameRowNames( _result: pSExp);
   var
     r: integer;
     myrownames: pSExp;
   begin
-    myrownames:= riProtect( riAllocVector( setStrSxp, rowcnt ) );
     if rownameKind = rnSupplied then begin
+      myrownames:= riProtect( riAllocVector( setStrSxp, rowcnt ) );
       for r:= 0 to rowcnt - 1 do begin
         riSetStringElt( myrownames, r, riMkChar( pChar(rownames[r]) ) );
       end;
     end else begin
+      if firstColAsRowName then begin
+        myrownames:= riProtect( riAllocVector( setStrSxp, rowcnt ) );
+      end else begin
+        myrownames:= riProtect( riAllocVector( setIntSxp, rowcnt ) )
+      end;
       for r:= 0 to rowcnt - 1 do begin
         if firstColAsRowName then begin
           riSetStringElt( myrownames, r, riMkChar( pChar(VarAsString(
               reader.CellValue[r + from, 1], IntToStr( r + 1 ) ) )) );
         end else begin
-          riSetStringElt( myrownames, r, riMkChar( pChar(IntToStr( r + 1 )) ) );
+          riInteger( myrownames )[r]:= r + 1;
         end;
       end {for};
+    end;
+
+    if anyDuplicated(myrownames) then begin
+      riUnprotect( 1 );
+      raise ExlsReadWrite.Create('rownames must be unique');
     end;
     riSetAttrib( _result, RRowNamesSymbol, myrownames );
     riUnprotect( 1 );
   end {ApplyRowNames};
 
 function CheckForAutoRow: boolean;
+  var
+    coln4row: string;
   begin
-    result:= hasColNames and (colnames[0] = '') and
-        (length( colnames ) > 1) and
-        VarIsStr( reader.CellValue[from, 1] ) and
-        (reader.CellValue[from, 1] <> '1');
+    result:= hasColNames and (colcnt >= 2);
+    if result then begin
+      if Length(colNames) > 0 then begin
+        coln4row:= colnames[0];
+      end else begin
+        coln4row:= VarAsString( reader.CellValue[from - 1, 1] )
+      end;
+      result:= (coln4row = '') and
+          VarIsStr( reader.CellValue[from, 1] ) and
+          (reader.CellValue[from, 1] <> '1');
+    end;
   end {CheckForAutoRow};
 
 function ReadDouble(): pSExp; cdecl;
@@ -418,8 +460,9 @@ function ReadDataframe(): pSExp; cdecl;
             end;
           end else begin
             raise EXlsReadWrite.CreateFmt( 'colClasses must be a scalar or a vector of ' +
-              'equal (or optionally with rownames equal - 1) length than the column count (length: %d/colcnt: %d)',
-              [riLength( _colClasses ), colCnt] );
+              'equal (or when having rownames: equal - 1) length as the column count ' +
+              '(length: %d/colcnt: %d/has rownames: %d)',
+              [riLength( _colClasses ), colCnt, integer(firstColAsRowName)] );
           end;
         end else begin
            raise ExlsReadWrite.Create( 'colClasses must be NA or a string (vector)' );
@@ -460,6 +503,8 @@ function ReadDataframe(): pSExp; cdecl;
       raise ExlsReadWrite.CreateFmt('If a column is used for the rownames, there must be  ' +
               'at least 2 columns in the Excelfile (actual number: %d)', [colcnt]);
     end;
+
+    PrepareColNames( from );
 
     SetColClasses( _colClasses );
     if firstColAsRowName and (Length( coltypes ) = colcnt - integer(firstColAsRowName) + 1) then begin
@@ -560,12 +605,13 @@ function ReadDataframe(): pSExp; cdecl;
           end {for considered rows};
 
           if coltypes[c] = setNilSxp then begin
-            rWarning( pChar('Could not determine a column type from first ' + IntToStr( consideredRows ) + ' rows. Infos:' + #13#10 +
-                '- colCnt: ' + IntToStr( colcnt ) + ', rowCnt: ' + IntToStr( rowcnt ) + ', ' +
-                'rowIdx of first data row: ' + IntToStr( from ) + #13#10 +
-                '- colIdx: ' + IntToStr( c + 1 ) + #13#10 +
-                '"LOGICAL" will be assumed and all values will be NA' + #13#10 +
-                '(Often it works if you delete the superfluous rows/columns (*not only* the cell *content*))' + #13#10#13#10));
+            rWarning( pChar(Format( 'Could not determine a type for column %d' +  #13#10 +
+                '  - colCnt: %d, rowCnt: %d, first/last data row: %d/%d' + #13#10 +
+                '  - "logical" type will be assumed and all values will be NA' + #13#10 +
+                '  - if the row/colCnt area is too large, try to delete the superfluous' + #13#10 +
+                '    rows/columns (not only the cell content))' + #13#10#13#10,
+                [c + 1 + integer(firstColAsRowName), colcnt, rowcnt, from,
+                from + consideredRows] )) );
             coltypes[c]:= setNilSxp;  // riLogical and RNaInt will be used;
             riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
           end {if nothing found in considered rows};
@@ -665,12 +711,12 @@ function ReadDataframe(): pSExp; cdecl;
         raise ExlsReadWrite.Create('ReadXls: "from" must be a scalar integer or double');
       end;
       from:= riInteger( riCoerceVector( _from, setIntSxp ) )[0];
-      SetColNames( _colNames );
-      SetRowNames( _rowNames );
-      SetNaStrings( _naStrings );
-      SetDateTimeAs( _dateTimeAs );
-      SetTrueFalse( _checkNames, checkNames, 'checkNames' );
-      SetTrueFalse( _stringsAsFactors, stringsAsFactors, 'stringsAsFactors' );
+      ArgColNames( _colNames );
+      ArgRowNames( _rowNames );
+      ArgNaStrings( _naStrings );
+      ArgDateTimeAs( _dateTimeAs );
+      ArgTrueFalse( _checkNames, checkNames, 'checkNames' );
+      ArgTrueFalse( _stringsAsFactors, stringsAsFactors, 'stringsAsFactors' );
 
         { create reader }
       reader:= TFlexCelImport.Create( nil );
@@ -690,20 +736,21 @@ function ReadDataframe(): pSExp; cdecl;
               'the number of determined rows (%d/%d)', [length( rownames ), rowcnt]);
         end;
 
-          { read column header (empty if not hasColNames ) }
-        ReadColNames( from );
-
           { read data }
         if colcnt > 0 then begin
           outputtype:= StrToOutputType( riChar( riStringElt( _type, 0 ) ) );
 
-            { data.frame }
           if outputtype = otDataFrame then begin
+
+            { data.frame }
+
             result:= ReadDataframe();
             ApplyFrameRowNames( result )
 
-            { matrix }
           end else begin
+
+            { matrix }
+
             if outputtype in [otDouble, otInteger, otLogical, otCharacter] then begin
               firstColAsRowName:= rownameKind = rnTrue;
               if not firstColAsRowName then begin
@@ -711,6 +758,8 @@ function ReadDataframe(): pSExp; cdecl;
                   firstColAsRowName:= True;
                 end;
               end;
+
+              PrepareColNames( from );
 
               case outputtype of
                 otDouble, otNumeric:   result:= ReadDouble();
@@ -723,7 +772,7 @@ function ReadDataframe(): pSExp; cdecl;
               ApplyMatrixRowColNames( result );
 
             end else begin
-              raise ExlsReadWrite.Create( 'The types "' + AllOutputTypes +
+              raise ExlsReadWrite.Create( 'Only the types "' + AllOutputTypes +
                   '" are supported right now. (Your input was: ' +
                   riChar( riStringElt( _type, 0 ) ) + ')' );
             end {if matrix};

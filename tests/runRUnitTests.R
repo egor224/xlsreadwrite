@@ -6,9 +6,9 @@ shlib <- system.file("libs", if(nzchar(arch <- .Platform$r_arch)) arch,
                      package = pkg)
 stopifnot(file.exists(shlib))
 
-if (file.info(shlib)$size < 20000) {
-        ## message appears in the log only
-    message("tests not executed (cran placeholder shlib)")
+if (file.info(shlib)$size < 20000)  {
+        ## cran version with dummy shlib
+    message("tests not executed (cran placeholder shlib)") # msg appears in the log
 } else if (require("RUnit", quietly = TRUE)) {
     rutdir <- system.file("RUnitTests", package = pkg)
     stopifnot(file.exists(rutdir), file.info(rutdir)$isdir)

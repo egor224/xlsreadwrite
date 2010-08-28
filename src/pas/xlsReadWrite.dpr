@@ -47,7 +47,7 @@ procedure MyDllProc( _reason: integer );
     case _reason of
       DLL_PROCESS_ATTACH: begin
         loadok:= LoadRVars( ToRVarsArr( [vriRGlobalEnv, vriRNilValue, vriRDimnamesSymbol,
-            vriRRowNamesSymbol, vriRNamesSymbol, vriRLevelsSymbol] ) );
+            vriRRowNamesSymbol, vriRNamesSymbol, vriRNaString, vriRLevelsSymbol] ) );
         if not LoadRVars( ToRVarsArr( [varRNaN, varRNaInt, varRNaReal] ) ) then loadok:= False;
         if not loadok then begin
           rRprintf( 'Load xlsReadWrite.dll: Could not initialize RNilValue/RNaN' );

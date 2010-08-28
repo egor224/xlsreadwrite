@@ -5,17 +5,15 @@
   # execute *all* testfiles in 'runitDir' folder
 execTestSuite <- function(runitDir, outDir = runitDir) {
   suite <- defineTestSuite(name = "RUnit tests", dirs = runitDir, testFileRegex = "^runit[[:upper:]].+\\.[rR]$")
-  invisible(sapply(dir(file.path(runitDir, runitDir), full.names = TRUE), load, envir = parent.frame()))
   res <<- runTestSuite(suite)
   .printResults(res, outDir)
 }
 
   # execute 'testfile' with all or one single 'fctname' functions
-execTestFile <- function(testfile, fctname = NA, outDir = NA) {
+execTestFile <- function(testfile, outDir, fctname = NA) {
   runitDir <- dirname(testfile)
   fct <- if (is.na(fctname)) "^test.+" else paste("^", fctname, "$", sep = "")
   if (is.na(outDir)) outDir <- runitDir
-  invisible(sapply(dir(file.path(runitDir, runitDir), full.names = TRUE), load, envir = parent.frame()))
   res <- runTestFile(testfile, testFuncRegexp = fct)
   .printResults(res, outDir)
 }
@@ -61,11 +59,12 @@ execTestSuiteCHECK <- function(runitDir) {
 
 ### setup and global settings
 
-.setupFilenames <- function(runitDir, outDir = runitDir){
-  assign("rfile", file.path(runitDir, "data/origData.xls"), envir = .GlobalEnv)
-  assign("rfile.img", file.path(runitDir, "data/origImage.xls"), envir = .GlobalEnv)
-  assign("wfile", file.path(outDir, "tmpWriteData.xls"), envir = .GlobalEnv)
-  assign("wfile.img", file.path(outDir, "tmpImageOut.xls"), envir = .GlobalEnv)
+.setup <- function(runitDir, outDir = runitDir){
+    assign("rfile", file.path(runitDir, "data/origData.xls"), envir = .GlobalEnv)
+    assign("rfile.img", file.path(runitDir, "data/origImage.xls"), envir = .GlobalEnv)
+    assign("wfile", file.path(outDir, "tmpWriteData.xls"), envir = .GlobalEnv)
+    assign("wfile.img", file.path(outDir, "tmpImageOut.xls"), envir = .GlobalEnv)
+    assign("isFreeVersion", length(grep("cells", names(formals(read.xls)))) == 0, envir = .GlobalEnv)
 }
 
 library(RUnit)

@@ -1,6 +1,6 @@
 ### given colClasses
 
-test.readColClassesGivenDateTime <- function() {
+test.colClasses.givenDateTime <- function() {
     myidx <- c(1, 19)
     mycls <-  c("integer", "integer", "isodate",   "integer", "integer", "double", "double", "double", "isotime",   "double", "double", "isodatetime" )
     mystorage <- c("integer", "integer", "character", "integer", "integer", "double", "double", "double", "character", "double", "double", "character" )
@@ -20,7 +20,7 @@ test.readColClassesGivenDateTime <- function() {
   }
 }
 
-test.readColClassesGivenDoubleIntCharNum <- function() {
+test.colClasses.givenDoubleIntCharNum <- function() {
     myidx <- c(1, 13)
     myval <- matrix(c(42.34500000, 3, 3.8005233, -20.4994424,
                        6.9478864, 6, 4.9871624, 4.4270298), ncol = 4, byrow = TRUE)
@@ -34,13 +34,13 @@ test.readColClassesGivenDoubleIntCharNum <- function() {
     checkIdentical(rdata[myidx,4], myval[,4])
 }
 
-test.readColClassesGivenLogicalFactorNA <- function() {
+test.colClasses.givenLogicalFactorNA <- function() {
     myval <- structure(list(
         c(TRUE, TRUE), 
         structure(1:2, .Label = c("2.8083093", "6.8696548"), class = "factor"), 
         c(8.4730312838147, 4.9871624111902),
         c(-35.3584594, 4.4270298)),
-        .Names = c("l_1", "f_2", "d_3", "d_4"), class = "data.frame", row.names = c("1", "2"))
+        .Names = c("l_1", "f_2", "d_3", "d_4"), class = "data.frame", row.names = 1:2)
     myclsIn <- c("logical", "factor", "NA", NA)
     myclsOut <- c("logical", "factor", "numeric", "numeric")
     mystorage <- c("logical", "integer", "double", "double")
@@ -53,16 +53,20 @@ test.readColClassesGivenLogicalFactorNA <- function() {
 
 ### auto-determine colClasses
 
-test.readColClassesAuto <- function() {
-    mylogical <- if (length(grep("cells", names(formals(read.xls)))) == 0) "logical" else "integer"
-    mycls <-    c("numeric", "numeric", mylogical, "numeric", "numeric", "numeric", "character")
-    mystorage <- c("double", "double", mylogical, "double", "double", "double", "character")
+test.colClasses.auto <- function() {
+    if (isFreeVersion) {
+      mycls <-    c("numeric", "numeric", "logical", "numeric", "numeric", "numeric", "character")
+      mystorage <- c("double", "double", "logical", "double", "double", "double", "character")
+    } else {
+      mycls <-    c("numeric", "numeric", "integer", "integer", "numeric", "numeric", "character")
+      mystorage <- c("double", "double", "integer", "integer", "double", "double", "character")
+    }
     rdata <- read.xls(rfile, colNames = TRUE, "dfSht", from = 5, stringsAsFactors = FALSE)
     checkIdentical(as.vector(sapply(rdata, class)), mycls)  
     checkIdentical(as.vector(sapply(rdata, storage.mode)), mystorage)  
 }
 
-test.readColClassesAutoFirst16Rows <- function() {
+test.colClasses.autoFirst16Rows <- function() {
     mywarn <- 0
     withCallingHandlers(rdata <- read.xls(rfile, sheet = "autoCls", from = 2, stringsAsFactors = FALSE), 
         warning = function(w) { mywarn <<- mywarn + 1; invokeRestart("muffleWarning") })
@@ -73,23 +77,22 @@ test.readColClassesAutoFirst16Rows <- function() {
     checkIdentical(rdata$has_warnings[c(16, 17)], c(NA, NA))
 }
 
-test.readColClassesAutoProgression <- function() {
+test.colClasses.autoProgression <- function() {
         # the first non-empty cell value determines the class
         # (there's a progression on the pro version but it's too complicated to implement here)
-        # check first row and then...
-    myclsOutClass <- c("factor", rep("numeric", 8), "factor", "logical")
-    myclsOutStorageMode <- c("integer", rep("double", 8), "integer", "logical")
-    rdata <- suppressWarnings(read.xls(rfile, sheet = "autoCls", from = 2))
-    checkIdentical(as.vector(sapply(rdata, class)), myclsOutClass)
-    checkIdentical(as.vector(sapply(rdata, storage.mode)), myclsOutStorageMode)
-      # ...loop and check each row of 2nd column separately
-#    mylogical <- if (length(grep("cells", names(formals(read.xls)))) == 0) "logical" else "integer"
-# TODO: probably need to differ between pro/free, check later      
-    mycls <- c("double", "double", rep("logical", 3), rep("double", 6), rep("character", 5))
-    for (ro in 3:18) {
-      checkIdentical(storage.mode(suppressWarnings(read.xls(
-            rfile, colNames = FALSE, sheet = "autoCls", from = ro, 
-            stringsAsFactors = FALSE))[,2]), mycls[ro - 2])
-  }
+    if (isFreeVersion) {
+            # check first row and then...
+        mycls <-    c(rep("numeric", 8), "factor", "logical")
+        mystorage <- c(rep("double", 8), "integer", "logical")
+        rdata <- suppressWarnings(read.xls(rfile, sheet = "autoCls", from = 2))
+        checkIdentical(as.vector(sapply(rdata, function(x) class(x)[1])), mycls)
+        checkIdentical(as.vector(sapply(rdata, storage.mode)), mystorage)
+        # ...loop and check each row of 2nd column separately
+        mycls <- c("double", "double", rep("logical", 3), rep("double", 6), rep("character", 5))
+        for (ro in 3:18) {
+            checkIdentical(storage.mode(suppressWarnings(read.xls(
+                rfile, colNames = FALSE, sheet = "autoCls", from = ro, 
+                stringsAsFactors = FALSE))[,2]), mycls[ro - 2])
+        }
+    }
 }
-

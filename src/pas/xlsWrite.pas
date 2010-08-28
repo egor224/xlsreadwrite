@@ -71,7 +71,7 @@ procedure SelectOrInsertSheet();
     end {if};
   end {SelectOrInsertSheet};
 
-procedure SetNaStrings(_naStrings: pSExp);
+procedure ArgNaStrings(_naStrings: pSExp);
   var
     i: integer;
   begin
@@ -89,25 +89,7 @@ procedure SetNaStrings(_naStrings: pSExp);
     end;
   end;
 
-procedure SetRowNames(_rowNames: pSExp);
-  begin
-      { check if is NA scalar }
-    rowNameAsFirstCol:= False;
-    if (riLength( _rowNames ) = 1) and
-       (riTypeOf( _rowNames ) in [setLglSxp, setRealSxp]) and
-       (rIsNa( riReal( riCoerceVector( _rowNames, setRealSxp ) )[0] ) <> 0)
-    then begin
-      rownameKind:= rnNA;
-    end else if riIsLogical( _rowNames ) then begin
-      if riLogical( _rowNames )[0] <> 0 then rownameKind:= rnTrue else rownameKind:= rnFalse;
-    end else if riIsString( _rowNames ) then begin
-      rownameKind:= rnSupplied;
-    end else begin
-      raise ExlsReadWrite.Create('SetRowNames: "rowNames" must be of type logical or string');
-    end;
-  end;
-
-function CheckForAutoRow: boolean;
+function AutoRowname: boolean;
   var
     dim, myrownames: pSExp;
   begin
@@ -125,10 +107,32 @@ function CheckForAutoRow: boolean;
         end;
       end;
       result:= Assigned( myrownames) and (not riIsNull( myrownames)) and
-          (riTypeOf( myrownames ) = setStrSxp) and
+          (riLength( myrownames ) > 0) and (riTypeOf( myrownames ) = setStrSxp) and
           (string(riChar( riStringElt( myrownames, 0 ) )) <> '1' );
     end;
   end {CheckForAutoRow};
+
+procedure ArgRowNames(_rowNames: pSExp);
+  begin
+      { check if is NA scalar }
+    rowNameAsFirstCol:= False;
+    if (riLength( _rowNames ) = 1) and
+       (riTypeOf( _rowNames ) in [setLglSxp, setRealSxp]) and
+       (rIsNa( riReal( riCoerceVector( _rowNames, setRealSxp ) )[0] ) <> 0)
+    then begin
+      rownameKind:= rnNA;
+    end else if riIsLogical( _rowNames ) then begin
+      if (riLogical( _rowNames )[0] <> 0) then rownameKind:= rnTrue else rownameKind:= rnFalse;
+    end else if riIsString( _rowNames ) then begin
+      rownameKind:= rnSupplied;
+      if (not (riLength( _rowNames ) = rowcnt)) then begin
+        raise ExlsReadWrite.CreateFmt('Number of supplied rownames doesn''t match ' +
+            'the number of determined rows (%d/%d)', [riLength( _rowNames ), rowcnt]);
+      end;
+    end else begin
+      raise ExlsReadWrite.Create('SetRowNames: "rowNames" must be of type logical or string');
+    end;
+  end;
 
 procedure ApplyColHeader();
   var
@@ -194,7 +198,6 @@ procedure ApplyRowNames();
       end {is frame};
       
       if riIsNull( rn ) then begin
-        rWarning( 'The data does not contain rownames, we will write plain row numbers' );
         rn:= nil;
       end;
     end;
@@ -274,10 +277,10 @@ procedure WriteString(); cdecl;
   begin
     for r := 0 to rowcnt - 1 do begin
       for c:= integer(rowNameAsFirstCol) to colcnt - 1 + integer(rowNameAsFirstCol) do begin
-        if riStringElt( _data, r + rowcnt*c ) <> RNAString then begin
-          val:= string(riChar( riStringElt( _data, r + rowcnt*c ) ));
-          writer.CellValue[r + 1 + offsetRow, c + 1 - integer(rowNameAsFirstCol)]:= val;
-        end else EventuallyApplyNaString( r + 1 + offsetRow, c + 1 - integer(rowNameAsFirstCol) );
+        if riStringElt( _data, r + rowcnt*(c - integer(rowNameAsFirstCol)) ) <> RNAString then begin
+          val:= string(riChar( riStringElt( _data, r + rowcnt*(c - integer(rowNameAsFirstCol)) ) ));
+          writer.CellValue[r + 1 + offsetRow, c + 1]:= val;
+        end else EventuallyApplyNaString( r + 1 + offsetRow, c + 1 );
       end {for};
     end {for};
   end {WriteString};
@@ -347,8 +350,8 @@ procedure WriteDataframe(); cdecl;
           end;
           setStrSxp: begin
               // todo: code copied from above (ugly, needs refactoring)
-            if riStringElt( _data, r + rowcnt*c ) <> RNAString then begin
-              val:= string(riChar( riStringElt( _data, r + rowcnt*c ) ));
+            if riStringElt( riVectorElt( _data, c - integer(rowNameAsFirstCol) ), r ) <> RNAString then begin
+              val:= string(riChar( riStringElt( riVectorElt( _data, c - integer(rowNameAsFirstCol) ), r ) ));
               writer.CellValue[r + 1 + offsetRow, c + 1]:= val;
             end else EventuallyApplyNaString( r + 1 + offsetRow, c + 1 );
           end;
@@ -362,6 +365,7 @@ procedure WriteDataframe(); cdecl;
   var
     filename: string;
     tmpl: string;
+    elem: pSExp;
   begin {WriteXls}
     result:= RNilValue;
     try
@@ -373,11 +377,20 @@ procedure WriteDataframe(); cdecl;
         { row and column count }
       offsetRow:= skipLines;
       if riIsFrame( _data ) then begin
-        rowcnt:= riLength( riVectorElt( _data, 0 ) );
+        elem:= riVectorElt( _data, 0 );
+        if riIsNull( elem ) then begin
+          rowcnt:= 0;
+        end else begin
+          rowcnt:= riLength( elem );
+        end;
         colcnt:= riLength( _data );
       end else begin
         rowcnt:= riNrows( _data );
-        colcnt:= riNcols( _data );
+        if (rowcnt = 0) and (riLength( _data ) = 0) and (not riIsMatrix( _data )) then begin
+          colcnt:= 0;
+        end else begin
+          colcnt:= riNcols( _data );
+        end;
       end;
       if rowcnt > 65536 then raise ExlsReadWrite.CreateFmt( 'Only up to %d rows supported (Excel <V2007))', [65536] );
       if colcnt > 256 then raise ExlsReadWrite.CreateFmt( 'Only up to %f columns supported (Excel <V2007))', [256] );
@@ -393,14 +406,17 @@ procedure WriteDataframe(); cdecl;
       end;
 
         { _rowNames }
-      SetRowNames( _rowNames );
+      ArgRowNames( _rowNames );
       if rownameKind = rnNA then begin
-        if CheckForAutoRow then begin
+        if AutoRowname then begin
           rowNameAsFirstCol:= True;
           rownameKind:= rnTrue;
         end;
       end {if};
 
+        { _naStrings }
+      ArgNaStrings( _naStrings );
+      
         { create writer }
       writer:= TFlexCelImport.Create( nil );
       writer.Adapter:= TXLSAdapter.Create( writer );
@@ -424,14 +440,14 @@ procedure WriteDataframe(); cdecl;
           rowNameAsFirstCol:= True;
         end;
 
-        if (colheadertype = chtString) and
+        if (colcnt > 0) and (colheadertype = chtString) and
             not ((riLength( _colNames ) = colcnt) or
                  (riLength( _colNames ) = colcnt + integer(rowNameAsFirstCol)))
         then begin
           raise EXlsReadWrite.CreateFmt( 'colNames must be a vector with ' +
             'equal length as the column count (incl./excl. column for rownames;' + #13#10 +
-            '(length: %d/colcnt: %d/has rownames: %b)',
-            [riLength( _colNames ), colCnt, rowNameAsFirstCol] );
+            '(length: %d/colcnt: %d/has rownames: %d)',
+            [riLength( _colNames ), colCnt, integer(rowNameAsFirstCol)] );
         end;
 
 

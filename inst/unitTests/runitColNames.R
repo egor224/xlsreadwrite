@@ -12,7 +12,7 @@ readAndCheckNull <- function(cn, type = NA) {
 }
 
 
-### (partly) given colNames
+### colNames given
 
 test.colNames.given <- function() {
     mycol <- c("one", "two", "three", "four")
@@ -43,10 +43,12 @@ test.colNames.givenWrong <- function() {
     checkException(write.xls(as.data.frame(t(myval)), wfile, colNames = mycol), silent = TRUE)
 }
 
-test.colNames.givenEmpty <- function() {
+### colNames true but (partly) missing
+
+test.colNames.trueButEmpty <- function() {
         # character
     rdata <- read.xls(rfile, colNames = TRUE, sheet = "spec_1", type = "character", from = 3)
-    checkIdentical(colnames(rdata), "X")
+    checkIdentical(colnames(rdata), "V1")
     checkIdentical(rdata[1], "Courtelary")
     colnames(rdata) <- NULL
     write.xls(rdata, wfile, colNames = TRUE)
@@ -55,7 +57,7 @@ test.colNames.givenEmpty <- function() {
     checkEquals(wdata[-1,,drop = FALSE], rdata, check.attributes = FALSE)
         # data.frame
     rdata <- read.xls(rfile, colNames = TRUE, sheet = "spec_1", type = "data.frame", from = 3)
-    checkIdentical(colnames(rdata), "X")
+    checkIdentical(colnames(rdata), "V1")
     checkIdentical(as.character(rdata[1,1]), "Courtelary")
     colnames(rdata) <- NULL
     write.xls(rdata, wfile, colNames = TRUE)
@@ -64,13 +66,20 @@ test.colNames.givenEmpty <- function() {
     checkEquals(wdata[-1,,drop = FALSE], rdata, check.attributes = FALSE)
 }
 
-test.colNames.partlyMissing <- function() {
-    mycol <- c("Linktype", "Name.and.Link", "Linkaddress", "X", "X.1", "Col1", "Col2")
-    mycol.ex <- c("X", "Linktype", "Name.and.Link", "Linkaddress", "X.1", "X.2", "Col1", "Col2")
+test.colNames.truePartlyEmpty <- function() {
+    mycol <- c("Linktype", "Name.and.Link", "Linkaddress", "V4", "V5", "Col1", "Col2")
+    mycol.ex <- c("V1", "Linktype", "Name.and.Link", "Linkaddress", "V5", "V6", "Col1", "Col2")
         # character
     rdata <- read.xls(rfile, sheet = "spec_pro", rowNames = TRUE, type = "character", from = 4)
     checkIdentical(colnames(rdata), mycol)
     rdata <- read.xls(rfile,  sheet = "spec_pro", rowNames = FALSE, type = "character", from = 4)
+    checkIdentical(colnames(rdata), mycol.ex)
+    rdata <- read.xls(rfile,  sheet = "spec_pro", type = "character", from = 4)
+    checkIdentical(colnames(rdata), mycol.ex)
+        # data.frame
+    rdata <- suppressWarnings(read.xls(rfile, sheet = "spec_pro", rowNames = TRUE, type = "data.frame", from = 4))
+    checkIdentical(colnames(rdata), mycol)
+    rdata <- suppressWarnings(read.xls(rfile,  sheet = "spec_pro", rowNames = FALSE, type = "data.frame", from = 4))
     checkIdentical(colnames(rdata), mycol.ex)
     rdata <- read.xls(rfile,  sheet = "spec_pro", type = "character", from = 4)
     checkIdentical(colnames(rdata), mycol.ex)
@@ -143,50 +152,74 @@ test.colNames.only <- function() {
 
 ### colnames with empty vectors/matrix/data.frame
 
-test.readWrite.emptyVector <- function() {
-    x <- double()
-        # ncol(x) is NULL: nothing  will be written
+test.colNames.emptyVector <- function() {
+    x <- double() # ncol(x) is NULL: nothing  will be written
+    
     write.xls(x, wfile, colNames = FALSE)
     checkTrue(is.null(read.xls(wfile)))
+    checkTrue(is.null(read.xls(wfile, type = "double")))
+
     write.xls(x, wfile, colNames = TRUE)
     checkTrue(is.null(read.xls(wfile)))
-    write.xls(x, wfile, colNames = "myColName")
+    checkTrue(is.null(read.xls(wfile, type = "double")))
+
+    write.xls(x, wfile, colNames = "myColName")  # todo: fix in pro
     checkTrue(is.null(read.xls(wfile)))
+    checkTrue(is.null(read.xls(wfile, type = "double")))
 }
 
 
-test.readWrite.emptyMatrix <- function() {
-    x <- as.matrix(integer())
-        # ncol(x) is 1: colnames will potentially be written
+test.colNames.emptyMatrix <- function() {
+    x <- as.matrix(integer()) # ncol(x) is 1: colnames will potentially be written
+    
     write.xls(x, wfile, colNames = FALSE)
     checkTrue(is.null(read.xls(wfile)))
+    checkTrue(is.null(read.xls(wfile, type = "double")))
+
     write.xls(x, wfile, colNames = TRUE)
+    wdata <- read.xls(wfile, colNames = FALSE, stringsAsFactor = FALSE)
+    checkIdentical(wdata[[1]], "V1")
     wdata <- read.xls(wfile, colNames = FALSE, type = "character")
     checkIdentical(wdata[[1]], "V1")
+
     write.xls(x, wfile, colNames = "myColName")
+    wdata <- read.xls(wfile, colNames = FALSE, stringsAsFactor = FALSE)
+    checkIdentical(wdata[[1]], "myColName")
     wdata <- read.xls(wfile, colNames = FALSE, type = "character")
     checkIdentical(wdata[[1]], "myColName")
 }
 
-test.readWrite.emptyDataFrames <- function() {
-    x <- data.frame()
-        # ncol(x) is 0: nothing  will be written
+test.colNames.emptyDataFrames <- function() {
+    x <- data.frame() # ncol(x) is 0: nothing  will be written
+    
     write.xls(x, wfile, colNames = FALSE)
     checkTrue(is.null(read.xls(wfile)))
+    checkTrue(is.null(read.xls(wfile, type = "double")))
+    
     write.xls(x, wfile, colNames = TRUE)
     checkTrue(is.null(read.xls(wfile)))
-    write.xls(x, wfile, colNames = "custCol")
+    checkTrue(is.null(read.xls(wfile, type = "double")))
+    
+    write.xls(x, wfile, colNames = "custCol")  # todo: fix in pro
     checkTrue(is.null(read.xls(wfile)))
+    checkTrue(is.null(read.xls(wfile, type = "double")))
 
     x <- as.data.frame(double())
-    colnames(x) <- "custCol"
-        # ncol(x) is 1: colnames will potentially be written
+    colnames(x) <- "custCol" # ncol(x) is 1: colnames will potentially be written
+    
     write.xls(x, wfile, colNames = FALSE)
     checkTrue(is.null(read.xls(wfile)))
+    checkTrue(is.null(read.xls(wfile, type = "double")))
+
     write.xls(x, wfile, colNames = TRUE)
+    wdata <- read.xls(wfile, colNames = FALSE, stringsAsFactor = FALSE)
+    checkIdentical(wdata[[1]], "custCol")
     wdata <- read.xls(wfile, colNames = FALSE, type = "character")
     checkIdentical(wdata[[1]], "custCol")
+
     write.xls(x, wfile, colNames = "myColName")
+    wdata <- read.xls(wfile, colNames = FALSE, stringsAsFactor = FALSE)
+    checkIdentical(wdata[[1]], "myColName")
     wdata <- read.xls(wfile, colNames = FALSE, type = "character")
     checkIdentical(wdata[[1]], "myColName")
 }
@@ -241,9 +274,11 @@ test.colNames.withAutoRowNames <- function() {
     wdata <- read.xls(wfile, type = "double")
     checkIdentical(wdata, rdata)
         # data.frame
+        # note: free recognizes as logical, pro as logical->then->integer
     rdata <- read.xls(rfile, sheet = 5, type = "data.frame", from = 5)
     checkIdentical(colnames(rdata), mycol)
     write.xls(rdata, wfile)
     wdata <- read.xls(wfile, type = "data.frame")
+    if (isFreeVersion) wdata[,3] <- as.logical(wdata[,3])
     checkIdentical(wdata, rdata)
 }

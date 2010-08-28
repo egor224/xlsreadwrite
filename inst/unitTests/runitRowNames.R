@@ -50,22 +50,30 @@ test.rowNames.givenEmpty <- function() {
     checkIdentical(rownames(rdata), myrow)
     rownames(rdata) <- NULL
     write.xls(rdata, wfile, rowNames = TRUE)
-    wdata <- read.xls(wfile, type = "character")
+    wdata <- read.xls(wfile, type = "character", rowNames = TRUE)
     checkIdentical(wdata, rdata.orig)
 
     rdata <- rdata.orig <- suppressWarnings(read.xls(rfile,  sheet = "spec_pro", rowNames = TRUE, type = "data.frame", from = 4))
     checkIdentical(rownames(rdata), myrow)
     rownames(rdata) <- NULL
     write.xls(rdata, wfile, rowNames = TRUE)
-    wdata <- suppressWarnings(read.xls(wfile, type = "data.frame"))
+    wdata <- suppressWarnings(read.xls(wfile, type = "data.frame", rowNames = TRUE))
     checkIdentical(wdata, rdata.orig)
 }
 
 test.rowNames.partlyMissing <- function() {
-    myrow <- c("1", "formula", "3", "4", "logical", "oledate", "integer", "oletime", "oledatetime",
+    myrow <- c("-", "formula", "3", "4", "logical", "oledate", "integer", "oletime", "oledatetime",
                "10", "double", "12", "13", "14", "15", "character/factor", "17")
     rdata <- read.xls(rfile,  sheet = "autoCls", rowNames = TRUE, type = "character", from = 2)
     checkIdentical(rownames(rdata), myrow)
+}
+
+
+### disallow duplicated rownames
+
+test.rowNames.duplicated <- function() {  # todo: fix in pro
+    checkException(rdata <- read.xls(rfile, sheet = "intSht", rowNames = TRUE, type = "integer"), silent = TRUE)
+    checkException(rdata <- read.xls(rfile, sheet = "intSht", rowNames = TRUE, type = "data.frame"), silent = TRUE)
 }
 
 

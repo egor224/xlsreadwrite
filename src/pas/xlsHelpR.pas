@@ -21,6 +21,7 @@ uses
 
   { call R functions (in the global R environment) }
 function GetWd(): pSExp;
+function AnyDuplicated( _val: pSExp ): boolean;
 function AsFactor( _val: pSExp ): pSExp;
 function MakeNames( _names: pSExp ): pSExp;
 function IsNaScalar( _x: pSExp ): boolean;
@@ -40,6 +41,16 @@ function GetWd(): pSExp;
     result:= riProtect( riEval( fcall, RGlobalEnv ) );
     riUnprotect( 2 );
   end;
+
+function anyDuplicated( _val: pSExp ): boolean;
+  var
+    res, fcall: pSExp;
+  begin
+    fcall:= riProtect( riLang2( riInstall( 'anyDuplicated' ), _val ) );
+    res:= riProtect( riEval( fcall, RGlobalEnv ) );
+    result:= riInteger(riCoerceVector( res, setIntSxp ))[0] > 0;
+    riUnprotect( 2 );
+  end {AnyDuplicated};
 
 function AsFactor( _val: pSExp ): pSExp;
   var

@@ -1,12 +1,12 @@
-### tests: misc
+### misc. old bugs
 
-test.readRKCellValue <- function() {
+test.speciality.RKCellValue <- function() {
         # in an old flexcel version RKRecord values were not divided by 100
     rdata <- read.xls(rfile, sheet = "spec_1", type = "double", from = 12)[1]
     checkIdentical(rdata, 143.28)
 }
 
-test.read1ColDataFrame <- function() {
+test.speciality.1ColDataFrame <- function() {
     myval <- c("Courtelary", "Delemont", "Franches-Mnt", "Moutier", "Neuveville", "Porrentruy",
                "", "", "OLD BUG WITH RKRecord:", "143.28")
     rdata <- read.xls(rfile, FALSE, sheet = "spec_1", from = 4, stringsAsFactor = FALSE)
@@ -17,14 +17,14 @@ test.read1ColDataFrame <- function() {
     checkIdentical(rdata, wdata)
 }
 
-test.readWithBadFrom <- function() {
+test.speciality.readWithBadFrom <- function() {
     checkException(read.xls(rfile, from = "bad"), silent = TRUE)
 }
 
 
-### tests: relative paths
+### relative paths
 
-test.readRelativePathNames <- function() {
+test.speciality.readRelativePathNames <- function() {
     oldwd <- getwd()
     rf1 <- "origData.xls"
         # (the following two paths may fail for non-standard dataDir)

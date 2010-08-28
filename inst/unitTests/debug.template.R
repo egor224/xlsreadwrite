@@ -11,14 +11,13 @@ runInvisible <- function(func) if (TRUE) invisible(func) else func
 
 ### source/load the code
 source(file.path(mytest, "loadRUnit.R"))
-.setupFilenames(mytest, mywork)
 if (withLib == "free") library(xlsReadWrite) else
-if (withLib == "pro") library(xlsReadWritePro) else {
-    stopifnot(withLib == "")
+if (withLib == "pro") library(xlsReadWritePro) else { stopifnot(withLib == "")
     runInvisible(sapply(dir(file.path(myroot, "R"), full.names = TRUE), source))
     if (!is.null(getLoadedDLLs()$xlsReadWrite)) dyn.unload(getLoadedDLLs()$xlsReadWrite[["path"]])
     runInvisible(dyn.load(file.path(myroot, "src/pas/xlsReadWrite.dll")))
 }
+.setup(mytest, mywork)
 
 ### execute tests
 

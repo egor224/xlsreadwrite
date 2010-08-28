@@ -1,15 +1,13 @@
 ### setup
 
 myd <- c(38429, 38432, 38433, 38434, 38435, 38440, 38441, 38442, 38443)
-isFree <- length(grep("cells", names(formals(read.xls)))) == 0
-
 
 ### basic datetime functions
 
 test.dateTime.conversion <- function() {
     s <- dateTimeToStr(myd)
     res <- strToDateTime(s)
-    if (isFree) checkEquals(res, myd) else checkEquals(unclass(res), myd)
+    if (isFreeVersion) checkEquals(res, myd) else checkEquals(unclass(res), myd)
 }
 
 test.dateTime.conversionFmt <- function() {
@@ -20,12 +18,12 @@ test.dateTime.conversionFmt <- function() {
 test.dateTime.isoConversion <- function() {
     res <- dateTimeToIsoStr(myd)
     res <- isoStrToDateTime(res)
-    if (isFree) checkEquals(res, myd) else checkEquals(unclass(res), myd)
+    if (isFreeVersion) checkEquals(res, myd) else checkEquals(unclass(res), myd)
 }
 
 test.dateTime.isoConversionFmt <- function() {
     res <- isoStrToDateTime(c("20070319", "2007-03-19", "20070319233112", "2007-03-19 23:31:12" )) 
-    if (isFree) {
+    if (isFreeVersion) {
         checkEquals(res, c(39160, 39160, 39160.98, 39160.98))
     } else {
         checkEquals(unclass(res), c(39160, 39160, 39160.98, 39160.98))
