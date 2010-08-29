@@ -751,7 +751,7 @@ function ReadDataframe(): pSExp; cdecl;
 
             { matrix }
 
-            if outputtype in [otDouble, otInteger, otLogical, otCharacter] then begin
+            if outputtype in [otDouble, otNumeric, otInteger, otLogical, otCharacter] then begin
               firstColAsRowName:= rownameKind = rnTrue;
               if not firstColAsRowName then begin
                 if (rownameKind = rnNA) and CheckForAutoRow() then begin
