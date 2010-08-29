@@ -14,7 +14,11 @@ type
     Node: string;
     Idxs: aIdxArr;
   end;
-    { a bit ugly/complicated but with integers it would be even worse }
+    { nod_[<binary>][platform][content]
+      - b: regular *b*inary, c: *c*ran binary;
+      - w32: windows 32 platform;
+      - without specifier, the binary; shlib: only shlib; src: depending on
+        prefix either R source with shlib or else full R and Pascal source }
   aNodeEntry = ( nod_bw32shlib, nod_bw32src, nod_bw32, nod_csrc, nod_cw32, nod_src );
 
 var
@@ -46,14 +50,14 @@ const
 
 { --------------------------------------------------------- helpers }
 
-procedure DecreaseVersion( _arr: aIdxArr );
+procedure SortVersion( _arr: aIdxArr );
   var
     i, j, idx: integer;
   begin
     for j:= Low( _arr ) to High( _arr ) do begin
       idx:= j;
       for i:= j + 1 to High( _arr ) do begin
-        if StrToInt( ReplaceStr( Listing[_arr[i]], '.', '' ) ) > StrToInt( ReplaceStr( Listing[_arr[j]], '.', '' ) ) then begin
+        if StrToInt( ReplaceStr( Listing[_arr[i]], '.', '' ) ) > StrToInt( ReplaceStr( Listing[_arr[idx]], '.', '' ) ) then begin
           idx:= i;
         end;
       end;
@@ -69,7 +73,7 @@ function SupportedFileExts( const ext: string ): boolean;
   end;
 
   { only has to match partially }
-function IndexOfListing( const sval: string ): integer;
+function IndexInListing( const sval: string ): integer;
   var
     i: integer;
   begin
@@ -124,24 +128,28 @@ begin
   try
     if ParamCount <> 3 then raise Exception.Create( 'need 3 parameters: listing, listing-template and output' );
 
-      { parse listing }
+    { parse listing.txt }
+
     Listing:= TStringList.Create(); Listing.LoadFromFile( ParamStr( 1 ) );
-    for nodeidx:= Low( Nodes ) to High( Nodes ) do begin
-      idx:= IndexOfListing( Nodes[nodeidx].Node );
+
+    for nodeidx:= Low( aNodeEntry ) to High( aNodeEntry ) do begin
+      idx:= IndexInListing( Nodes[nodeidx].Node );
       while idx > -1 do begin
         if (Listing.Count >= idx + 1) and SupportedFileExts( ExtractFileExt( Listing[idx + 1] ) ) then begin
             SetLength( Nodes[nodeidx].Idxs, Length( Nodes[nodeidx].Idxs ) + 1 );
             Nodes[nodeidx].Idxs[Length( Nodes[nodeidx].Idxs ) - 1]:= idx;
         end;
         Listing[idx]:= ReplaceStr( ReplaceStr( Listing[idx], Nodes[nodeidx].Node, '' ), ':', '' );
-        idx:= IndexOfListing( Nodes[nodeidx].Node );
+        idx:= IndexInListing( Nodes[nodeidx].Node );
       end;
     end;
+
+    { generate listing.html }
 
     ListingGen:= TStringList.Create(); ListingGen.LoadFromFile( ParamStr( 2 ) );
 
 		  { handle <%VAR_BINWIN32_VERSIONFILE%> }
-    DecreaseVersion( Nodes[nod_bw32].Idxs );
+    SortVersion( Nodes[nod_bw32].Idxs );
     ListingGen.Text:= ReplaceStr( ListingGen.Text, '<%VAR_BINWIN32_VERSIONFILE%>',
         GenVersionFile( nod_bw32 ) );
 
@@ -164,7 +172,7 @@ begin
         GenFile( Nodes[nod_csrc].Idxs[0] + 1, 'cran/src', '      '  ) );
 
 		  { handle <%VAR_CRANWIN32_VERSIONFILE%> }
-    DecreaseVersion( Nodes[nod_cw32].Idxs );
+    SortVersion( Nodes[nod_cw32].Idxs );
     ListingGen.Text:= ReplaceStr( ListingGen.Text, '<%VAR_CRANWIN32_VERSIONFILE%>',
         GenVersionFile( nod_cw32 ) );
 
