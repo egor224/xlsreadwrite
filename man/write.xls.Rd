@@ -48,10 +48,9 @@ write.xls(x, file,
     is located at \code{R\_HOME/library/xlsReadWrite/template} (search relative to the
     shlib in R\_HOME/library/xlsReadWrite/libs/[<arch>]/).
 
-    The character string arguments for \code{colNames} and/or \code{colClasses}
-    can optionally include an entry for the column used for the rownames (entry
-    will be discarded). For \code{rowNames}, the character vector length must be
-    the same as the number of data rows.
+    The character string arguments for \code{colNames} can optionally include an entry
+    for the column used for the rownames (entry will be discarded). For \code{rowNames},
+    the character vector length must be the same as the number of data rows.
 }
 
 \section{Pro version}{
