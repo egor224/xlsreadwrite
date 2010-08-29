@@ -422,13 +422,18 @@ procedure WriteDataframe(); cdecl;
       writer.Adapter:= TXLSAdapter.Create( writer );
       try
           { open template file }
-        tmpl:= ShlibPath() + '..\template\TemplateNew.xls';
+        tmpl:= ShlibPath() + '\..\..\template\TemplateNew.xls';           // >= R2.12
         if not FileExists( tmpl ) then begin
-            { alternative path to support debugging from Delphi }
-          tmpl:= ShlibPath() + '\..\..\inst\template\TemplateNew.xls';
+          tmpl:= ShlibPath() + '\..\template\TemplateNew.xls';            // < R2.12
           if not FileExists( tmpl ) then begin
-            raise ExlsReadWrite.CreateFmt('Could not find template file (%s)',
-                [ShlibPath() + '..\template\TemplateNew.xls'] );
+            tmpl:= ShlibPath() + '\..\..\inst\template\TemplateNew.xls';  // debugging
+            if not FileExists( tmpl ) then begin
+              raise ExlsReadWrite.CreateFmt('Could not find template file (%s).' + #13#10 +
+                 'It is supposed to be at these places (>= R2.12.x / < R2.12.x):' + #13#10 +
+                 '- %s' + #13#10 + '- %s',
+                  ['TemplateNew.xls', ShlibPath() + '\..\..\template\TemplateNew.xls',
+                  ShlibPath() + '\..\template\TemplateNew.xls'] );
+            end;
           end;
         end;
         writer.OpenFile( tmpl );

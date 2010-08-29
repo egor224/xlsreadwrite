@@ -5,7 +5,7 @@
 ifneq (,$(findstring Rversion.mk,$(wildcard *.mk))) 
 include Rversion.mk 
 else
-R_VERSION = 2.10.1
+R_VERSION = 2.11.0
 endif
 include include.mk
 
@@ -15,19 +15,21 @@ include include.mk
 ### (go from old to new R versions, src pkgs will always be overwritten) ######
 ###############################################################################
 
+# comprehensive targets
 .PHONY: check
 .PHONY: release
 .PHONY: push-release
 
+# regular version
 .PHONY: check-reg build-reg release-reg
-.PHONY: check-cran build-cran release-cran
-.PHONY: check-cran-final
-
+# cran version
+.PHONY: check-cran build-cran release-cran check-cran-final
+# developer targets
 .PHONY: test-dev c-dev pas-dev clean-dev
 
-$(warning ***********************************)
-$(warning R version $(R_VERSION) will be used)
-$(warning ***********************************)
+test:
+	@echo $(RCMD)
+	@cd $(GEN) && $(RCMD) build $(PKG)
 
 
 ### reg - regular/pascal version ##############################################
@@ -45,7 +47,7 @@ build-reg: clean-gen populate-gen-reg $(GENDIR_GEN)
 ifneq (,$(findstring --allow-dirty,$(flags))) 
 	@HASDIFF="`$(GIT) diff HEAD 2> $(NULL)`" && if (test "$$HASDIFF"); then echo "dirty" >> $(GEN)/$(PKG)/inst/COMMIT; fi
 else
-	@HASDIFF="`$(GIT) diff HEAD 2> $(NULL)`" && if (test "$$HASDIFF"); then echo "!!! workspace is not clean (commit changes or use '--allow-dirty' flag)" && exit 1; fi
+	@HASDIFF="`$(GIT) diff HEAD 2> $(NULL)`" && if (test "$$HASDIFF"); then echo "!!! workspace is not clean (commit changes or use 'flags=--allow-dirty')" && exit 1; fi
 endif
 	# src
 	@cd $(GEN) && $(RCMD) build $(PKG)
@@ -140,7 +142,8 @@ $(GEN)/$(PKG)/src/$(SRCC): $(DEV)/src/c/$(SRCC)
 
 test-dev:
 	@echo "### test-dev"
-	@cd $(DEV)/__misc/debug && $(RSCRIPT) -e "source('../dynRunner/dynRunner.R');dynTests()"
+	@echo "does not work atm" && exit 1
+	//@cd $(DEV)/__misc/debug && $(RSCRIPT) -e "source('../dynRunner/dynRunner.R');dynTests()"
 shlib-c:
 	@echo "### c-dev"
 	@cd $(DEV)/src/c && $(RCMD) SHLIB $(PKG).c

@@ -1,6 +1,10 @@
 # include.mk for xlsReadWrite Makefile
 # ====================================
 
+# warning because info will not be displayed
+$(warning ***********************************)
+$(warning R version $(R_VERSION) will be used)
+$(warning ***********************************)
 
 ### settings
 
@@ -26,7 +30,7 @@ R_MAJVER := $(basename $(R_VERSION))
   # (ugly, FIXME)
 R_HOME = C:/Programme/R/R-$(R_VERSION)
 R = $(R_HOME)/bin/R.exe
-RCMD = $(R_HOME)/bin/Rcmd.exe
+RCMD = $(R_HOME)/bin/R CMD
 RGUI = $(R_HOME)/bin/Rgui.exe
 RSCRIPT = $(R_HOME)/bin/Rscript.exe
 GIT = C:/Programme/Git/bin/git.exe
@@ -41,7 +45,7 @@ export DLL = dll
 
 # directories
 PKGDIR = man R src tests \
-    inst/RUnitTests/data inst/template
+    inst/unitTests/data inst/template
 PKGDIR_GEN = $(addprefix $(GEN)/$(PKG)/,$(PKGDIR))
 GENDIR_GEN = $(GEN)/bin $(GEN)/src
 RELDIR = bin/$(OS_FOLDER)/shlib bin/$(OS_FOLDER)/src \
@@ -52,9 +56,9 @@ RELDIR_REL = $(addprefix $(REL)/,$(RELDIR))
 # files in non-source folders
 AUX_DEV = $(DEV) $(DEV)/DESCRIPTION $(DEV)/NAMESPACE \
     $(DEV)/tests/runRUnitTests.R \
-    $(DEV)/inst/LICENSE $(DEV)/inst/README \
-    $(DEV)/inst/RUnitTests/Data/origData.xls $(DEV)/inst/template/TemplateNew.xls \
-    $(wildcard $(DEV)/inst/RUnitTests/*.R) \
+    $(DEV)/LICENSE $(DEV)/inst/README \
+    $(DEV)/inst/unitTests/Data/origData.xls $(DEV)/inst/template/TemplateNew.xls \
+    $(wildcard $(DEV)/inst/unitTests/*.R) \
     $(wildcard $(DEV)/man/*) $(wildcard $(DEV)/R/*)
 AUX = $(subst $(DEV)/,,$(AUX_DEV))
 AUX_GEN = $(addprefix $(GEN)/$(PKG)/,$(AUX))
