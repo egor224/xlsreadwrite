@@ -64,7 +64,6 @@ xls.getshlib(pkgvers = NA, url = NA, md5 = TRUE,
 }
 
 \examples{\dontrun{
-# (without dontrun the CRAN version check would fail)
 
 xls.getshlib()
 }}

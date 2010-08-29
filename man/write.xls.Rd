@@ -27,13 +27,13 @@ write.xls(x, file,
         to the current working directory.}
     \item{colNames}{with \code{TRUE} the data colnames will be written into
         the first row of the sheet or the 'from'-starting area. Provide a character
-        vector to write custom colnames. With \code{FALSE} no colnames will be written.
+        vector to write custom colnames. With \code{FALSE} no colnames will be written.}
     \item{sheet}{case sensitive character string or one-based number indicating
         the Excel sheet to write to.}
     \item{from}{row to start writing to.}
     \item{rowNames}{with \code{TRUE} the data rownames will be written into
         the first column of the sheet. Provide a character vector to write
-        custom rownames. With \code{FALSE} no rownames will be written..}
+        custom rownames. With \code{FALSE} no rownames will be written..
 
         With \code{NA} the first column will be considered to receive the
         rownames under the following conditions: 1) \code{colNames} is \code{TRUE}
@@ -44,10 +44,9 @@ write.xls(x, file,
 }
 
 \details{
-    New files are based on the template \code{TemplateNew.xls} which is located in
-    \code{R\_HOME/library/xlsReadWrite/template) or in the application data folder
-    \code{<APPDATA>/Treetron/xlsReadWrite}. If both templates exists, the one in the
-    application data folder has priority.
+    New files are based on the template \code{TemplateNew.xls}. It can be modified and
+    is located at \code{R\_HOME/library/xlsReadWrite/template} (search relative to the
+    shlib in R\_HOME/library/xlsReadWrite/libs/[<arch>]/).
 
     The character string arguments for \code{colNames} and/or \code{colClasses}
     can optionally include an entry for the column used for the rownames (entry
@@ -63,22 +62,31 @@ write.xls(x, file,
     \code{\link{read.xls}}, \code{\link{write.table}}
 }
 
-\examples{\dontrun{
-# (without dontrun the CRAN version check would fail)
+\examples{
+# --- only run for regular, i.e. non-cran version
+shlib <- system.file("libs", if (nzchar(arch <- .Platform$r_arch)) arch else "",
+                     paste("xlsReadWrite", .Platform$dynlib.ext, sep = ""), package = "xlsReadWrite")
+if (file.exists(shlib) && (file.info(shlib)$size > 20000)) {
+# -----------------------------------------------
 
 myval <- data.frame(
     Fertility = c(80.2, 83.1, 92.5), 
     Agriculture = c(17, 45.1, 39.7), 
-    Testlogical = c(T,T,F), 
+    Testlogical = c(TRUE, TRUE, FALSE), 
     Education = as.integer(c(12, 9, 5)), 
     Catholic = c(9.96, 84.84, 93.4), 
     Infant.Mortality = c(22.2, 22.2, 20.2), 
     Testcharacter = c("Co", "De", "Fr"), stringsAsFactors = FALSE)
+
+# write the data.frame...
+
 write.xls(myval, "mytest.xls")
+
+# ..then read and check (colClasses because we want logical and integer (for
+# double) and character (for factor; could also have given stringsAsFactors))
 
 mycls <- c("double", "double", "logical", "integer", "double", "double", "character")
 wdata <- read.xls("mytest.xls", colClasses = mycls)
-rownames(myval) <- as.character(rownames(myval))
 stopifnot(identical(wdata, myval))
 }}
 

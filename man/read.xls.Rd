@@ -25,9 +25,10 @@ read.xls(file,
     \item{colNames}{with \code{TRUE} the first row of the sheet or the
         'from'-starting area will be used for the colnames. Provide a
         character vector to use custom colnames. The above colname values may
-        possibly get modified depending on the \link{checkNames} argument.
+        possibly get modified depending on the \code{checkNames} argument.
         
-        With \code{FALSE} a "V" followed by column number will be used.}
+        The default, "V" followed by column number, will be used for \code{FALSE}
+        end for missing values.}
     \item{sheet}{case sensitive character string or one-based number indicating
         the Excel sheet to read from.}
     \item{type}{a character string indicating the type of the returned object.
@@ -37,8 +38,8 @@ read.xls(file,
     \item{rowNames}{with \code{TRUE} the first column of the sheet will be used
         for the rownames. Provide a character vector to use custom rownames. The
         above rowname values may possibly get modified depending on the
-        \link{checkNames} argument. With \code{FALSE} defaults will be used
-        (numbers starting from one).}
+        \code{checkNames} argument. With \code{FALSE} defaults will be used
+        (numbers starting from one).
 
         With \code{NA} the first sheet column will be considered to 
         contain rownames under the following conditions: 1) \code{colNames}
@@ -58,7 +59,7 @@ read.xls(file,
 
         If nothing can be determined, all values become NA (logical) and a warning
         message will be printed. \code{NA} can be used together with other entries,
-        e.g. \code{c(NA, "double", NA, "isodate").
+        e.g. \code{c(NA, "double", NA, "isodate")}.}
     \item{checkNames}{logical. With \code{TRUE} col- and rownames are guaranteed
         to be syntactically valid variable names, e.g. by prepending an "X" or
         translating invalid characters to "." (details see \code{\link{make.names}}.}
@@ -70,7 +71,7 @@ read.xls(file,
         NA-values. \code{NA} disables interpretation, i.e. an Excel 'NA' string
         becomes a character or factor. Empty cells depend on the type, see details.}
     \item{stringsAsFactors}{logical, the default follows the global option
-        \code{\link{default.stringsAsFactors()}}.}
+        \code{\link{default.stringsAsFactors}}.}
 }
 
 \details{
@@ -104,19 +105,28 @@ read.xls(file,
     \code{\link{read.table}}, \code{\link{matrix}}, \code{\link{data.frame}}
  }
 
-\examples{\dontrun{
-# (without dontrun the CRAN version check would fail)
+\examples{
+# --- only run for regular, i.e. non-cran version
+shlib <- system.file("libs", if (nzchar(arch <- .Platform$r_arch)) arch else "",
+                     paste("xlsReadWrite", .Platform$dynlib.ext, sep = ""), package = "xlsReadWrite")
+if (file.exists(shlib) && (file.info(shlib)$size > 20000)) {
+# -----------------------------------------------
 
     # path to Excel file
 rfile <- system.file("unitTests/data/origData.xls", package = "xlsReadWrite")
 
-    # read as data.frame and as double matrix
+# read as data.frame and as double
+
 read.xls(rfile)
 read.xls(rfile, type = "double")
 
-    # custom col-/rownames
-rdata <- read.xls(rfile, colNames = myc("one", "two", "three", "four"), 
-                  from = 3, rowNames = FALSE, type = "double")
+# read as integer with custom col-/rownames 
+
+(rdata <- read.xls(rfile, from = 3, type = "integer",
+                   colNames = c("one", "one", "three", "four"), 
+                   rowNames = paste("r", 1:12, sep = "")))
+    # 2nd 'one' ends as 'one.1' due to 'checkNames'
+stopifnot(colnames(rdata)[2] == "one.1")
 }}
 
 \keyword{file}

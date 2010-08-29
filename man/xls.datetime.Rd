@@ -18,10 +18,8 @@ isoStrToDateTime(sdate)
 
 \arguments{
     \item{odate}{a numeric (double) datetime value from Excel.}
-    \item{format}{formatting string. With an empty string the defaults will be used:
-        shortDateFormat and longTimeFormat settings of the system will be used.See list in details.}
-    \item{format}{formatting string. With an empty string the defaults,
-        shortDateFormat and longTimeFormat, will be used.}
+    \item{format}{formatting string, see list in details. With an empty string the
+        system defaults settings for shortDateFormat and longTimeFormat will be used.}
     \item{isoformat}{one of the following character strings: \code{YYYYMMDD} (basic date),
         \code{YYYY-MM-DD} (extended date), \code{YYYYMMDDhhmmss} (basic date/time),
         \code{YYYY-MM-DD hh:mm:ss} (extended date/time) or \code{YYYY-MM-DD hh:mm:ss.f}
@@ -86,8 +84,12 @@ isoStrToDateTime(sdate)
     \code{\link{read.xls}}, \code{\link{write.xls}}
 }
 
-\examples{\dontrun{
-# (without dontrun the CRAN version check would fail)
+\examples{
+# --- only run for regular, i.e. non-cran version
+shlib <- system.file("libs", if (nzchar(arch <- .Platform$r_arch)) arch else "",
+                     paste("xlsReadWrite", .Platform$dynlib.ext, sep = ""), package = "xlsReadWrite")
+if (file.exists(shlib) && (file.info(shlib)$size > 20000)) {
+# -----------------------------------------------
 
     # convert iso datetime character to numeric datetime
 (idt <- isoStrToDateTime("2010-08-14 09:23:13"))
@@ -105,6 +107,6 @@ dateTimeToStr(idt, format = "dddddd")          # long date format
 (dd <- strToDateTime(sd))
 (tt <- strToDateTime(st))
 
-isTRUE(all.equal(dt, (dd + tt)))
+stopifnot(isTRUE(all.equal(dt, (dd + tt))))
 }}
 \keyword{chron}
