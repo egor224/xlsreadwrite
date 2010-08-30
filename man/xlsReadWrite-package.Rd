@@ -28,7 +28,7 @@
         \item the package does \emph{not} have any external dependencies
         \item it has a nice simple interface and \emph{just works fine} (since ~4 years)
     }
-    
+
     Regarding the less rosy side: \code{xlsReadWrite} - still - is windows
     only and uses proprietary 3rd party code (which means only our own code is,
     and can be, free). The package is written in Pascal, a very nice language,
@@ -39,7 +39,7 @@
     already earlier through FreePascal). The underlying library is being developed
     for .xlsx (quite a long time already) and so there is hope to support the .xlsx
     format sometime in future. Probably as a separate package, but we will see.
-    
+
     xlsReadWrite is not the only possibility to interface Excel. Besides the
     \emph{pro} shareware version (see below) there are the following packages:
     \emph{RODBC} (drivers), \emph{gdata} (Perl), \emph{RExcel} or \emph{COM} (Excel),
@@ -62,18 +62,18 @@
 
 \section{3. Tests and compiling}{
     TESTS
-     
+
     The enclosed RUnit tests help us maintaining the quality and kind of secure what happens in certain
     circumstances, e.g. when column types for data.frames will be determined. Or with the, sometimes,
     quite complicated col-/rownames behaviour. Otherwise they provide additional user examples and give
     assurance that things work correctly on a local system. 
-    
+
     You may run the approx. 50 unit tests with the following code:
-    
+
     \preformatted{
             # adapt path
         ruDir <- "C:/Programme/R/R-2.11.0/library/xlsReadWrite/unitTests" 
-        
+
             # note: RUnit package needed
         library(RUnit); library(xlsReadWrite)
 
@@ -82,9 +82,9 @@
         .setup(ruDir, getwd())
         execTestSuite(ruDir, getwd())
     }
-    
+
     COMPILING
-    
+
     Prerequisites: Delphi 2007 and Flexcel (http://www.tmssoftware.com, a high-quality
     code library for the core Excel-work). Then follow these steps:\enumerate{
         \item Clone the github repo and initialize the RPascal submodule
@@ -103,7 +103,7 @@
 
 \section{4. CRAN version and xlsReadWritePro}{
     CRAN
-    
+
     Besides the \emph{regular} \code{xlsReadWrite} package there is a special \emph{cran} version.
     Reason (copied from the cran version startup message):\preformatted{
         "BACKGROUND: Our own xlsReadWrite code is free, but we also use proprietary code\n"
@@ -112,9 +112,9 @@
         "binaries due to security reasons' we only provide a placeholder and you can\n"
         "download the binary shlib separately.\n\n";
     }
-    
+
     XLSREADWRITEPRO
-    
+
     The pro version is our second attempt and goes further than the free version:\itemize{
         \item append data to existing files, 
         \item work with in-memory objects, e.g. to compose Excel reports with multiple sheets,
@@ -125,7 +125,7 @@
         \item additional oleDateTime helper functions,
         \item last but not least: formal support contact.
     }
-    
+
     By purchasing the \code{xlsReadWritePro} shareware version you help support our
     development and maintenance effort. We are grateful that quite some people
     and companies did and both, the free and the pro version shall benefit. The trial

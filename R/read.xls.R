@@ -9,7 +9,7 @@ read.xls <- function(
     naStrings = NA,
     stringsAsFactors = default.stringsAsFactors())
 {
-    res <- .Call("ReadXls", file, colNames, sheet, type, from, 
+    res <- .Call("ReadXls", file, colNames, sheet, type, from,
                  rowNames, colClasses, checkNames,
                  dateTimeAs, naStrings, stringsAsFactors)
     res

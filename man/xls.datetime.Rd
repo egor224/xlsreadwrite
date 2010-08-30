@@ -31,14 +31,14 @@ isoStrToDateTime(sdate)
     \code{dateTimeToStr} converts a given double value to a string representation
     optionally using the formatting string.
 
-    \code{strToDateTime} converts a given character string to a double value. 
-    The string must contain a valid date and/or time value (in respect to the 
+    \code{strToDateTime} converts a given character string to a double value.
+    The string must contain a valid date and/or time value (in respect to the
     active locale). Names (e.g. days and months) are not supported.
 
     \code{isoStrToDateTime} and \code{dateTimeToIsoStr} follow the ISO-8601 standard.
 
     The following table lists the supported formatting strings (adapted from Delphi help):
-  
+
   \tabular{ll}{
     c   \tab ShortDateFormat followed by LongTimeFormat. Time is not displayed if midnight precisely.\cr
     d   \tab day as a number without a leading zero (1-31).\cr
@@ -109,4 +109,5 @@ dateTimeToStr(idt, format = "dddddd")          # long date format
 
 stopifnot(isTRUE(all.equal(dt, (dd + tt))))
 }}
+
 \keyword{chron}

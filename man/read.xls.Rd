@@ -26,7 +26,7 @@ read.xls(file,
         'from'-starting area will be used for the colnames. Provide a
         character vector to use custom colnames. The above colname values may
         possibly get modified depending on the \code{checkNames} argument.
-        
+
         The default, "V" followed by column number, will be used for \code{FALSE}
         end for missing values.}
     \item{sheet}{case sensitive character string or one-based number indicating
@@ -87,23 +87,26 @@ read.xls(file,
 }
 
 \section{Pro version}{
-    By purchasing xlsReadWritePro you help support our development and maintenance effort. 
-    We are grateful that quite some people and companies did, and both, the free and pro
-    version shall benefit (e.g. crossplatform, which is not done on a lazy afternoon...).
+    The pro version is our second attempt and has more capabilities:
+    + append data to existing files, + work with in-memory objects, e.g. to
+    compose Excel reports with multiple sheets, + address confined data areas:
+    rows, cols and from, to. Also (named) ranges and picking from individual
+    cells, + manage sheets (copy, rename, delete), + read/write formula values,
+    + insert, list and delete images, + additional oleDateTime helper functions,
+    + last but not least: formal support.
 
-    Features of xlsReadWritePro: + append data to existing files, + work with in-memory objects
-    (e.g. to compose Excel reports), + work with data area subsets, + use (named) ranges and pick 
-    individual cells, + work with sheets (copy, rename, delete), + read/write formula values, 
-    + insert, list and delete images, + more oleDateTime helper functions, + formal support.
-
-    The trial (http://www.swissr.org) is free and the two versions can easily be switched 
-    and coexist just fine. So, why not check out xlsReadWritePro and see for yourself? 
+    By purchasing the xlsReadWritePro shareware version you help support our
+    development and maintenance effort. We are grateful that quite some people
+    and companies did and both, the free and the pro version shall benefit.
+    
+    The trial (http://www.swissr.org) is free and the two versions do coexist
+    just fine. So, why not check out xlsReadWritePro and see for yourself?
 }
 
 \seealso{
     \code{\link{write.xls}},
     \code{\link{read.table}}, \code{\link{matrix}}, \code{\link{data.frame}}
- }
+}
 
 \examples{
 # --- only run for regular, i.e. non-cran version

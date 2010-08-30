@@ -33,7 +33,7 @@ write.xls(x, file,
     \item{from}{row to start writing to.}
     \item{rowNames}{with \code{TRUE} the data rownames will be written into
         the first column of the sheet. Provide a character vector to write
-        custom rownames. With \code{FALSE} no rownames will be written..
+        custom rownames. With \code{FALSE} no rownames will be written.
 
         With \code{NA} the first column will be considered to receive the
         rownames under the following conditions: 1) \code{colNames} is \code{TRUE}
@@ -69,12 +69,12 @@ if (file.exists(shlib) && (file.info(shlib)$size > 20000)) {
 # -----------------------------------------------
 
 myval <- data.frame(
-    Fertility = c(80.2, 83.1, 92.5), 
-    Agriculture = c(17, 45.1, 39.7), 
-    Testlogical = c(TRUE, TRUE, FALSE), 
-    Education = as.integer(c(12, 9, 5)), 
-    Catholic = c(9.96, 84.84, 93.4), 
-    Infant.Mortality = c(22.2, 22.2, 20.2), 
+    Fertility = c(80.2, 83.1, 92.5),
+    Agriculture = c(17, 45.1, 39.7),
+    Testlogical = c(TRUE, TRUE, FALSE),
+    Education = as.integer(c(12, 9, 5)),
+    Catholic = c(9.96, 84.84, 93.4),
+    Infant.Mortality = c(22.2, 22.2, 20.2),
     Testcharacter = c("Co", "De", "Fr"), stringsAsFactors = FALSE)
 
 # write the data.frame...
