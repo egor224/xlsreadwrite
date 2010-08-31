@@ -51,10 +51,10 @@
     \tabular{rll}{
         General info:   \tab\tab		\url{http://www.swissr.org} \cr
         Downloads:	    \tab\tab	    \url{http://dl.dropbox.com/u/2602516/swissrpkg/index.html}\cr
-        .\tab\tab\cr
+        .\tab\tab.\cr
         Bugtracker:  	\tab\tab		\url{http://dev.swissr.org/projects/xlsReadWrite}\cr
         Forum:          \tab\tab        \url{http://dev.swissr.org/projects/xlsReadWrite/boards}\cr
-        .\tab\tab\cr
+        .\tab\tab.\cr
         CRAN version:	\tab\tab		\url{http://cran.r-project.org/web/packages/xlsReadWrite/index.html}\cr
         Source code: 	\tab\tab		\url{http://github.com/swissr/xlsReadWrite}\cr
     }
