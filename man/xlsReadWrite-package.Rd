@@ -5,7 +5,7 @@
 \title{Read and write Excel files}
 
 
-\section{}{
+\description{
     \enumerate{
         \item Overview
         \item Links and downloads
@@ -19,8 +19,8 @@
     \code{xlsReadWrite} is a packages which allows to read and write Excel files.
     Currently supported is the .xls (BIFF8) file format.
 
-    Please type \code{?read.xls} and  \code{?write.xls} to learn about the actual
-    commands and usage.
+    Please type \code{help(package = "xlsReadWrite")}, \code{?read.xls}, \code{?write.xls}
+    and \code{?xls.getshlib} to learn about the package and the actual commands and usage.
 
     The main plus points:\itemize{
         \item it is fast
@@ -44,7 +44,7 @@
     \emph{pro} shareware version (see below) there are the following packages:
     \emph{RODBC} (drivers), \emph{gdata} (Perl), \emph{RExcel} or \emph{COM} (Excel),
     \emph{dataframes2xls} (Python), \emph{xlsx} (Apache POI, Java) and, of course,
-    using plain old \emph{.csv} files. Note: dependencies mentioned in brackets.
+    using plain old \emph{.csv} files. Note, dependencies have been mentioned in brackets.
 }
 
 \section{2. Links and downloads}{
@@ -86,7 +86,9 @@
     COMPILING
 
     Prerequisites: Delphi 2007 and Flexcel (http://www.tmssoftware.com, a high-quality
-    code library for the core Excel-work). Then follow these steps:\enumerate{
+    code library for the core Excel-work).
+
+    Then follow these steps:\enumerate{
         \item Clone the github repo and initialize the RPascal submodule
         \item Adapt paths in 'include.mk'
         \item Make sure that the RTools are in your path (as first entry!)
@@ -95,7 +97,7 @@
            \item 'src/pas/vFlexcelCommits.txt' has the currently used Flexcel version
         }
         \item Compile:\itemize{
-           \item open a console in the root folder and execute 'make build' or
+           \item open a console in the root folder and execute 'make build-reg' or
            \item open the Delphi project file, adapt paths, host application, and press F9...
         }
     }
@@ -129,15 +131,17 @@
     By purchasing the \code{xlsReadWritePro} shareware version you help support our
     development and maintenance effort. We are grateful that quite some people
     and companies did and both, the free and the pro version shall benefit. The trial
-    (http://www.swissr.org) is free and the two versions install in parallel without
-    any problems. So, why not check out \code{xlsReadWritePro} now and see for yourself? 
+    (http://www.swissr.org) is free and the two versions do coexist just fine. So, why
+    not check out \code{xlsReadWritePro} now and see for yourself?
 }
 
 \section{5. Contact/feedback}{
-    The preferred communication channel is the \url{http://dev.swissr.org} forum. Otherwise 
-    by email, \emph{chappi at swissr.org} or - for pro version users - \emph{hans-peter.suter at treetron.ch}.
-    
-    August 30, 2010 / Hans-Peter
+    The preferred communication channel is the forum
+    (\url{http://dev.swissr.org/projects/xlsreadwrite/boards}). Otherwise by email,
+    \emph{support at swissr.org} or - for pro version users -
+    \emph{hans-peter.suter at treetron.ch}.
+
+    August 31, 2010 / Hans-Peter
 }
 
 \keyword{package}

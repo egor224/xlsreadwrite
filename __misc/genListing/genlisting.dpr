@@ -144,7 +144,7 @@ begin
       end;
     end;
 
-    { generate listing.html }
+    { generate index.html listing }
 
     ListingGen:= TStringList.Create(); ListingGen.LoadFromFile( ParamStr( 2 ) );
 

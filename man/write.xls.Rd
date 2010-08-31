@@ -19,10 +19,7 @@ write.xls(x, file,
 \arguments{
     \item{x}{data to be written. A data.frame or else a matrix or vector
         of the type double, integer, logical or character. Vectors will
-        be written in columns.
-
-        The data (including potential col-/rownames) has to fit into the
-        destination area eventually restricted by the \code{from}.}
+        be written in columns.}
     \item{file}{name of an Excel file. Path may be absolute or relative
         to the current working directory.}
     \item{colNames}{with \code{TRUE} the data colnames will be written into
@@ -30,7 +27,7 @@ write.xls(x, file,
         vector to write custom colnames. With \code{FALSE} no colnames will be written.}
     \item{sheet}{case sensitive character string or one-based number indicating
         the Excel sheet to write to.}
-    \item{from}{row to start writing to.}
+    \item{from}{row to start writing from.}
     \item{rowNames}{with \code{TRUE} the data rownames will be written into
         the first column of the sheet. Provide a character vector to write
         custom rownames. With \code{FALSE} no rownames will be written.
@@ -40,13 +37,14 @@ write.xls(x, file,
         or contains a character vector, 2) there are character rownames (supplied or
         in the data) and 3) the first entry thereof is not \code{"1"}.}
     \item{naStrings}{the string to be used for \code{NA} values. An empty string
-        clears (blanks) the cell, with \code{NA} cell value will not be changed.}
+        clears (blanks) the cell, with \code{NA} the cell value will not be changed
+        (only relevant for an eventual future append capability).}
 }
 
 \details{
     New files are based on the template \code{TemplateNew.xls}. It can be modified and
-    is located at \code{R\_HOME/library/xlsReadWrite/template} (search relative to the
-    shlib in R\_HOME/library/xlsReadWrite/libs/[<arch>]/).
+    is located at \code{R\_HOME/library/xlsReadWrite/template} (internal search is relative
+    to the shlib located at R\_HOME/library/xlsReadWrite/libs/[<arch>/]).
 
     The character string arguments for \code{colNames} can optionally include an entry
     for the column used for the rownames (entry will be discarded). For \code{rowNames},

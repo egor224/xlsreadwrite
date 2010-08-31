@@ -56,7 +56,7 @@ RELDIR_REL = $(addprefix $(REL)/,$(RELDIR))
 # files in non-source folders
 AUX_DEV = $(DEV) $(DEV)/DESCRIPTION $(DEV)/NAMESPACE \
     $(DEV)/tests/runRUnitTests.R \
-    $(DEV)/LICENSE $(DEV)/inst/README \
+    $(DEV)/LICENSE \
     $(DEV)/inst/unitTests/Data/origData.xls $(DEV)/inst/template/TemplateNew.xls \
     $(wildcard $(DEV)/inst/unitTests/*.R) \
     $(wildcard $(DEV)/man/*) $(wildcard $(DEV)/R/*)

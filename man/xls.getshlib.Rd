@@ -3,18 +3,18 @@
 \title{Download regular shlib (dll/so)}
 
 \description{
-    Downloads the regular shlib (~420 KB) from our swissr dropbox account and
-    replaces the currently used placeholder shlib with it.
+    Downloads the regular shlib from our swissr dropbox account and replaces
+    the currently used placeholder shlib with it. The size is about ~420 KB.
 
-    Using the default arguments, i.e. \code{xls.getshlib()}, should work just
+    Using the default command, \code{xls.getshlib()}, should work just
     fine. Every step is documented, i.e. will be printed on the console.
 
     There are quite a lot of different versions (shlib, R, (in future) platforms).
-    If the correct shlib cannot be found automatically and/or if there are permission
-    issues, \code{xls.getshlib} will stop. In this case please download the full
-    regular package or shlib manually: the URLs are the details section. Other than
-    being less convenient, it is the same. If there is a failure where the package
-    is to blame, please notify us, such that we can remedy the problem. Thank you.
+    If the correct shlib cannot be found and/or if there are permission issues,
+    \code{xls.getshlib} will stop. But you can always download the full regular
+    package or shlib manually from the URLs indicated in the details section below.
+    Other than being less convenient it is the same. In case of any issues we are
+    happy to hear about them (bug tracker/forum/email), thank you.
 }
 
 \usage{
@@ -46,15 +46,15 @@ xls.getshlib(pkgvers = NA, url = NA, md5 = TRUE,
 
     Why do you need to download the shlib from an external source? Two (three)
     reasons:\enumerate{
-        \item (background: our own xlsReadWrite code is free, but we also use
+        \item Our own xlsReadWrite code is free (GPL-2), but we also use
             proprietary code (Flexcel, tmssoftware.com) which can only be distributed
-            legally in precompiled, i.e. binary form).
-        \item As CRAN 'generally does not accept submissions of precompiled
-            binaries due to security reasons' we only provide a placeholder and you
+            legally in precompiled, i.e. binary form.
+        \item As CRAN \emph{'generally does not accept submissions of precompiled
+            binaries due to security reasons'} we only provide a placeholder and you
             have to download the binary shlib separately.
         \item xlsReadWrite is written in Pascal and CRAN most probably would not
             be able/interested to support suitable compilers, i.e. Delphi and/or FPC.
-            (We didnot ask about compilers though, because the first point already
+            (We did not ask about compilers though, because the first point already
             rules out a normal open source distribution of the package).
     }
 
