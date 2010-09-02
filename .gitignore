@@ -1,4 +1,5 @@
 __gen/*
+__misc/CHANGES
 __misc/debug/*
 __misc/debug/out/*
 *.local
@@ -6,9 +7,11 @@ __misc/debug/out/*
 *.dll
 *.dcu
 *.o
-eproject.cfg
 TODO
 Rversion.mk
+inst/unitTests/_Details.txt
+inst/unitTests/_Results.txt
+inst/unitTests/debug.R
 src/pas/xlsReadWrite.dproj*
 src/pas/xlsReadWrite.identcache
 src/pas/xlsReadWrite.res
