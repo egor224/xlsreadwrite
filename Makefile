@@ -145,7 +145,7 @@ test-dev:
 	@echo "does not work atm" && exit 1
 	//@cd $(DEV)/__misc/debug && $(RSCRIPT) -e "source('../dynRunner/dynRunner.R');dynTests()"
 rdconv:
-	@$(RCMD) Rdconv -t 'html' -o $(DEV)/man/out.html $(DEV)/man/$(FILE)
+	@$(RCMD) Rdconv -t $(TYPE) -o $(DEV)/man/out.$(TYPE) $(DEV)/man/$(FILE)
 shlib-c:
 	@echo "### c-dev"
 	@cd $(DEV)/src/c && $(RCMD) SHLIB $(PKG).c
