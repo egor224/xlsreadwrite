@@ -29,8 +29,8 @@ function MakeNames( _names: pSExp ): pSExp;
 function IsNaScalar( _x: pSExp ): boolean;
 
 const
-  TheCR = #10;
-  TheCRCR = #10#10;
+  TheLF = #10;
+  TheLFLF = #10#10;
 
 {==============================================================================}
 implementation
@@ -39,7 +39,7 @@ uses
 
 procedure ConsoleMsg( const _msg: string );
   begin
-    rRprintf( pChar(_msg + TheCR) );
+    rRprintf( pChar(_msg + TheLF) );
   end;
 
 function GetWd(): pSExp;

@@ -31,14 +31,14 @@ var
 
 const
   theStartupMsg =
-    'xlsReadWrite version @version@ (sha1: @commit@)' + TheCR +
-    'Copyright (C) 2010 Hans-Peter Suter, Treetron, Switzerland.' + TheCR +
-    '' + TheCR +
-    'This package can be freely distributed and used for any' + TheCR +
-    'purpose. It comes with ABSOLUTELY NO GUARANTEE at all.' + TheCR +
-    'xlsReadWrite has been written in Pascal and contains binary' + TheCR +
-    'code from a proprietary library. Our own code is free (GPL-2).' + TheCRCR +
-    'Updates, issue tracker and more info at http://www.swissr.org.' + TheCRCR;
+    'xlsReadWrite version @version@ (sha1: @commit@)' + TheLF +
+    'Copyright (C) 2010 Hans-Peter Suter, Treetron, Switzerland.' + TheLF +
+    '' + TheLF +
+    'This package can be freely distributed and used for any' + TheLF +
+    'purpose. It comes with ABSOLUTELY NO GUARANTEE at all.' + TheLF +
+    'xlsReadWrite has been written in Pascal and contains binary' + TheLF +
+    'code from a proprietary library. Our own code is free (GPL-2).' + TheLFLF +
+    'Updates, issue tracker and more info at http://www.swissr.org.' + TheLFLF;
 
 procedure MyDllProc( _reason: integer );
   var
