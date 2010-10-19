@@ -605,11 +605,11 @@ function ReadDataframe(): pSExp; cdecl;
           end {for considered rows};
 
           if coltypes[c] = setNilSxp then begin
-            rWarning( pChar(Format( 'Could not determine a type for column %d' +  #13#10 +
-                '  - colCnt: %d, rowCnt: %d, first/last data row: %d/%d' + #13#10 +
-                '  - "logical" type will be assumed and all values will be NA' + #13#10 +
-                '  - if the row/colCnt area is too large, try to delete the superfluous' + #13#10 +
-                '    rows/columns (not only the cell content))' + #13#10#13#10,
+            rWarning( pChar(Format( 'Could not determine a type for column %d' +  TheCR +
+                '  - colCnt: %d, rowCnt: %d, first/last data row: %d/%d' + TheCR +
+                '  - "logical" type will be assumed and all values will be NA' + TheCR +
+                '  - if the row/colCnt area is too large, try to delete the superfluous' + TheCR +
+                '    rows/columns (not only the cell content))' + TheCRCR,
                 [c + 1 + integer(firstColAsRowName), colcnt, rowcnt, from,
                 from + consideredRows] )) );
             coltypes[c]:= setNilSxp;  // riLogical and RNaInt will be used;

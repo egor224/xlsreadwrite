@@ -24,7 +24,7 @@ function DateTimeXls( _what, _val, _fmt: pSExp ): pSExp; cdecl;
 {==============================================================================}
 implementation
 uses
-  SysUtils, DateUtils, Variants, Classes, Math, rhR;
+  SysUtils, DateUtils, Variants, Classes, Math, rhR, xlsHelpR;
 
 { --------------------------------------------------------- date time routines }
 { taken from the pro version (lcid removed (can be worked around with iso strings)) }
@@ -216,9 +216,9 @@ function DateTimeXls( _what, _val, _fmt: pSExp ): pSExp; cdecl;
         rError( pChar(E.Message) );
       end;
       on E: EAssertionFailed do begin
-        rError( pChar('Assertion failed: ' + E.Message + #13#10 +
-            '(This is probably a bug. We appreciate your bug report.' + #13#10 +
-            'Please include the message and (if possible) the relevant data.' + #13#10 +
+        rError( pChar('Assertion failed: ' + E.Message + TheCR +
+            '(This is probably a bug. We appreciate your bug report.' + TheCR +
+            'Please include the message and (if possible) the relevant data.' + TheCR +
             'Thank you!)') );
       end;
       on E: Exception do begin

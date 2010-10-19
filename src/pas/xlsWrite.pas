@@ -428,9 +428,9 @@ procedure WriteDataframe(); cdecl;
           if not FileExists( tmpl ) then begin
             tmpl:= ShlibPath() + '\..\..\inst\template\TemplateNew.xls';  // debugging
             if not FileExists( tmpl ) then begin
-              raise ExlsReadWrite.CreateFmt('Could not find template file (%s).' + #13#10 +
-                 'It is supposed to be at these places (>= R2.12.x / < R2.12.x):' + #13#10 +
-                 '- %s' + #13#10 + '- %s',
+              raise ExlsReadWrite.CreateFmt('Could not find template file (%s).' + TheCR +
+                 'It is supposed to be at these places (>= R2.12.x / < R2.12.x):' + TheCR +
+                 '- %s' + TheCR + '- %s',
                   ['TemplateNew.xls', ShlibPath() + '\..\..\template\TemplateNew.xls',
                   ShlibPath() + '\..\template\TemplateNew.xls'] );
             end;
@@ -450,7 +450,7 @@ procedure WriteDataframe(); cdecl;
                  (riLength( _colNames ) = colcnt + integer(rowNameAsFirstCol)))
         then begin
           raise EXlsReadWrite.CreateFmt( 'colNames must be a vector with ' +
-            'equal length as the column count (incl./excl. column for rownames;' + #13#10 +
+            'equal length as the column count (incl./excl. column for rownames;' + TheCR +
             '(length: %d/colcnt: %d/has rownames: %d)',
             [riLength( _colNames ), colCnt, integer(rowNameAsFirstCol)] );
         end;

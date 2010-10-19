@@ -60,7 +60,7 @@ procedure R_init_xlsReadWrite( _info: pDllInfo ); cdecl;
 
 procedure R_unload_xlsReadWrite( _info: pDllInfo ); cdecl;
   begin
-    rRprintf( 'xlsReadWrite.dll unloaded%s', #13#10 );
+    ConsoleMsg( 'xlsReadWrite.dll unloaded%s' );
   end;
 
 

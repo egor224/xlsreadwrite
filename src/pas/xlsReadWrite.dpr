@@ -31,14 +31,14 @@ var
 
 const
   theStartupMsg =
-    'xlsReadWrite version @version@ (sha1: @commit@)' + #13#10 +
-    'Copyright (C) 2010 Hans-Peter Suter, Treetron, Switzerland.' + #13#10 +
-    '' + #13#10 +
-    'This package can be freely distributed and used for any' + #13#10 +
-    'purpose. It comes with ABSOLUTELY NO GUARANTEE at all.' + #13#10 +
-    'xlsReadWrite has been written in Pascal and contains binary' + #13#10 +
-    'code from a proprietary library. Our own code is free (GPL-2).' + #13#10#13#10 +
-    'Updates, issue tracker and more info at http://www.swissr.org.' + #13#10#13#10;
+    'xlsReadWrite version @version@ (sha1: @commit@)' + TheCR +
+    'Copyright (C) 2010 Hans-Peter Suter, Treetron, Switzerland.' + TheCR +
+    '' + TheCR +
+    'This package can be freely distributed and used for any' + TheCR +
+    'purpose. It comes with ABSOLUTELY NO GUARANTEE at all.' + TheCR +
+    'xlsReadWrite has been written in Pascal and contains binary' + TheCR +
+    'code from a proprietary library. Our own code is free (GPL-2).' + TheCRCR +
+    'Updates, issue tracker and more info at http://www.swissr.org.' + TheCRCR;
 
 procedure MyDllProc( _reason: integer );
   var
@@ -50,9 +50,9 @@ procedure MyDllProc( _reason: integer );
             vriRRowNamesSymbol, vriRNamesSymbol, vriRNaString, vriRLevelsSymbol] ) );
         if not LoadRVars( ToRVarsArr( [varRNaN, varRNaInt, varRNaReal] ) ) then loadok:= False;
         if not loadok then begin
-          rRprintf( 'Load xlsReadWrite.dll: Could not initialize RNilValue/RNaN' );
+          ConsoleMsg( 'Load xlsReadWrite.dll: Could not initialize RNilValue/RNaN' );
         end;
-        rRprintf( pChar(ReplaceVersionAndCommit( theStartupMsg )), #13#10 );
+        ConsoleMsg( ReplaceVersionAndCommit( theStartupMsg ));
       end;
       DLL_PROCESS_DETACH: begin
         { Here the console is already gone and a message window pops up if

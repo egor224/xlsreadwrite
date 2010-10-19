@@ -19,6 +19,8 @@ interface
 uses
   Variants, rhRInternals, rhxTypesAndConsts;
 
+procedure ConsoleMsg( const _msg: string );
+
   { call R functions (in the global R environment) }
 function GetWd(): pSExp;
 function AnyDuplicated( _val: pSExp ): boolean;
@@ -26,12 +28,19 @@ function AsFactor( _val: pSExp ): pSExp;
 function MakeNames( _names: pSExp ): pSExp;
 function IsNaScalar( _x: pSExp ): boolean;
 
+const
+  TheCR = #10;
+  TheCRCR = #10#10;
 
 {==============================================================================}
 implementation
 uses
   rhR;
 
+procedure ConsoleMsg( const _msg: string );
+  begin
+    rRprintf( pChar(_msg + TheCR) );
+  end;
 
 function GetWd(): pSExp;
   var
