@@ -14,7 +14,7 @@ read.xls(file,
          type = "data.frame",
          from = 1,
          rowNames = NA, colClasses = NA, checkNames = TRUE,
-         dateTimeAs = "numeric",
+         dateTime = "numeric",
          naStrings = NA,
          stringsAsFactors = default.stringsAsFactors())
 }
@@ -63,7 +63,7 @@ read.xls(file,
     \item{checkNames}{logical. With \code{TRUE} col- and rownames are guaranteed
         to be syntactically valid variable names, e.g. by prepending an "X" or
         translating invalid characters to "." (\code{\link{make.names}} is being used).}
-    \item{dateTimeAs}{scalar character controlling how Excel date values will be
+    \item{dateTime}{scalar character controlling how Excel date values will be
         interpreted when no explicit colClasses have been given: \code{isodatetime} or
         \code{numeric}. 'isodatetime'  will possibly be shortened to 'isodate' or 'isotime'
         and 'numeric' to 'integer'.}
