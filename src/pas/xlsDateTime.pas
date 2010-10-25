@@ -216,9 +216,9 @@ function DateTimeXls( _what, _val, _fmt: pSExp ): pSExp; cdecl;
         rError( pChar(E.Message) );
       end;
       on E: EAssertionFailed do begin
-        rError( pChar('Assertion failed: ' + E.Message + TheLF +
-            '(This is probably a bug. We appreciate your bug report.' + TheLF +
-            'Please include the message and (if possible) the relevant data.' + TheLF +
+        rError( pChar('Assertion failed: ' + E.Message + TheLE +
+            '(This is probably a bug. We appreciate your bug report.' + TheLE +
+            'Please include the message and (if possible) the relevant data.' + TheLE +
             'Thank you!)') );
       end;
       on E: Exception do begin

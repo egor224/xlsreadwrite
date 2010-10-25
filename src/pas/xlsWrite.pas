@@ -97,7 +97,6 @@ function AutoRowname: boolean;
     myrownames:= nil;
 
     if colheadertype <> chtNone then begin
-
       if riIsFrame( _data ) then begin
         myrownames:= riGetAttrib( _data, RRowNamesSymbol );
       end else begin
@@ -106,6 +105,7 @@ function AutoRowname: boolean;
           myrownames:= riVectorElt( dim, 0 );
         end;
       end;
+
       result:= Assigned( myrownames) and (not riIsNull( myrownames)) and
           (riLength( myrownames ) > 0) and (riTypeOf( myrownames ) = setStrSxp) and
           (string(riChar( riStringElt( myrownames, 0 ) )) <> '1' );
@@ -428,9 +428,9 @@ procedure WriteDataframe(); cdecl;
           if not FileExists( tmpl ) then begin
             tmpl:= ShlibPath() + '\..\..\inst\template\TemplateNew.xls';  // debugging
             if not FileExists( tmpl ) then begin
-              raise ExlsReadWrite.CreateFmt('Could not find template file (%s).' + TheLF +
-                 'It is supposed to be at these places (>= R2.12.x / < R2.12.x):' + TheLF +
-                 '- %s' + TheLF + '- %s',
+              raise ExlsReadWrite.CreateFmt('Could not find template file (%s).' + TheLE +
+                 'It is supposed to be at these places (>= R2.12.x / < R2.12.x):' + TheLE +
+                 '- %s' + TheLE + '- %s',
                   ['TemplateNew.xls', ShlibPath() + '\..\..\template\TemplateNew.xls',
                   ShlibPath() + '\..\template\TemplateNew.xls'] );
             end;
@@ -450,11 +450,10 @@ procedure WriteDataframe(); cdecl;
                  (riLength( _colNames ) = colcnt + integer(rowNameAsFirstCol)))
         then begin
           raise EXlsReadWrite.CreateFmt( 'colNames must be a vector with ' +
-            'equal length as the column count (incl./excl. column for rownames;' + TheLF +
+            'equal length as the column count (incl./excl. column for rownames;' + TheLE +
             '(length: %d/colcnt: %d/has rownames: %d)',
             [riLength( _colNames ), colCnt, integer(rowNameAsFirstCol)] );
         end;
-
 
             
         { -- write matrix }

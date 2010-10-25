@@ -37,7 +37,7 @@ const
                  = ( 'NA', 'True', 'False', 'Supplied' );
 
 function DateTimeToStrFmt( const _format: string; _dateTime: TDateTime ): string;
-                 
+
 function StrToOutputType( const _type: string ): aOutputType;
 function AllOutputTypes(): string;
 
@@ -176,7 +176,7 @@ function VarAsDouble(const _v: variant; _default: double; _nanvalue: double;
       end;
 
       varEmpty,
-      varNull: 	          result:= _navalue;
+      varNull:            result:= _navalue;
     else
       result:= _default;
     end {case};

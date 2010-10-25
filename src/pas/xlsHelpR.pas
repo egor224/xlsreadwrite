@@ -29,8 +29,9 @@ function MakeNames( _names: pSExp ): pSExp;
 function IsNaScalar( _x: pSExp ): boolean;
 
 const
-  TheLF = #10;
-  TheLFLF = #10#10;
+  TheLE =   #10;           // line ending (#13#10 breaks on R2.12 with Win7 64 bit)
+  TheLELE = TheLE + TheLE;
+
 
 {==============================================================================}
 implementation
@@ -39,7 +40,7 @@ uses
 
 procedure ConsoleMsg( const _msg: string );
   begin
-    rRprintf( pChar(_msg + TheLF) );
+    rRprintf( pChar(_msg + TheLe) );
   end;
 
 function GetWd(): pSExp;

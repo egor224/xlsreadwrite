@@ -22,7 +22,7 @@ uses
 
 function ReadXls( _file, _colNames, _sheet, _type,
     _from, _rowNames, _colClasses,
-    _checkNames, _dateTimeAs, _naStrings,
+    _checkNames, _dateTime, _naStrings,
     _stringsAsFactors: pSExp ): pSExp; cdecl;
 
 {==============================================================================}
@@ -34,39 +34,39 @@ uses
 {  -- helper - copied from pro }
 
 function IsNaScalar( _x: pSExp ): boolean;
-  begin
-    result:= (riLength( _x ) = 1) and
-             (riTypeOf( _x ) in [setLglSxp, setRealSxp]) and
-             (rIsNa( riReal( riCoerceVector( _x, setRealSxp ) )[0] ) <> 0);
-  end;
-
-function IsInNaStrings(const _val: string; const _naStrings: TStringDynArray = nil): boolean; overload;
-  var
-    i: Integer;
-  begin
-    result:= False;
-    if (Assigned( _naStrings )) and (Length( _naStrings ) > 0) then begin
-      for i:= 0 to Length( _naStrings ) - 1 do begin
-        if _val = _naStrings[i] then begin
-          result:= True;
-          Break;
-        end;
-      end;
-    end {if};
-  end;
-
-function IsInNaStrings(const _val: variant; const _naStrings: TStringDynArray = nil): boolean; overload;
-  begin
-    result:= (VarType( _val ) = varOleStr) or (VarType( _val ) = varString);
-    if result then result:= IsInNaStrings( string(_val), _naStrings );
-  end;
-
-
+  begin
+    result:= (riLength( _x ) = 1) and
+             (riTypeOf( _x ) in [setLglSxp, setRealSxp]) and
+             (rIsNa( riReal( riCoerceVector( _x, setRealSxp ) )[0] ) <> 0);
+  end;
+
+function IsInNaStrings(const _val: string; const _naStrings: TStringDynArray = nil): boolean; overload;
+  var
+    i: Integer;
+  begin
+    result:= False;
+    if (Assigned( _naStrings )) and (Length( _naStrings ) > 0) then begin
+      for i:= 0 to Length( _naStrings ) - 1 do begin
+        if _val = _naStrings[i] then begin
+          result:= True;
+          Break;
+        end;
+      end;
+    end {if};
+  end;
+
+function IsInNaStrings(const _val: variant; const _naStrings: TStringDynArray = nil): boolean; overload;
+  begin
+    result:= (VarType( _val ) = varOleStr) or (VarType( _val ) = varString);
+    if result then result:= IsInNaStrings( string(_val), _naStrings );
+  end;
+
+
 {  -- code }
 
 function ReadXls( _file, _colNames, _sheet, _type,
     _from, _rowNames, _colClasses,
-    _checkNames, _dateTimeAs, _naStrings,
+    _checkNames, _dateTime, _naStrings,
     _stringsAsFactors: pSExp ): pSExp; cdecl;
   var
     reader: TFlexCelImport;
@@ -134,10 +134,10 @@ procedure ArgTrueFalse(_val: pSExp; var _res: boolean; const _what: string );
     end;
   end;
 
-procedure ArgDateTimeAs( _dateTimeAs: pSExp );
+procedure ArgDateTime( _dateTime: pSExp );
   begin
-    dateTimeAsNumeric:= GetScalarString( _dateTimeAs,
-        'dateTimeAs must be a character string' ) = 'numeric';
+    dateTimeAsNumeric:= GetScalarString( _dateTime,
+        'dateTime must be a character string' ) = 'numeric';
   end;
 
 procedure ArgRowNames(_colNames: pSExp);
@@ -165,19 +165,19 @@ procedure ArgRowNames(_colNames: pSExp);
 procedure ArgNaStrings(_naStrings: pSExp);
   var
     i: integer;
-  begin
-    if IsNaScalar( _naStrings ) then begin
-      naStrings:= nil;
-    end else begin
-      if riIsString( _naStrings ) then begin
-        SetLength( naStrings, riLength( _naStrings ) );
-        for i := 0 to riLength( _naStrings ) - 1 do begin
-          naStrings[i]:= string(riChar( riStringElt( _naStrings, i ) ));
-        end;
-      end else begin
-        raise ExlsReadWrite.Create('"naStrings" must be a string or NA');
-      end;
-    end;
+  begin
+    if IsNaScalar( _naStrings ) then begin
+      naStrings:= nil;
+    end else begin
+      if riIsString( _naStrings ) then begin
+        SetLength( naStrings, riLength( _naStrings ) );
+        for i := 0 to riLength( _naStrings ) - 1 do begin
+          naStrings[i]:= string(riChar( riStringElt( _naStrings, i ) ));
+        end;
+      end else begin
+        raise ExlsReadWrite.Create('"naStrings" must be a string or NA');
+      end;
+    end;
   end;
 
 procedure PrepareColNames( _idx: integer );
@@ -251,10 +251,10 @@ procedure ApplyMatrixRowColNames( _result: pSExp);
       end;
 
       if anyDuplicated(myrownames) then begin
-        riUnprotect( unprotcnt );
-        raise ExlsReadWrite.Create('rownames must be unique');
-      end;
-    end;
+        riUnprotect( unprotcnt );
+        raise ExlsReadWrite.Create('rownames must be unique');
+      end;
+    end;
 
       { colnames }
     mycolnames:= riProtect( riAllocVector( setStrSxp, colcnt - integer(firstColAsRowName) ));
@@ -311,9 +311,9 @@ procedure ApplyFrameRowNames( _result: pSExp);
     end;
 
     if anyDuplicated(myrownames) then begin
-      riUnprotect( 1 );
-      raise ExlsReadWrite.Create('rownames must be unique');
-    end;
+      riUnprotect( 1 );
+      raise ExlsReadWrite.Create('rownames must be unique');
+    end;
     riSetAttrib( _result, RRowNamesSymbol, myrownames );
     riUnprotect( 1 );
   end {ApplyRowNames};
@@ -344,8 +344,8 @@ function ReadDouble(): pSExp; cdecl;
     for r:= 0 to rowcnt - 1 do begin
       for c:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
         v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
-        if IsInNaStrings( v, naStrings ) then riReal( result )[r + rowcnt*c]:= RNaReal
-        else riReal( result )[r + rowcnt*c]:= VarAsDouble( v, RNaN, RNaN, RNaReal );
+        if IsInNaStrings( v, naStrings ) then riReal( result )[r + rowcnt*c]:= RNaReal
+        else riReal( result )[r + rowcnt*c]:= VarAsDouble( v, RNaN, RNaN, RNaReal );
       end {for};
     end {for};
     riUnprotect( 1 );
@@ -360,8 +360,8 @@ function ReadInteger(): pSExp; cdecl;
     for r:= 0 to rowcnt - 1 do begin
       for c:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
         v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
-        if IsInNaStrings( v, naStrings ) then riInteger( result )[r + rowcnt*c]:= RNaInt
-        else riInteger( result )[r + rowcnt*c]:= VarAsInt( v, RNaInt, RNaInt );
+        if IsInNaStrings( v, naStrings ) then riInteger( result )[r + rowcnt*c]:= RNaInt
+        else riInteger( result )[r + rowcnt*c]:= VarAsInt( v, RNaInt, RNaInt );
       end {for};
     end {for};
     riUnprotect( 1 );
@@ -376,8 +376,8 @@ function ReadLogical(): pSExp; cdecl;
     for r:= 0 to rowcnt - 1 do begin
       for c:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
         v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
-        if IsInNaStrings( v, naStrings ) then riLogical( result )[r + rowcnt*c]:= RNaInt
-        else riLogical( result )[r + rowcnt*c]:= integer(VarAsBool( v, False, RNaInt ));
+        if IsInNaStrings( v, naStrings ) then riLogical( result )[r + rowcnt*c]:= RNaInt
+        else riLogical( result )[r + rowcnt*c]:= integer(VarAsBool( v, False, RNaInt ));
       end {for};
     end {for};
     riUnprotect( 1 );
@@ -392,8 +392,8 @@ function ReadString(): pSExp; cdecl;
     for r:= 0 to rowcnt - 1 do begin
       for c:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
         v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
-        if IsInNaStrings( v, naStrings ) then riSetStringElt( result, r + rowcnt*c, RNaString )
-        else riSetStringElt( result, r + rowcnt*c, riMkChar( pChar(VarAsString( v )) ) );
+        if IsInNaStrings( v, naStrings ) then riSetStringElt( result, r + rowcnt*c, RNaString )
+        else riSetStringElt( result, r + rowcnt*c, riMkChar( pChar(VarAsString( v )) ) );
       end {for};
     end {for};
     riUnprotect( 1 );
@@ -590,10 +590,10 @@ function ReadDataframe(): pSExp; cdecl;
               varOleStr,
               varString: begin
                 if IsLogicalString( v ) then begin
-                  coltypes[c]:= setLglSxp;
-                  riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
+                  coltypes[c]:= setLglSxp;
+                  riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
                   Break;
-                end else if stringsAsFactors then begin
+                end else if stringsAsFactors then begin
                   coltypes[c]:= setSpecialSxp;  // misuse of aSExpType
                 end else begin
                   coltypes[c]:= setStrSxp;
@@ -605,11 +605,11 @@ function ReadDataframe(): pSExp; cdecl;
           end {for considered rows};
 
           if coltypes[c] = setNilSxp then begin
-            rWarning( pChar(Format( 'Could not determine a type for column %d' +  TheLF +
-                '  - colCnt: %d, rowCnt: %d, first/last data row: %d/%d' + TheLF +
-                '  - "logical" type will be assumed and all values will be NA' + TheLF +
-                '  - if the row/colCnt area is too large, try to delete the superfluous' + TheLF +
-                '    rows/columns (not only the cell content))' + TheLFLF,
+            rWarning( pChar(Format( 'Could not determine a type for column %d' +  TheLE +
+                '  - colCnt: %d, rowCnt: %d, first/last data row: %d/%d' + TheLE +
+                '  - "logical" type will be assumed and all values will be NA' + TheLE +
+                '  - if the row/colCnt area is too large, try to delete the superfluous' + TheLE +
+                '    rows/columns (not only the cell content))' + TheLELE,
                 [c + 1 + integer(firstColAsRowName), colcnt, rowcnt, from,
                 from + consideredRows] )) );
             coltypes[c]:= setNilSxp;  // riLogical and RNaInt will be used;
@@ -633,20 +633,20 @@ function ReadDataframe(): pSExp; cdecl;
         case coltypes[c] of
           setIntSxp: begin
             v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
-            if IsInNaStrings( v, naStrings ) then riInteger( riVectorElt( result, c ) )[r]:= RNaInt
-            else riInteger( riVectorElt( result, c ) )[r]:= VarAsInt( v, RNaInt, RNaInt );
+            if IsInNaStrings( v, naStrings ) then riInteger( riVectorElt( result, c ) )[r]:= RNaInt
+            else riInteger( riVectorElt( result, c ) )[r]:= VarAsInt( v, RNaInt, RNaInt );
           end;
           setRealSxp: begin
             v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
-            if IsInNaStrings( v, naStrings ) then riReal( riVectorElt( result, c ) )[r]:= RNaReal
-            else riReal( riVectorElt( result, c ) )[r]:= VarAsDouble( v, RNaN, RNaN, RNaReal );
-          end;
+            if IsInNaStrings( v, naStrings ) then riReal( riVectorElt( result, c ) )[r]:= RNaReal
+            else riReal( riVectorElt( result, c ) )[r]:= VarAsDouble( v, RNaN, RNaN, RNaReal );
+          end;
           setCplxSxp, setDotSxp, setAnySxp: begin   // misused for Date
             v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
-            if IsInNaStrings( v, naStrings ) then begin
-              riSetStringElt( riVectorElt( result, c ), r, RNaString );
-            end else begin
-              tempdat:= VarAsDouble( v, RNaN, RNaN, RNaReal );
+            if IsInNaStrings( v, naStrings ) then begin
+              riSetStringElt( riVectorElt( result, c ), r, RNaString );
+            end else begin
+              tempdat:= VarAsDouble( v, RNaN, RNaN, RNaReal );
               if not IsNan( tempdat ) then begin
                 if coltypes[c] = setCplxSxp then begin
                   tempname:= DateTimeToStrFmt( 'yyyy-mm-dd', tempdat );
@@ -663,13 +663,13 @@ function ReadDataframe(): pSExp; cdecl;
           end;
           setLglSxp: begin
             v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
-            if IsInNaStrings( v, naStrings ) then riLogical( riVectorElt( result, c ) )[r]:= RNaInt
-            else riLogical( riVectorElt( result, c ) )[r]:= integer(VarAsBool( v, False, RNaInt ));
+            if IsInNaStrings( v, naStrings ) then riLogical( riVectorElt( result, c ) )[r]:= RNaInt
+            else riLogical( riVectorElt( result, c ) )[r]:= integer(VarAsBool( v, False, RNaInt ));
           end;
           setSpecialSxp, setStrSxp: begin
             v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
-            if IsInNaStrings( v, naStrings ) then riSetStringElt( riVectorElt( result, c ), r, RNaString )
-            else riSetStringElt( riVectorElt( result, c ), r, riMkChar( pChar(VarAsString( v )) ) );
+            if IsInNaStrings( v, naStrings ) then riSetStringElt( riVectorElt( result, c ), r, RNaString )
+            else riSetStringElt( riVectorElt( result, c ), r, riMkChar( pChar(VarAsString( v )) ) );
           end;
           setNilSxp: begin
             riLogical( riVectorElt( result, c ) )[r]:= RNaInt;
@@ -714,7 +714,7 @@ function ReadDataframe(): pSExp; cdecl;
       ArgColNames( _colNames );
       ArgRowNames( _rowNames );
       ArgNaStrings( _naStrings );
-      ArgDateTimeAs( _dateTimeAs );
+      ArgDateTime( _dateTime );
       ArgTrueFalse( _checkNames, checkNames, 'checkNames' );
       ArgTrueFalse( _stringsAsFactors, stringsAsFactors, 'stringsAsFactors' );
 
