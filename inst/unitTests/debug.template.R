@@ -53,7 +53,7 @@ res <- runTestFile(testfile, testFuncRegexp = paste("^", testfct, "$", sep = "")
         runFct <- function(func) if (runInvisible) invisible(func) else func
         runFct(sapply(dir(file.path(pkgroot, "R"), full.names = TRUE), source))
         if (!is.null(getLoadedDLLs()$xlsReadWrite)) dyn.unload(getLoadedDLLs()$xlsReadWrite[["path"]])
-        runFct(dyn.load(file.path(pkgroot, "src/xlsReadWrite.dll")))
+        runFct(dyn.load(file.path(pkgroot, "src/pas/xlsReadWrite.dll")))
         testdir <<- file.path(pkgroot, "inst/unitTests");
     }
     if (cleanFirst) rm(list = ls(), envir = .GlobalEnv)
