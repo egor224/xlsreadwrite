@@ -1,38 +1,33 @@
-#
-# Makefile for xlsReadWrite
-#
+###
+### Makefile for xlsReadWrite
+### - to be run in a cmd console (PowerShell/Terminator do not run atm
+### - include.mk file modifies the system path!
+###
 
-ifneq (,$(findstring Rversion.mk,$(wildcard *.mk))) 
 include Rversion.mk 
-else
-R_VERSION = 2.11.0
-endif
 include include.mk
+$(info *************************************************)
+$(info *   XLSREADWRITE MAKEFILE)
+$(info *)
+$(info *   R version $(R_VERSION) is being used)
+$(info *)
+$(info *   Path has been modified:)
+$(info $(PATH))
+$(info *************************************************)
 
-
-### list of important targets #################################################
-### ('flags=<xy>' to optionally pass arguments for check and build) ###########
-### (go from old to new R versions, src pkgs will always be overwritten) ######
-###############################################################################
-
-# comprehensive targets
-.PHONY: check
-.PHONY: release
-.PHONY: push-release
-
-# regular version
+# targets
+.PHONY: check release push-release
 .PHONY: check-reg build-reg release-reg
-# cran version
 .PHONY: check-cran build-cran release-cran check-cran-final
-# developer targets
-.PHONY: test-dev c-dev pas-dev clean-dev
 
-test:
-	@echo $(RCMD)
-	@cd $(GEN) && $(RCMD) build $(PKG)
+# catch all, testing
+all:
+	@echo AUX_DEF: $(AUX_DEV)
+	@echo "!! Select a specific target !!"
 
 
 ### reg - regular/pascal version ##############################################
+### ('flags=<xy>' to optionally pass arguments for check and build) ###########
 ###############################################################################
 
 check-reg: clean-gen populate-gen-reg
@@ -84,16 +79,9 @@ release-reg: $(RELDIR_REL) build-reg
 	# generate html listing
 	$(GENLISTEXE) $(REL)/listing.txt $(GENLIST)/index.html.template $(REL)/index.html
 
-.PHONY: populate-gen
-populate-gen-reg: $(PKGDIR_GEN) $(AUX_GEN) $(SRCPAS_GEN) $(SRCRPAS_GEN)
-	@echo "### populate-gen-reg"
-$(SRCPAS_GEN): $(GEN)/$(PKG)/src/%:$(DEV)/src/pas/%
-	@cp $< $@
-$(SRCRPAS_GEN): $(GEN)/$(PKG)/src/%:$(DEV)/src/RPascal/src/%
-	@cp $< $@
-
 
 ### cran - CRAN version #######################################################
+### ('flags=<xy>' to optionally pass arguments for check and build) ###########
 ###############################################################################
 
 check-cran: clean-gen populate-gen-cran
@@ -130,22 +118,34 @@ release-cran: $(RELDIR_REL) build-cran
 	# generate html listing
 	$(GENLISTEXE) $(REL)/listing.txt $(GENLIST)/index.html.template $(REL)/index.html
 
-.PHONY: populate-gen-cran
-populate-gen-cran: $(PKGDIR_GEN) $(AUX_GEN) $(GEN)/$(PKG)/src/$(SRCC)
-	@echo "### populate-gen-cran"
-$(GEN)/$(PKG)/src/$(SRCC): $(DEV)/src/c/$(SRCC)
-	@cp $< $@
-
 
 ### development and distribution targets ######################################
 ###############################################################################
+
+.PHONY: test-dev rdconv singledocu-dev docu-dev shlib-c shlib-pas clean-dev
 
 test-dev:
 	@echo "### test-dev"
 	@echo "does not work atm" && exit 1
 	//@cd $(DEV)/__misc/debug && $(RSCRIPT) -e "source('../dynRunner/dynRunner.R');dynTests()"
+
 rdconv:
 	@$(RCMD) Rdconv -t $(TYPE) -o $(DEV)/man/out.$(TYPE) $(DEV)/man/$(FILE)
+
+DOCUFILE=xls.oledatetime
+# change here but revert afterwards to prevent git changes
+DOCUFILE=xls.oledatetime
+singledocu-dev:
+	@echo "### singledocu-dev"
+	@rm -f $(GEN)/$(PKG)/man/$(DOCUFILE).pdf
+	@rm -f $(GEN)/$(PKG)/man/$(DOCUFILE).Rd
+	@cp $(DEV)/man/$(DOCUFILE).Rd $(GEN)/$(PKG)/man/$(DOCUFILE).Rd
+	@cd $(GEN)/$(PKG)/man && $(RCMD) Rd2pdf $(DOCUFILE).Rd
+docu-dev: clean-gen populate-gen
+	@echo "### docu-dev"
+	@rm -f $(GEN)/xlsReadWrite.pdf
+	@cd $(GEN) && $(RCMD) Rd2pdf $(PKG)
+
 shlib-c:
 	@echo "### c-dev"
 	@cd $(DEV)/src/c && $(RCMD) SHLIB $(PKG).c
@@ -184,8 +184,6 @@ push-release:
 ### combined & helper #########################################################
 ###############################################################################
 
-all:
-	@echo "!! Select a specific target !!"
 check:
 	$(MAKE) check-reg
 	$(MAKE) check-cran
@@ -193,7 +191,9 @@ release:
 	$(MAKE) release-reg
 	$(MAKE) release-cran
 
-.PHONY: clean-gen clean-gen-src
+
+.PHONY: clean-gen clean-gen-src populate-gen-reg populate-gen-cran populate-rel
+
 clean-gen:
 	@echo "### clean-gen"
 	@rm -rf $(GEN)/*
@@ -201,11 +201,28 @@ clean-gen-src:
 	@echo "### clean-gen-src"
 	@rm -f $(GEN)/$(PKG)/src/*.$(DCU) $(GEN)/$(PKG)/src/*.o $(GEN)/$(PKG)/src/$(PKG).$(DLL) 
 
-$(AUX_GEN): $(GEN)/$(PKG)/%:$(DEV)/%
-	@cp $< $@
-$(PKGDIR_GEN):
-	@mkdir -p $@
-$(GENDIR_GEN):
-	@mkdir -p $@
-$(RELDIR_REL):
-	@mkdir -p $@
+populate-gen-reg:
+	@echo "### populate-gen-reg"
+	# make folders
+	@mkdir -p $(GENDIR)
+	# copy non source file
+	@cp --parents $(AUX_DEV) $(GEN)/$(PKG)
+	@rm -f $(GEN)/$(PKG)/inst/unitTests/debug.R
+	# copy source file
+	@cp $(SRCPAS_DEV) $(GEN)/$(PKG)/src/
+	@cp $(SRCRPAS_DEV) $(GEN)/$(PKG)/src/
+
+populate-gen-cran:
+	@echo "### populate-gen-reg"
+	# make folders
+	@mkdir -p $(GENDIR)
+	# copy non source file
+	@cp --parents $(AUX_DEV) $(GEN)/$(PKG)
+	@rm -f $(GEN)/$(PKG)/inst/unitTests/debug.R
+	# copy source file
+	@cp $(SRCC_DEV) $(GEN)/$(PKG)/src/
+
+populate-rel:
+	@echo "### populate-rel"
+	# make folders
+	@mkdir -p $(RELDIR)

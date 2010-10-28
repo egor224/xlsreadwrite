@@ -1,0 +1,25 @@
+# (make a copy of this file (without .tmpl suffix) to prevent git changes)
+
+
+### CHOOSE R VERSION HERE
+
+# R_VERSION = 2.9.1
+# R_VERSION = 2.10.1
+R_VERSION = 2.11.1
+# R_VERSION = 2.12.0dev
+
+
+### corresponding RTOOLS
+
+ifneq (,$(findstring 2.12.,$(R_VERSION))) 
+RTOOLS=/cygdrive/c/Program Files/R/Rtools212
+endif
+ifneq (,$(findstring 2.11.,$(R_VERSION))) 
+RTOOLS=/cygdrive/c/Program Files (x86)/R/Rtools211
+endif
+ifneq (,$(findstring 2.10.,$(R_VERSION))) 
+RTOOLS=/cygdrive/c/Program Files (x86)/R/Rtools211
+endif
+ifneq (,$(findstring 2.9.,$(R_VERSION))) 
+RTOOLS=/cygdrive/c/Program Files (x86)/R/Rtools210
+endif

@@ -2,7 +2,7 @@
 
   # - source this file
   # - manually paste 'suite' code from the 'execute tests' block into RGui
-  # (by default no modifications are needed (loads installed xlsReadWritePro
+  # (by default no modifications are needed (loads installed xlsReadWrite
   # package and runs tests in the current directory). When adapting and/or for
   # single file/fct tests, clone file, e.g. as 'debug.R', before doing changes)
 
@@ -52,8 +52,8 @@ res <- runTestFile(testfile, testFuncRegexp = paste("^", testfct, "$", sep = "")
     } else {
         runFct <- function(func) if (runInvisible) invisible(func) else func
         runFct(sapply(dir(file.path(pkgroot, "R"), full.names = TRUE), source))
-        if (!is.null(getLoadedDLLs()$xlsReadWritePro)) dyn.unload(getLoadedDLLs()$xlsReadWritePro[["path"]])
-        runFct(dyn.load(file.path(pkgroot, "src/xlsReadWritePro.dll")))
+        if (!is.null(getLoadedDLLs()$xlsReadWrite)) dyn.unload(getLoadedDLLs()$xlsReadWrite[["path"]])
+        runFct(dyn.load(file.path(pkgroot, "src/xlsReadWrite.dll")))
         testdir <<- file.path(pkgroot, "inst/unitTests");
     }
     if (cleanFirst) rm(list = ls(), envir = .GlobalEnv)

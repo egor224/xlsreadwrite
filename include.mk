@@ -1,73 +1,94 @@
-# include.mk for xlsReadWrite Makefile
-# ====================================
+###
+### note: paths currently refer to my (thinkpad) file/folder layout
+###
 
-# warning because info will not be displayed
-$(warning ***********************************)
-$(warning R version $(R_VERSION) will be used)
-$(warning ***********************************)
 
-### settings
+### MAIN LOCATIONS
 
-ROOT = .
-DEV = $(ROOT)
-GEN = $(ROOT)/../__gen
-REL = $(ROOT)/../swissrpkg
+ROOT=.
+DEV=$(ROOT)
+GEN=$(ROOT)/../__gen
+REL=$(ROOT)/../swissrpkg
 
-GENLIST = $(DEV)/__misc/genListing
-GENLISTEXE = $(GENLIST)/genlisting.exe
-# (ugly, FIXME)
-DBOX = "D:/DropboxSwissr/My\ Dropbox/Public/swissrpkg"
-DTEMP = "D:/Temp"
+
+### VARIABLES AND SETTINGS
+
+export PKG=xlsReadWrite
+PKG_VERSION:=$(shell cat $(DEV)/DESCRIPTION | sed -n -e 's/Version: //p')
 
 # switch off directory printing
-W = --no-print-directory
+W=--no-print-directory
 
-export PKG = xlsReadWrite
-PKG_VERSION:= $(shell cat $(DEV)/DESCRIPTION | sed -n -e 's/Version: //p')
-R_MAJVER = $(subst ., ,$(R_VERSION))
-R_MAJVER := $(basename $(R_VERSION))
+NULL="/null"
+export DCU=dcu
+export DLL=dll
 
-  # (ugly, FIXME)
-R_HOME = C:/Programme/R/R-$(R_VERSION)
-R = $(R_HOME)/bin/R.exe
-RCMD = $(R_HOME)/bin/R CMD
-RGUI = $(R_HOME)/bin/Rgui.exe
-RSCRIPT = $(R_HOME)/bin/Rscript.exe
-GIT = C:/Programme/Git/bin/git.exe
-NULL = "/null"
+
+### FILES AND DIRECTORIES
+
 # (os_foldername (win32, macosx, debian/lenny))
-OS_FOLDER = win32
-export DCU = dcu
-export DLL = dll
+OS_FOLDER=win32
 
+# generate directories
+GENDIR=$(addprefix $(GEN)/$(PKG)/, \
+    man R src tests inst/unitTests/data inst/template) \
+    $(GEN)/bin
 
-### files and directories
+# release directories from ($REL root)
+RELDIR=$(addprefix $(REL)/, \
+    bin/$(OSDIR)/src bin/$(OSDIR)/$(R_MAJVER) \
+    cran/$(OSDIR)/src src)
 
-# directories
-PKGDIR = man R src tests \
-    inst/unitTests/data inst/template
-PKGDIR_GEN = $(addprefix $(GEN)/$(PKG)/,$(PKGDIR))
-GENDIR_GEN = $(GEN)/bin $(GEN)/src
-RELDIR = bin/$(OS_FOLDER)/shlib bin/$(OS_FOLDER)/src \
-    bin/$(OS_FOLDER)/$(R_MAJVER) src \
-    cran/$(OS_FOLDER)/$(R_MAJVER)
-RELDIR_REL = $(addprefix $(REL)/,$(RELDIR))
+# listing directory (with generator and template)
+LISTINGDIR=$(DEV)/__misc/genListing
+
+# dropbox directory
+DBOXDIR=/cygdrive/c/Users/Public/Dropboxen/DropboxSwissr/My Dropbox/Public/swissrpkg
+
+# temp (for cran final test)
+DTEMP=/cygdrive/c/Users/chappi/Documents/R/test
 
 # files in non-source folders
-AUX_DEV = $(DEV) $(DEV)/DESCRIPTION $(DEV)/NAMESPACE \
-    $(DEV)/tests/runRUnitTests.R \
-    $(DEV)/LICENSE \
-    $(DEV)/inst/unitTests/Data/origData.xls $(DEV)/inst/template/TemplateNew.xls \
-    $(wildcard $(DEV)/inst/unitTests/*.R) \
-    $(wildcard $(DEV)/man/*) $(wildcard $(DEV)/R/*)
-AUX = $(subst $(DEV)/,,$(AUX_DEV))
-AUX_GEN = $(addprefix $(GEN)/$(PKG)/,$(AUX))
+AUX_DEV=$(DEV)/DESCRIPTION $(DEV)/NAMESPACE $(DEV)/LICENSE \
+        $(DEV)/tests/runRUnitTests.R \
+        $(DEV)/inst/template/TemplateNew.xls \
+        $(DEV)/inst/unitTests/Data/origData.xls \
+        $(wildcard $(DEV)/inst/unitTests/*.R) \
+        $(wildcard $(DEV)/man/*) $(wildcard $(DEV)/R/*)
 
 # files in source folders
-SRCC = $(PKG).c
-SRCPAS = $(notdir $(wildcard $(DEV)/src/pas/*.pas))
-SRCRPAS = rhR.pas rhRDynload.pas rhRInternals.pas \
-    rhxLoadRVars.pas rhxTypesAndConsts.pas
-SRCPAS_GEN = $(addprefix $(GEN)/$(PKG)/src/,$(SRCPAS)) $(GEN)/$(PKG)/src/$(PKG).dpr $(GEN)/$(PKG)/src/Makefile $(GEN)/$(PKG)/src/Makevars
-SRCRPAS_GEN = $(addprefix $(GEN)/$(PKG)/src/,$(SRCRPAS))
+SRCPAS_DEV=$(wildcard $(DEV)/src/pas/*.pas) \
+           $(DEV)/src/pas/$(PKG).dpr \
+           $(DEV)/src/pas/Makefile $(DEV)/src/pas/Makevars
+SRCRPAS_DEV=$(addprefix $(DEV)/src/RPascal/src/, \
+            rhR.pas rhRDynload.pas rhRInternals.pas \
+            rhxLoadRVars.pas rhxTypesAndConsts.pas)
+SRCC_DEV=$(addprefix $(DEV)/src/c/, $(PKG).c)
 
+
+### TOOLS INCLUDING VARIABLES THEREOF
+
+# R version major, minor splitting
+R_MAJVER=$(subst ., ,$(R_VERSION))
+R_MAJVER:=$(basename $(R_VERSION))
+
+# R program folder locations (no 64 bit atm) and exes
+ifneq (,$(findstring 2.12.,$(R_VERSION))) 
+	R_PROG=/cygdrive/c/Program\ Files/R
+	R_BINARCH=bin/i386
+else
+	R_PROG=/cygdrive/c/Program\ Files\ \(x86\)/R
+	R_BINARCH=bin
+endif
+R_HOME=$(R_PROG)/R-$(R_VERSION)
+RCMD=$(R_HOME)/$(R_BINARCH)/Rcmd
+RGUI=$(R_HOME)/$(R_BINARCH)/Rgui.exe
+RSCRIPT=$(R_HOME)/$(R_BINARCH)/Rscript.exe
+
+MIKTEX=/cygdrive/c/Program Files (x86)/MiKTex 2.8/miktex/bin
+GIT=/usr/bin/git
+
+
+### MODIFY THE PATH
+
+export PATH:=$(RTOOLS)/bin:$(RTOOLS)/perl/bin:$(MIKTEX):/usr/bin
