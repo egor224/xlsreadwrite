@@ -9,6 +9,9 @@
     Using the default command, \code{xls.getshlib()}, should work just
     fine. Every step is documented, i.e. will be printed on the console.
 
+    The file will be downloaded with the \code{download.file} R function and
+    thus follows the option \code{timeout} which defaults to 60 seconds.
+
     There are quite a lot of different versions (shlib, R, (in future) platforms).
     If the correct shlib cannot be found and/or if there are permission issues,
     \code{xls.getshlib} will stop. But you can always download the full regular
@@ -68,7 +71,8 @@ xls.getshlib(pkgvers = NA, url = NA, md5 = TRUE,
 }
 
 \seealso{
-    \code{\link{read.xls}}, \code{\link{write.xls}}
+    \code{\link{read.xls}}, \code{\link{write.xls}}, \code{\link{download.file}}
+    and \code{\link{options}} for the timeout.
 }
 
 \examples{\dontrun{
