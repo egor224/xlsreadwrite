@@ -72,17 +72,16 @@ function WriteXls( _data, _file, _colNames, _sheet, _skipLines, _rowNames, _naSt
     end {SelectOrInsertSheet};
 
   procedure ArgNaStrings(_naStrings: pSExp);
-    var
-      i: integer;
     begin
       if IsNaScalar( _naStrings ) then begin
         naStrings:= nil;
       end else begin
         if riIsString( _naStrings ) then begin
-          SetLength( naStrings, riLength( _naStrings ) );
-          for i := 0 to riLength( _naStrings ) - 1 do begin
-            naStrings[i]:= string(riChar( riStringElt( _naStrings, i ) ));
+          if riLength( _naStrings ) <> 1 then begin
+            raise ExlsReadWrite.Create('"naStrings" must be a scalar character');
           end;
+          SetLength( naStrings, 1 );
+          naStrings[0]:= string(riChar( riStringElt( _naStrings, 0 ) ));
         end else begin
           raise ExlsReadWrite.Create('"naStrings" must be a string or NA');
         end;

@@ -53,6 +53,10 @@ test.NaN_NA.writeWithNaStrings <- function() {
     checkIdentical(read.xls(wfile, type = "character", colNames = FALSE)[naidx], "hello")
 }    
 
+test.NaN_NA.writeWithMultipleNaStrings <- function() {
+    checkException(write.xls(mat("double"), wfile, naStrings = c("hello", "world"), colNames = FALSE), silent = TRUE)
+}
+
 
 ### read write (including cells picking)
 
