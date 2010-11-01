@@ -110,7 +110,7 @@ read.xls(file,
 \examples{
 # --- only run for regular, i.e. non-cran version
 shlib <- system.file("libs", if (nzchar(arch <- .Platform$r_arch)) arch else "",
-                     paste("xlsReadWrite", .Platform$dynlib.ext, sep = ""), package = "xlsReadWrite")
+  paste("xlsReadWrite", .Platform$dynlib.ext, sep = ""), package = "xlsReadWrite")
 if (file.exists(shlib) && (file.info(shlib)$size > 20000)) {
 # -----------------------------------------------
 

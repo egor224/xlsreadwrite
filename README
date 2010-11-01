@@ -1,6 +1,7 @@
 [copy of man/xlsReadWrite-package.Rd - maybe out of date]
 
-Description
+xlsReadWrite R package
+======================
 
    1. Overview
    2. RUnit tests
@@ -8,8 +9,9 @@ Description
    4. Compile and downloads
    5. Links and contact 
 
-   
+
 1. Overview
+-----------
 
 xlsReadWrite is a packages which allows to read and write Excel files. Currently supported is the .xls (BIFF8) file format.
 
@@ -35,28 +37,27 @@ xlsReadWrite is mature and no big changes are planned. Some internal refactoring
 
 
 2. RUnit tests
+--------------
 
 There are more than 50 unit tests which should cover all aspects of the package and ensure and maintain code quality. The tests also serve as an extended reference going beyond the examples.
 
 You can easily run the tests on your system: the RUnit test files are located at
 R_HOME/library/xlsReadWrite/unitTest.
 Please have a look at the file debug.template.R for details (basically: source file, copy/paste testsuite code).
+
+
 3. CRAN/pro version
+-------------------
 
-CRAN
+Besides the regular xlsReadWrite package there is a special CRAN version. Reason (copied from the cran version startup message):
 
-Besides the regular xlsReadWrite package there is a special cran version. Reason (copied from the cran version startup message):
+"BACKGROUND: Our own xlsReadWrite code is free, but we also use proprietary code"
+"(Flexcel, tmssoftware.com) which can only be distributed legally in precompiled,"
+"i.e. binary form. As CRAN 'generally does not accept submissions of precompiled"
+"binaries due to security reasons' we only provide a placeholder and you can"
+"download the binary shlib separately.";
 
-        "BACKGROUND: Our own xlsReadWrite code is free, but we also use proprietary code\n"
-        "(Flexcel, tmssoftware.com) which can only be distributed legally in precompiled,\n"
-        "i.e. binary form. As CRAN 'generally does not accept submissions of precompiled\n"
-        "binaries due to security reasons' we only provide a placeholder and you can\n"
-        "download the binary shlib separately.\n\n";
-    
-
-xlsReadWritePro
-
-The pro version is our second attempt and goes further than the free version:
+The xlsReadWritePro version is our second attempt and goes further than the free version:
 
     * append data to existing files
     * work with in-memory Excel 'files' (called xls-obj)
@@ -72,12 +73,9 @@ By purchasing the xlsReadWritePro shareware version you help support our develop
 
 
 4. Compile and downloads
+------------------------
 
-Compile
-
-Prerequisites: Delphi 2007 and Flexcel (http://www.tmssoftware.com, a high-quality code library for the core Excel-work).
-
-Then follow these steps:
+Prerequisites for compiling: Delphi 2007 and Flexcel (http://www.tmssoftware.com, a high-quality code library for the core Excel-work). Then follow these steps:
 
    1. Clone the github repo (see below) and initialize the RPascal submodule
    2. Adapt paths in 'include.mk'
@@ -95,10 +93,12 @@ Github repo: 		http://github.com/swissr/xlsReadWrite
 
 
 5. Links and contact
+--------------------
 
 General info: 		http://www.swissr.org
 Bugtracker: 		http://dev.swissr.org/projects/xlsReadWrite
 Forum: 		http://dev.swissr.org/projects/xlsReadWrite/boards
+Email: 		support at swissr.org
 
 
 November 1, 2010 / Hans-Peter 

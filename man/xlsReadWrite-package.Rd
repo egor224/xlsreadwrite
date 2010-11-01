@@ -17,11 +17,12 @@
 \section{1. Overview}{
     \code{xlsReadWrite} is a packages which allows to read and write Excel files.
     Currently supported is the .xls (BIFF8) file format.
+    \cr
 
     \bold{Getting started}\itemize{
         \item check out \code{\link{read.xls}}, \code{\link{write.xls}} and \code{\link{xls.getshlib}}
         \item \code{help(package = "xlsReadWrite")} gives information on the package
-        \cr
+
     }
 
     \bold{Why xlsReadWrite?}\itemize{
@@ -34,6 +35,7 @@
     On the less rosy side: xlsReadWrite still is windows only and uses proprietary
     3rd party code (which means only our own code is, and can be, free). The package
     is written in Pascal, a very nice language, but a bit obscure in the R world.
+    \cr
 
     \bold{Other solutions and future}
 
@@ -62,20 +64,17 @@
 }
 
 \section{3. CRAN/pro version}{
-    \bold{CRAN}
 
-    Besides the \emph{regular} \code{xlsReadWrite} package there is a special \emph{cran} version.
-    Reason (copied from the cran version startup message):\preformatted{
-        "BACKGROUND: Our own xlsReadWrite code is free, but we also use proprietary code\n"
-        "(Flexcel, tmssoftware.com) which can only be distributed legally in precompiled,\n"
-        "i.e. binary form. As CRAN 'generally does not accept submissions of precompiled\n"
-        "binaries due to security reasons' we only provide a placeholder and you can\n"
-        "download the binary shlib separately.\n\n";
-    }
+    Besides the \emph{regular} \code{xlsReadWrite} package there is a special \bold{CRAN}
+    version. Reason (copied from the cran version startup message):\cr\cr
+"BACKGROUND: Our own xlsReadWrite code is free, but we also use proprietary code"\cr
+"(Flexcel, tmssoftware.com) which can only be distributed legally in precompiled,"\cr
+"i.e. binary form. As CRAN 'generally does not accept submissions of precompiled"\cr
+"binaries due to security reasons' we only provide a placeholder and you can"\cr
+"download the binary shlib separately.";\cr
 
-    \bold{xlsReadWritePro}
-
-    The pro version is our second attempt and goes further than the free version:\itemize{
+    The \bold{xlsReadWritePro} version is our second attempt and goes further than
+    the free version:\itemize{
         \item append data to existing files
         \item work with in-memory Excel 'files' (called xls-obj)\cr
         \item manage sheets (select, insert, copy, rename, delete, hide, info, list)
@@ -96,12 +95,8 @@
 
 \section{4. Compile and downloads}{
 
-    \bold{Compile}
-
-    Prerequisites: Delphi 2007 and Flexcel (http://www.tmssoftware.com, a high-quality
-    code library for the core Excel-work).
-
-    Then follow these steps:\enumerate{
+    Prerequisites for compiling: Delphi 2007 and Flexcel (http://www.tmssoftware.com,
+    a high-quality code library for the core Excel-work). Then follow these steps:\enumerate{
         \item Clone the github repo (see below) and initialize the RPascal submodule
         \item Adapt paths in 'include.mk'
         \item Regarding Flexcel code:\itemize{
@@ -129,6 +124,7 @@
         General info:   \tab\tab		\url{http://www.swissr.org} \cr
         Bugtracker:  	\tab\tab		\url{http://dev.swissr.org/projects/xlsReadWrite}\cr
         Forum:          \tab\tab        \url{http://dev.swissr.org/projects/xlsReadWrite/boards}\cr
+        Email:          \tab\tab        support at swissr.org\cr
     }
 
     November 1, 2010 / Hans-Peter
