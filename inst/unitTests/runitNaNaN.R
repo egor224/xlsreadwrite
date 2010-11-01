@@ -61,21 +61,23 @@ test.NaN_NA.double <- function() {
     wdata <- read.xls(wfile, type = "double", colNames = FALSE)
     checkIdentical(wdata[naidx], as.double(NA))
     checkIdentical(wdata[nanidx], NaN)
-
-    wdata <- read.xls(wfile, type = "double", cells = c(naidx, nanidx))
-    checkIdentical(wdata[1], as.double(NA))
-    checkIdentical(wdata[2], NaN)
+    if (!isFreeVersion) {
+        wdata <- read.xls(wfile, type = "double", cells = c(naidx, nanidx))
+        checkIdentical(wdata[1], as.double(NA))
+        checkIdentical(wdata[2], NaN)
     }
+}
 
 test.NaN_NA.integer <- function() {
     write.xls(mat("integer"), wfile, colNames = FALSE)
     wdata <- read.xls(wfile, type = "integer", colNames = FALSE)
     checkIdentical(wdata[naidx], as.integer(NA))
     checkIdentical(wdata[nanidx], as.integer(NA))
-
-    wdata <- read.xls(wfile, type = "integer", cells = c(naidx, nanidx))
-    checkIdentical(wdata[1], as.integer(NA))
-    checkIdentical(wdata[2], as.integer(NA))
+    if (!isFreeVersion) {
+        wdata <- read.xls(wfile, type = "integer", cells = c(naidx, nanidx))
+        checkIdentical(wdata[1], as.integer(NA))
+        checkIdentical(wdata[2], as.integer(NA))
+    }
 }
 
 test.NaN_NA.logical <- function() {
@@ -83,10 +85,11 @@ test.NaN_NA.logical <- function() {
     wdata <- read.xls(wfile, type = "logical", colNames = FALSE)
     checkIdentical(wdata[naidx], NA)
     checkIdentical(wdata[nanidx], NA)
-
-    wdata <- read.xls(wfile, type = "logical", cells = c(naidx, nanidx))
-    checkIdentical(wdata[1], NA)
-    checkIdentical(wdata[2], NA)
+    if (!isFreeVersion) {
+        wdata <- read.xls(wfile, type = "logical", cells = c(naidx, nanidx))
+        checkIdentical(wdata[1], NA)
+        checkIdentical(wdata[2], NA)
+    }
 }
 
 test.NaN_NA.character <- function() {
@@ -94,10 +97,11 @@ test.NaN_NA.character <- function() {
     wdata <- read.xls(wfile, type = "character", colNames = FALSE)
     checkIdentical(wdata[naidx], "")
     checkIdentical(wdata[nanidx], "NaN")
-
-    wdata <- read.xls(wfile, type = "character", cells = c(naidx, nanidx))
-    checkIdentical(wdata[1], "")
-    checkIdentical(wdata[2], "NaN")
+    if (!isFreeVersion) {
+        wdata <- read.xls(wfile, type = "character", cells = c(naidx, nanidx))
+        checkIdentical(wdata[1], "")
+        checkIdentical(wdata[2], "NaN")
+    }
 
     write.xls(mat("character"), wfile, colNames = FALSE, naStrings = "NA")
     wdata <- read.xls(wfile, type = "character", colNames = FALSE, naStrings = "NA")
@@ -110,10 +114,11 @@ test.NaN_NA.frameNaN <- function() {
     wdata <- read.xls(wfile, colNames = FALSE)
     checkIdentical(wdata[naidx], as.double(NA))
     checkIdentical(wdata[nanidx], NaN)
-
-    suppressWarnings(wdata <- read.xls(wfile, cells = c(naidx, nanidx)))
-    checkIdentical(wdata[[1]], NA)
-    checkIdentical(wdata[[2]], NaN)
+    if (!isFreeVersion) {
+        suppressWarnings(wdata <- read.xls(wfile, cells = c(naidx, nanidx)))
+        checkIdentical(wdata[[1]], NA)
+        checkIdentical(wdata[[2]], NaN)
+    }
 }
 
 
@@ -149,10 +154,12 @@ test.NaN_NA.readMatrix <- function() {
 }
 
 test.NaN_NA.readFrame <- function() {
-    rdata <- read.xls(rfile, sheet = "intSht", type = "data.frame", stringsAsFactors = FALSE)
-
     tmpcls <- c("integer", "integer", "integer", "integer", "character", "character",
                 "numeric", "integer", "integer", "integer", "integer", "integer")
+
+    rdata <- read.xls(rfile, sheet = "intSht", type = "data.frame", stringsAsFactors = FALSE,
+                      colClass = if (isFreeVersion) tmpcls else NA )
+
     checkIdentical(as.vector(sapply(rdata, class)), tmpcls)  
 
     checkIdentical(rdata[chidx], rep("", sum(chidx)))

@@ -61,6 +61,12 @@ function IsInNaStrings(const _val: variant; const _naStrings: TStringDynArray = 
     if result then result:= IsInNaStrings( string(_val), _naStrings );
   end;
 
+function IsNanString(const _val: variant): boolean;
+  begin
+    result:= ((VarType( _val ) = varOleStr) or (VarType( _val ) = varString)) and
+             (_val = TheNanString);
+  end;
+
 {  -- code }
 
 function ReadXls( _file, _colNames, _sheet, _type,
@@ -347,7 +353,8 @@ function ReadXls( _file, _colNames, _sheet, _type,
         for c:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
           v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
           if IsInNaStrings( v, naStrings ) then riReal( result )[r + rowcnt*c]:= RNaReal
-          else riReal( result )[r + rowcnt*c]:= VarAsDouble( v, RNaN, RNaN, RNaReal );
+          else if IsNanString( v ) then riReal( result )[r + rowcnt*c]:= RNaN
+          else riReal( result )[r + rowcnt*c]:= VarAsDouble( v, RNaReal );
         end {for};
       end {for};
       riUnprotect( 1 );
@@ -363,7 +370,7 @@ function ReadXls( _file, _colNames, _sheet, _type,
         for c:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
           v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
           if IsInNaStrings( v, naStrings ) then riInteger( result )[r + rowcnt*c]:= RNaInt
-          else riInteger( result )[r + rowcnt*c]:= VarAsInt( v, RNaInt, RNaInt );
+          else riInteger( result )[r + rowcnt*c]:= VarAsInt( v, RNaInt );
         end {for};
       end {for};
       riUnprotect( 1 );
@@ -378,8 +385,11 @@ function ReadXls( _file, _colNames, _sheet, _type,
       for r:= 0 to rowcnt - 1 do begin
         for c:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
           v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
-          if IsInNaStrings( v, naStrings ) then riLogical( result )[r + rowcnt*c]:= RNaInt
-          else riLogical( result )[r + rowcnt*c]:= integer(VarAsBool( v, False, RNaInt ));
+          if IsInNaStrings( v, naStrings ) or IsNanString( v ) then begin
+             riLogical( result )[r + rowcnt*c]:= RNaInt
+          end else begin
+            riLogical( result )[r + rowcnt*c]:= integer(VarAsBool( v, False, RNaInt ));
+          end;
         end {for};
       end {for};
       riUnprotect( 1 );
@@ -395,10 +405,9 @@ function ReadXls( _file, _colNames, _sheet, _type,
         for c:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
           v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
           if IsInNaStrings( v, naStrings ) then riSetStringElt( result, r + rowcnt*c, RNaString )
-
+          else if IsNanString( v ) then riSetStringElt( result, r + rowcnt*c, riMkChar( TheNanString ) )
           else riSetStringElt( result, r + rowcnt*c, riMkChar( pChar(VarAsString( v )) ) );
-
-        end {for};
+        end {for}
       end {for};
       riUnprotect( 1 );
     end {ReadString};
@@ -635,16 +644,18 @@ function ReadXls( _file, _colNames, _sheet, _type,
 
       for r:= 0 to rowcnt - 1 do begin
         for c:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
+            { todo: this reading is a duplication from above, normalize!! }
           case coltypes[c] of
             setIntSxp: begin
               v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
               if IsInNaStrings( v, naStrings ) then riInteger( riVectorElt( result, c ) )[r]:= RNaInt
-              else riInteger( riVectorElt( result, c ) )[r]:= VarAsInt( v, RNaInt, RNaInt );
+              else riInteger( riVectorElt( result, c ) )[r]:= VarAsInt( v, RNaInt );
             end;
             setRealSxp: begin
               v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
               if IsInNaStrings( v, naStrings ) then riReal( riVectorElt( result, c ) )[r]:= RNaReal
-              else riReal( riVectorElt( result, c ) )[r]:= VarAsDouble( v, RNaN, RNaN, RNaReal );
+              else if IsNanString( v ) then riReal( riVectorElt( result, c ) )[r]:= RNaN
+              else riReal( riVectorElt( result, c ) )[r]:= VarAsDouble( v, RNaReal );
             end;
 
             setCplxSxp, setDotSxp, setAnySxp: begin   // misused for Date
@@ -652,7 +663,7 @@ function ReadXls( _file, _colNames, _sheet, _type,
               if IsInNaStrings( v, naStrings ) then begin
                 riSetStringElt( riVectorElt( result, c ), r, RNaString );
               end else begin
-                tempdat:= VarAsDouble( v, RNaN, RNaN, RNaReal );
+                tempdat:= VarAsDouble( v, RNaReal );
                 if not IsNan( tempdat ) then begin
                   if coltypes[c] = setCplxSxp then begin
                     tempname:= DateTimeToStrFmt( 'yyyy-mm-dd', tempdat );
@@ -669,12 +680,14 @@ function ReadXls( _file, _colNames, _sheet, _type,
             end;
             setLglSxp: begin
               v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
-              if IsInNaStrings( v, naStrings ) then riLogical( riVectorElt( result, c ) )[r]:= RNaInt
-              else riLogical( riVectorElt( result, c ) )[r]:= integer(VarAsBool( v, False, RNaInt ));
+              if IsInNaStrings( v, naStrings ) or IsNanString( v ) then begin
+                riLogical( riVectorElt( result, c ) )[r]:= RNaInt
+              end else riLogical( riVectorElt( result, c ) )[r]:= integer(VarAsBool( v, False, RNaInt ));
             end;
             setSpecialSxp, setStrSxp: begin
               v:= reader.CellValue[r + from, c + 1 + integer(firstColAsRowName)];
               if IsInNaStrings( v, naStrings ) then riSetStringElt( riVectorElt( result, c ), r, RNaString )
+              else if IsNanString( v ) then riSetStringElt( riVectorElt( result, c ), r, riMkChar( TheNanString ) )
               else riSetStringElt( riVectorElt( result, c ), r, riMkChar( pChar(VarAsString( v )) ) );
             end;
             setNilSxp: begin

@@ -28,7 +28,7 @@ type
 
 const
   TheNAString =     'NA';   // see remark in pro vesion
-  TheNaNString =    'NaN';
+  TheNanString =    'NaN';
 
   TheOutputType: array[aOutputType] of string
                  = ( 'undefined', 'double', 'integer', 'logical'
@@ -41,9 +41,9 @@ function DateTimeToStrFmt( const _format: string; _dateTime: TDateTime ): string
 function StrToOutputType( const _type: string ): aOutputType;
 function AllOutputTypes(): string;
 
-function VarAsBool(const _v: variant; _default: boolean; _navalue: integer): integer;
-function VarAsDouble(const _v: variant; _default: double; _nanvalue: double; _navalue: double): double;
-function VarAsInt(const _v: variant; _default, _navalue: integer): integer;
+function VarAsBool( const _v: variant; _default: boolean; _navalue: integer ): integer;
+function VarAsDouble( const _v: variant; _default: double ): double;
+function VarAsInt( const _v: variant; _default: integer ): integer;
 function VarAsString( const _v: variant ): string; overload;
 function VarAsString( const _v: variant; const _def: string ): string; overload;
 
@@ -124,7 +124,7 @@ function VarAsBool(const _v: variant; _default: boolean; _navalue: integer): int
     end;
   end {VarAsBool};
 
-function VarAsInt(const _v: variant; _default, _navalue: integer): integer;
+function VarAsInt(const _v: variant; _default: integer): integer;
   begin
     case VarType( _v ) of
       varShortInt,
@@ -147,14 +147,13 @@ function VarAsInt(const _v: variant; _default, _navalue: integer): integer;
       end;
 
       varEmpty,
-      varNull: 	        result:= _navalue;
+      varNull: 	        result:= _default;
     else
       result:= _default;
     end {case};
   end {VarAsInt};
 
-function VarAsDouble(const _v: variant; _default: double; _nanvalue: double;
-    _navalue: double): double;
+function VarAsDouble(const _v: variant; _default: double): double;
   begin
     case VarType( _v ) of
       varSmallint,
@@ -172,11 +171,11 @@ function VarAsDouble(const _v: variant; _default: double; _nanvalue: double;
 
       varOleStr,
       varString:        begin
-        result:= StrToFloatDef( _v, _nanvalue );
+        result:= StrToFloatDef( _v, _default );
       end;
 
       varEmpty,
-      varNull:            result:= _navalue;
+      varNull: 	          result:= _default;
     else
       result:= _default;
     end {case};

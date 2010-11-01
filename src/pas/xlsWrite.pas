@@ -235,7 +235,7 @@ function WriteXls( _data, _file, _colNames, _sheet, _skipLines, _rowNames, _naSt
       for r := 0 to rowcnt - 1 do begin
         for c:= integer(rowNameAsFirstCol) to colcnt - 1 + integer(rowNameAsFirstCol) do begin
           valreal:= riReal( _data )[r + rowcnt*(c - integer(rowNameAsFirstCol))];
-          if (rIsNan( valreal ) <> 0) then writer.CellValue[r + 1 + offsetRow, c + 1]:= 'NaN'
+          if (rIsNan( valreal ) <> 0) then writer.CellValue[r + 1 + offsetRow, c + 1]:= TheNanString
           else if (rIsNa( valreal ) = 0) then writer.CellValue[r + 1 + offsetRow, c + 1]:= valreal
           else EventuallyApplyNaString( r + 1 + offsetRow, c + 1 );
         end {for};
@@ -338,7 +338,7 @@ function WriteXls( _data, _file, _colNames, _sheet, _skipLines, _rowNames, _naSt
             setRealSxp: begin
               valreal:= riReal( riVectorElt( _data, c - integer(rowNameAsFirstCol) ) )[r];
                 // todo: code copied from above (ugly, needs refactoring)
-              if (rIsNan( valreal ) <> 0) then writer.CellValue[r + 1 + offsetRow, c + 1]:= 'NaN'
+              if (rIsNan( valreal ) <> 0) then writer.CellValue[r + 1 + offsetRow, c + 1]:= TheNanString
               else if (rIsNa( valreal ) = 0) then writer.CellValue[r + 1 + offsetRow, c + 1]:= valreal
               else EventuallyApplyNaString( r + 1 + offsetRow, c + 1 );
             end;
