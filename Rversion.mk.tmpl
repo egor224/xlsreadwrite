@@ -23,3 +23,7 @@ endif
 ifneq (,$(findstring 2.9.,$(R_VERSION))) 
 RTOOLS=/cygdrive/c/Program Files (x86)/R/Rtools210
 endif
+
+### use R2.11 RTools gcc for all R versions (only needed for cran version)
+
+RMINGW=/cygdrive/c/Program Files (x86)/R/MinGW/bin

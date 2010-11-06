@@ -91,4 +91,4 @@ GIT=/usr/bin/git
 
 ### MODIFY THE PATH
 
-export PATH:=$(RTOOLS)/bin:$(RTOOLS)/perl/bin:$(MIKTEX):/usr/bin
+export PATH:=$(RTOOLS)/bin:$(RTOOLS)/perl/bin:$(RMINGW):$(MIKTEX):/usr/bin
