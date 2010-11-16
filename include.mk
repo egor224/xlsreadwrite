@@ -1,94 +1,118 @@
-###
-### note: paths currently refer to my (thinkpad) file/folder layout
-###
-
-
 ### MAIN LOCATIONS
 
-ROOT=.
-DEV=$(ROOT)
-GEN=$(ROOT)/../__gen
-REL=$(ROOT)/../swissrpkg
+export ROOT=.
+export DEV=$(ROOT)
+export GEN=$(ROOT)/../__gen
+export REL=$(ROOT)/../swissrpkg
 
 
 ### VARIABLES AND SETTINGS
 
 export PKG=xlsReadWrite
-PKG_VERSION:=$(shell cat $(DEV)/DESCRIPTION | sed -n -e 's/Version: //p')
+export PKG_VERSION:=$(shell cat $(DEV)/DESCRIPTION | sed -n -e 's/Version: //p')
 
 # switch off directory printing
-W=--no-print-directory
+export W=--no-print-directory
 
-NULL="/null"
+export NULL="/null"
 export DCU=dcu
 export DLL=dll
 
 
-### FILES AND DIRECTORIES
+### DIRECTORIES FOR STORING
 
-# (os_foldername (win32, macosx, debian/lenny))
-OS_FOLDER=win32
-
-# generate directories
-GENDIR=$(addprefix $(GEN)/$(PKG)/, \
+# directories in generate folder
+export GENDIRS=$(addprefix $(GEN)/$(PKG)/, \
     man R src tests inst/unitTests/data inst/template) \
-    $(GEN)/bin
+    $(GEN)/bin $(GEN)/src $(GEN)/lib
 
-# release directories from ($REL root)
-RELDIR=$(addprefix $(REL)/, \
+# directories in release folder
+export OSDIR=win32
+export RELDIRS=$(addprefix $(REL)/, \
     bin/$(OSDIR)/src bin/$(OSDIR)/$(R_MAJVER) \
     cran/$(OSDIR)/src src)
 
 # listing directory (with generator and template)
-LISTINGDIR=$(DEV)/__misc/genListing
+export LISTING=$(DEV)/__misc/genListing
 
-# dropbox directory
-DBOXDIR=/cygdrive/c/Users/Public/Dropboxen/DropboxSwissr/My Dropbox/Public/swissrpkg
+# dropbox swissrpkg directory
+export SWISSRPKG=$(C)/Users/Public/Dropboxen/DropboxSwissr/My Dropbox/Public/swissrpkg
 
-# temp (for cran final test)
-DTEMP=/cygdrive/c/Users/chappi/Documents/R/test
+# temp directory (for cran final test)
+export DTEMP=$(C)/Users/chappi/Documents/R/test
+
+
+### FILES
 
 # files in non-source folders
-AUX_DEV=$(DEV)/DESCRIPTION $(DEV)/NAMESPACE $(DEV)/LICENSE \
-        $(DEV)/tests/runRUnitTests.R \
+export AUX_DEV=$(DEV)/DESCRIPTION $(DEV)/NAMESPACE $(DEV)/LICENSE \
+        $(DEV)/tests/execTests.R \
         $(DEV)/inst/template/TemplateNew.xls \
         $(DEV)/inst/unitTests/Data/origData.xls \
         $(wildcard $(DEV)/inst/unitTests/*.R) \
         $(wildcard $(DEV)/man/*) $(wildcard $(DEV)/R/*)
 
 # files in source folders
-SRCPAS_DEV=$(wildcard $(DEV)/src/pas/*.pas) \
+export SRCPAS_DEV=$(wildcard $(DEV)/src/pas/*.pas) \
            $(DEV)/src/pas/$(PKG).dpr \
            $(DEV)/src/pas/Makefile $(DEV)/src/pas/Makevars
-SRCRPAS_DEV=$(addprefix $(DEV)/src/RPascal/src/, \
+export SRCRPAS_DEV=$(addprefix $(DEV)/src/RPascal/src/, \
             rhR.pas rhRDynload.pas rhRInternals.pas \
             rhxLoadRVars.pas rhxTypesAndConsts.pas)
-SRCC_DEV=$(addprefix $(DEV)/src/c/, $(PKG).c)
+export SRCC_DEV=$(addprefix $(DEV)/src/c/, $(PKG).c)
 
 
-### TOOLS INCLUDING VARIABLES THEREOF
+### SOFTWARE, INCL. DIRECTORIES
+
+# non-R software
+export MINGWDIR=/cygdrive/c/Program Files (x86)/R/MinGW/bin
+export MIKTEXDIR=/cygdrive/c/Program Files (x86)/MiKTex 2.8/miktex/bin
+export GIT=/cygdrive/c/cygwin/bin/git
+export LISTINGTOOL=$(LISTING)/genlisting.exe
 
 # R version major, minor splitting
-R_MAJVER=$(subst ., ,$(R_VERSION))
-R_MAJVER:=$(basename $(R_VERSION))
+export R_MAJVER=$(subst ., ,$(R_VERSION))
+export R_MAJVER:=$(basename $(R_VERSION))
 
-# R program folder locations (no 64 bit atm) and exes
-ifneq (,$(findstring 2.12.,$(R_VERSION))) 
-	R_PROG=/cygdrive/c/Program\ Files/R
-	R_BINARCH=bin/i386
+# R version dependent variables and system paths
+ifneq (,$(findstring 2.12.,$(R_VERSION)))
+  # Rtools212 (do not install .dll's (use cygwin libs))
+export RTOOLS=/cygdrive/c/Program Files/R/Rtools212
+export RBIN=/cygdrive/c/Program Files/R/R-$(R_VERSION)/bin/i386
+export RARCH=i386
+  # set system path: perl not needed, cygwin has to be at the end!
+export PATH:=$(RTOOLS)/bin:$(MINGWDIR):$(MIKTEXDIR):/cygdrive/c/cygwin/bin
 else
-	R_PROG=/cygdrive/c/Program\ Files\ \(x86\)/R
-	R_BINARCH=bin
+  # RTools211 (works for R2.9 - R2.11; do not install .dll's (use cygwin libs))
+export RTOOLS=/cygdrive/c/Program Files (x86)/R/Rtools211
+export RBIN=C:/Program Files (x86)/R/R-$(R_VERSION)/bin
+  # set system path: cygwin has to be at the end!
+export PATH:=$(RTOOLS)/bin:$(RTOOLS)/perl/bin:$(MIKTEXDIR):$(MINGWDIR):/cygdrive/c/cygwin/bin
 endif
-R_HOME=$(R_PROG)/R-$(R_VERSION)
-RCMD=$(R_HOME)/$(R_BINARCH)/Rcmd
-RGUI=$(R_HOME)/$(R_BINARCH)/Rgui.exe
-RSCRIPT=$(R_HOME)/$(R_BINARCH)/Rscript.exe
 
-MIKTEX=/cygdrive/c/Program Files (x86)/MiKTex 2.8/miktex/bin
-GIT=/usr/bin/git
+# R software
+export RCMD="$(RBIN)/Rcmd.exe"
+export RGUI="$(RBIN)/Rgui.exe"
+export RSCRIPT="$(RBIN)/Rscript.exe"
 
 
-### MODIFY THE PATH
+### THIS MAKEFILE RUNS IN CMD.EXE (cygwin) BUT NOT IN TERMINATOR
 
-export PATH:=$(RTOOLS)/bin:$(RTOOLS)/perl/bin:$(RMINGW):$(MIKTEX):/usr/bin
+ifeq (terminator, $(TERM))
+$(error does not run in terminator)
+endif
+ifneq (cygwin, $(TERM))
+$(error TERM variable is not cygwin)
+endif
+
+
+### BANNER
+# (RTools make version disabled info printing, use warning)
+
+MYMAKE=$(shell which make)
+$(info *************************************************)
+$(info XLSREADWRITE MAKEFILE)
+$(info R:    $(R_VERSION))
+$(info Make: $(MYMAKE))
+$(info Path: $(PATH))
+$(info *************************************************)
