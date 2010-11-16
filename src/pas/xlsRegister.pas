@@ -33,19 +33,19 @@ uses
 procedure R_init_xlsReadWrite( _info: pDllInfo ); cdecl;
   const
     theCallMethods: array[0..4] of aCallMethodDef
-                    = ( ( cadName: 'ReadXls'
-                        ; cadFunc: @xlsRead.ReadXls
-                        ; cadNumArgs: 11 )
-                      , ( cadName: 'WriteXls'
-                        ; cadFunc: @xlsWrite.WriteXls
-                        ; cadNumArgs: 7 )
-                      , ( cadName: 'DateTimeXls'
-                        ; cadFunc: @xlsDateTime.DateTimeXls
-                        ; cadNumArgs: 3 )
-                      , ( cadName: 'R_unload_xlsReadWrite'
-                        ; cadFunc: @R_unload_xlsReadWrite
-                        ; cadNumArgs: 1 )
-                      , ( cadName: nil; cadFunc: nil; cadNumArgs: 0 ) );
+                    = ( ( cadName: 'ReadXls';
+                          cadFunc: @xlsRead.ReadXls;
+                          cadNumArgs: 11 ),
+                        ( cadName: 'WriteXls';
+                          cadFunc: @xlsWrite.WriteXls;
+                          cadNumArgs: 7 ),
+                        ( cadName: 'DateTimeXls';
+                          cadFunc: @xlsDateTime.DateTimeXls;
+                          cadNumArgs: 3 ),
+                        ( cadName: 'R_unload_xlsReadWrite';
+                          cadFunc: @R_unload_xlsReadWrite;
+                          cadNumArgs: 1 ),
+                        ( cadName: nil; cadFunc: nil; cadNumArgs: 0 ) );
 
   begin
     try

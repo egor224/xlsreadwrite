@@ -58,7 +58,7 @@ function anyDuplicated( _val: pSExp ): boolean;
   begin
     fcall:= riProtect( riLang2( riInstall( 'anyDuplicated' ), _val ) );
     res:= riProtect( riEval( fcall, RGlobalEnv ) );
-    result:= riInteger(riCoerceVector( res, setIntSxp ))[0] > 0;
+    result:= riInteger(riCoerceVector( res, setIntSxp ))[0] <> 0;
     riUnprotect( 2 );
   end {AnyDuplicated};
 

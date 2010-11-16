@@ -87,7 +87,7 @@ read.xls(file,
 }
 
 \section{Pro version}{
-    The pro version is our second attempt and goes further than the free version:
+    The pro version is our second attempt and goes further than the free version:\cr
     + append data to existing files, + work with in-memory objects, e.g. to compose
     Excel reports with multiple sheets, + address confined data areas: rows, cols
     and from, to; (named) ranges and picking from individual cells, + manage sheets

@@ -1,6 +1,7 @@
-# testing will be done using the RUnit package
-# - the actual tests are at '../inst/unitTests/runit*.R'
-# - to call them directly, see '../inst/unitTests/debug.template.R'
+### execute RUnit tests from within R CMD check
+#
+# - the test files are located at: '../inst/unitTests/runit*.R'
+# - to execute them manually see:  '../inst/unitTests/execManually.R'
 
 pkg <- "xlsReadWrite"
 shlib <- system.file("libs", if (nzchar(arch <- .Platform$r_arch)) arch else "",
@@ -26,7 +27,7 @@ if (file.info(shlib)$size < 20000)  {
     cfile.img <<- file.path(getwd(), "tmp_cImage.xls" )
     isFreeVersion <<- length(grep("cells", names(formals(read.xls)))) == 0
 
-    # execute test suite
+    # execute all tests
     suite <- defineTestSuite(name = paste(pkg, "RUnitTests called from CHECK"), dirs = rutdir, testFileRegex = "^runit[[:upper:]].+\\.[rR]$")
     res <- runTestSuite(suite)
     err <- getErrors(res)

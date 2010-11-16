@@ -1,10 +1,24 @@
-### helper code to execute RUnit tests manually
+### execute RUnit tests manually
+#
+# 1. source (or copy/paste) this file
+# 2. copy/paste snippet (below) to execute test(s) in current directory
+# (see adapt block for options (rarely needed for useRs)
 
-  # - source this file
-  # - manually paste 'suite' code from the 'execute tests' block into RGui
-  # (by default no modifications are needed (loads installed xlsReadWrite
-  # package and runs tests in the current directory). When adapting and/or for
-  # single file/fct tests, clone file, e.g. as 'debug.R', before doing changes)
+
+### snippets
+
+if (FALSE) { # prevent execution when file is sourced
+
+# check suite, i.e. all test files
+checkSuite()
+
+# check the indicated file
+checkFile("runitReadWrite.R")
+
+# check the indicated test-function
+checkTest("runitReadWrite.R", fct = "test.readWrite.integer")
+
+}
 
 
 ### adapt
@@ -13,32 +27,9 @@
 withLib <- "free"  
     # when set to TRUE the .GlobalEnv will be cleared before running tests
 cleanFirst <- FALSE
-    # the following is only needed for (lowlevel) dyn.lib
+    # the following is only considered for "", i.e. lowlevel dyn.lib
 #pkgroot <- "T:/swissr_repos/xlsReadWrite"
 #runInvisible <- TRUE
-
-
-### execute tests
-
-if (FALSE) { # prevent execution when file is sourced
-
-# suite
-suite <- defineTestSuite(name = "RUnit tests", dirs = testdir, testFileRegex = "^runit[[:upper:]].+\\.[rR]$")
-res <- runTestSuite(suite)
-.printResults(res, getwd())
-
-# single file (example)
-testfile <- file.path(testdir, "runitReadWrite.R")   # !!! ADAPT HERE
-res <- runTestFile(testfile, testFuncRegexp = "^test.+")
-.printResults(res, getwd())
-
-# single function (example)
-testfile <- file.path(testdir, "runitReadWrite.R")   # !!! ADAPT HERE
-testfct <- "test.readWrite.integer"                  # !!! ADAPT HERE
-res <- runTestFile(testfile, testFuncRegexp = paste("^", testfct, "$", sep = ""))
-.printResults(res, getwd())
-
-}
 
 
 ### helpers
@@ -66,6 +57,7 @@ res <- runTestFile(testfile, testFuncRegexp = paste("^", testfct, "$", sep = "")
 
     isFreeVersion <<- length(grep("cells", names(formals(read.xls)))) == 0
 }
+# run .setup when sourcing this file
 .setup()
 
 .printResults <- function(res, outDir) {
@@ -86,4 +78,22 @@ res <- runTestFile(testfile, testFuncRegexp = paste("^", testfct, "$", sep = "")
         message("RUnit test ok: ", err$nTestFunc, " test function(s), ", err$nDeactivated, " deactivated\n")
         message("(Log: ", normalizePath(outDir), ")\n")
     }
+}
+
+checkSuite() <- function() {
+    suite <- defineTestSuite(name = "RUnit tests", dirs = testdir, testFileRegex = "^runit[[:upper:]].+\\.[rR]$")
+    res <- runTestSuite(suite)
+    .printResults(res, getwd())
+}
+
+checkFile <- function(fn) {
+    testfile <- file.path(testdir, fn)
+    res <- runTestFile(testfile, testFuncRegexp = "^test.+")
+    .printResults(res, getwd())
+}
+
+checkTest <- function(fn, fct) {
+    testfile <- file.path(testdir, fn)
+    res <- runTestFile(testfile, testFuncRegexp = paste("^", fct, "$", sep = ""))
+    .printResults(res, getwd())
 }
