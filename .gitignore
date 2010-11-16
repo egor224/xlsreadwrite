@@ -8,10 +8,7 @@ __misc/debug/out/*
 *.dcu
 *.o
 TODO
-Rversion.mk
-inst/unitTests/_Details.txt
-inst/unitTests/_Results.txt
-inst/unitTests/debug.R
+rversion.mk
 src/pas/xlsReadWrite.dproj*
 src/pas/xlsReadWrite.identcache
 src/pas/xlsReadWrite.res
