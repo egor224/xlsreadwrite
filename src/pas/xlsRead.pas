@@ -1,4 +1,3 @@
-
 unit xlsRead;
 
 { Read functionality.
@@ -28,8 +27,8 @@ function ReadXls( _file, _colNames, _sheet, _type,
 {==============================================================================}
 implementation
 uses
-  SysUtils, Types, Variants, Classes, Math, UFlexCelImport, XlsAdapter, rhR, UFlxNumberFormat,
-  UFlxFormats;
+  SysUtils, Types, Variants, Classes, Math, UFlexCelImport, XlsAdapter, rhR,
+  UFlxNumberFormat, UFlxFormats;
 
 {  -- helper - copied from pro }
 
@@ -223,7 +222,7 @@ function ReadXls( _file, _colNames, _sheet, _type,
       r: integer;
       entry: pchar;
       myrownames, mycolnames: pSExp;
-      unprotcnt: integer; // ugly, todo
+      unprotcnt: integer;
     begin
       dim:= riProtect( riAllocVector( setVecSxp, 2 ) );
       unprotcnt:= 1;
@@ -232,9 +231,9 @@ function ReadXls( _file, _colNames, _sheet, _type,
       if rownameKind = rnFalse then begin
         myrownames:= RNilValue;
       end else begin
-        Inc( unprotcnt );
         if rownameKind = rnSupplied then begin
           myrownames:= riProtect( riAllocVector( setStrSxp, rowcnt ) );
+          Inc( unprotcnt );
           for r:= 0 to rowcnt - 1 do begin
             riSetStringElt( myrownames, r, riMkChar( pChar(rownames[r]) ) );
           end;
@@ -244,6 +243,8 @@ function ReadXls( _file, _colNames, _sheet, _type,
           end else begin
             myrownames:= riProtect( riAllocVector( setIntSxp, rowcnt ) )
           end;
+          Inc( unprotcnt );
+
           for r:= 0 to rowcnt - 1 do begin
             if firstColAsRowName then begin
               riSetStringElt( myrownames, r, riMkChar( pChar(VarAsString(
@@ -252,15 +253,13 @@ function ReadXls( _file, _colNames, _sheet, _type,
               riInteger( myrownames )[r]:= r + 1;
             end;
           end {for};
-        end;
+
+        end {if rownameKind};
 
         if anyDuplicated(myrownames) then begin
           riUnprotect( unprotcnt );
-
           raise ExlsReadWrite.Create('rownames must be unique');
-
         end;
-
       end;
 
         { colnames }
@@ -288,25 +287,34 @@ function ReadXls( _file, _colNames, _sheet, _type,
       riSetAttrib( result, RDimNamesSymbol, dim );
 
       riUnprotect( unprotcnt );
-    end {ApplyColNames};
+    end {ApplyMatrixRowColNames};
 
-    // todo: could/should be merged with matrix case?
+    // todo: should be merged with matrix case
+    //      (well, the whole unit should be cleaned up)
   procedure ApplyFrameRowNames( _result: pSExp);
     var
       r: integer;
       myrownames: pSExp;
+      unprotcnt: integer;
     begin
+      unprotcnt:= 0;
       if rownameKind = rnSupplied then begin
+
         myrownames:= riProtect( riAllocVector( setStrSxp, rowcnt ) );
+        Inc( unprotcnt );
         for r:= 0 to rowcnt - 1 do begin
           riSetStringElt( myrownames, r, riMkChar( pChar(rownames[r]) ) );
         end;
+
       end else begin
+
         if firstColAsRowName then begin
           myrownames:= riProtect( riAllocVector( setStrSxp, rowcnt ) );
         end else begin
           myrownames:= riProtect( riAllocVector( setIntSxp, rowcnt ) )
         end;
+        Inc( unprotcnt );
+
         for r:= 0 to rowcnt - 1 do begin
           if firstColAsRowName then begin
             riSetStringElt( myrownames, r, riMkChar( pChar(VarAsString(
@@ -315,15 +323,16 @@ function ReadXls( _file, _colNames, _sheet, _type,
             riInteger( myrownames )[r]:= r + 1;
           end;
         end {for};
-      end;
+
+      end {if};
 
       if anyDuplicated(myrownames) then begin
-        riUnprotect( 1 );
+        riUnprotect( unprotcnt );
         raise ExlsReadWrite.Create('rownames must be unique');
       end;
 
       riSetAttrib( _result, RRowNamesSymbol, myrownames );
-      riUnprotect( 1 );
+      riUnprotect( unprotcnt );
     end {ApplyRowNames};
 
   function CheckForAutoRow: boolean;
@@ -357,7 +366,6 @@ function ReadXls( _file, _colNames, _sheet, _type,
           else riReal( result )[r + rowcnt*c]:= VarAsDouble( v, RNaReal );
         end {for};
       end {for};
-      riUnprotect( 1 );
     end {ReadDouble};
 
   function ReadInteger(): pSExp; cdecl;
@@ -373,7 +381,6 @@ function ReadXls( _file, _colNames, _sheet, _type,
           else riInteger( result )[r + rowcnt*c]:= VarAsInt( v, RNaInt );
         end {for};
       end {for};
-      riUnprotect( 1 );
     end {ReadInteger};
 
   function ReadLogical(): pSExp; cdecl;
@@ -392,7 +399,6 @@ function ReadXls( _file, _colNames, _sheet, _type,
           end;
         end {for};
       end {for};
-      riUnprotect( 1 );
     end {ReadLogical};
 
   function ReadString(): pSExp; cdecl;
@@ -409,7 +415,6 @@ function ReadXls( _file, _colNames, _sheet, _type,
           else riSetStringElt( result, r + rowcnt*c, riMkChar( pChar(VarAsString( v )) ) );
         end {for}
       end {for};
-      riUnprotect( 1 );
     end {ReadString};
 
   function ReadDataframe(): pSExp; cdecl;
@@ -499,6 +504,7 @@ function ReadXls( _file, _colNames, _sheet, _type,
       tempdat: double;
       formerfactors: pSExp;
       consideredRows: integer;
+      unprotcnt: integer;
     begin {ReadDataframe}
       SetLength( coltypes, 0 );
 
@@ -525,9 +531,10 @@ function ReadXls( _file, _colNames, _sheet, _type,
         coltypes:= Copy( coltypes, 1, Length( coltypes ) - 1 );
       end;
 
-        { allocate }
+        { allocate (only unprotect result at the end) }
       result:= riProtect( riAllocVector( setVecSxp, colcnt - integer(firstColAsRowName) ) );
       mynames:= riProtect( riAllocVector( setStrSxp, colcnt - integer(firstColAsRowName) ) );
+      unprotcnt:= 1;
 
       { loop columns (get type and name) }
 
@@ -709,11 +716,14 @@ function ReadXls( _file, _colNames, _sheet, _type,
 
       { make the frame }
 
-      if checkNames then mynames:= riProtect( MakeNames( mynames ) );
+      if checkNames then begin
+        mynames:= riProtect( MakeNames( mynames ) );
+        Inc( unprotcnt );
+      end;
       riSetAttrib( result, RNamesSymbol, mynames );
-      myclass:= riProtect( riMkString( 'data.frame' ) );
+      myclass:= riMkString( 'data.frame' );
       riClassgets( result, myclass );
-      riUnprotect( 3 + integer(checkNames) );
+      riUnprotect( unprotcnt );
     end {ReadDataframe};
 
   var
@@ -758,11 +768,12 @@ function ReadXls( _file, _colNames, _sheet, _type,
           { read data }
         if colcnt > 0 then begin
           outputtype:= StrToOutputType( riChar( riStringElt( _type, 0 ) ) );
-          if outputtype = otDataFrame then begin
-            { data.frame }
 
+          if outputtype = otDataFrame then begin
+
+              { data.frame }
             result:= ReadDataframe();
-            ApplyFrameRowNames( result )
+            ApplyFrameRowNames( result );
 
           end else begin
 
@@ -792,8 +803,12 @@ function ReadXls( _file, _colNames, _sheet, _type,
               raise ExlsReadWrite.Create( 'Only the types "' + AllOutputTypes +
                   '" are supported right now. (Your input was: ' +
                   riChar( riStringElt( _type, 0 ) ) + ')' );
-            end {if matrix};
+            end {if correct outputtype};
           end {if data.frame};
+
+            { unprotect result }
+          riUnprotect( 1 );
+
         end else begin
           result:= RNilValue;
         end {if};
