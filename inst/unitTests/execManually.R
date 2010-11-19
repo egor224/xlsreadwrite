@@ -57,7 +57,6 @@ cleanFirst <- FALSE
 
     isFreeVersion <<- length(grep("cells", names(formals(read.xls)))) == 0
 }
-# run .setup when sourcing this file
 .setup()
 
 .printResults <- function(res, outDir) {
@@ -80,7 +79,7 @@ cleanFirst <- FALSE
     }
 }
 
-checkSuite() <- function() {
+checkSuite <- function() {
     suite <- defineTestSuite(name = "RUnit tests", dirs = testdir, testFileRegex = "^runit[[:upper:]].+\\.[rR]$")
     res <- runTestSuite(suite)
     .printResults(res, getwd())
