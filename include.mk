@@ -36,9 +36,9 @@ RELDIRS=$(addprefix $(REL)/, \
 LISTING=$(DEV)/__misc/genListing
 
 # dropbox swissrpkg directory
-SWISSRPKG=/cygdrive/c/Users/Public/Dropboxen/DropboxSwissr/My Dropbox/Public/swissrpkg
+DROPSWISSRPKG=/cygdrive/c/Users/Public/Dropboxen/DropboxSwissr/My Dropbox/Public/swissrpkg
 
-# temp directory (for cran final test)
+# temp directory (for final tests after distribution)
 TESTDIR=/cygdrive/c/Users/chappi/Documents/R/test
 
 
