@@ -7,8 +7,9 @@
 \description{
     \enumerate{
         \item Overview
-        \item RUnit tests
         \item CRAN/pro versions
+        \item RUnit tests
+	\item Future plans
         \item Download and compilation
         \item Links and contact
     }
@@ -21,8 +22,8 @@
 
     \bold{Getting started}\itemize{
         \item check out \code{\link{read.xls}}, \code{\link{write.xls}} and
-        \code{\link{xls.getshlib}} \item type: \code{help(package = "xlsReadWrite")}
-        for more information
+        \code{\link{xls.getshlib}}
+	\item type: \code{help(package = "xlsReadWrite")} for more information\cr
     }
 
     \bold{Why xlsReadWrite?}\itemize{
@@ -36,34 +37,16 @@
     3rd party code (which means only our own code is, and can be, free). The package
     is written in Pascal, a very nice but rather obscure language in the R world.\cr
 
-    \bold{Other solutions and future}
+    \bold{Other solutions}
 
     xlsReadWrite is not the only game in town, we know of the following packages
     (brackets indicate dependencies): \emph{RODBC} (drivers), \emph{gdata} (Perl),
     \emph{RExcel} or \emph{COM} (Excel), \emph{dataframes2xls} (Python), \emph{xlsx}
     (Apache POI, Java). Last but not least, you may use plain old \emph{.csv} files
     (none) or consider our own \emph{xlsReadWritePro} (none) shareware package.
-
-    xlsReadWrite is mature and no big changes are planned. Certainly some internal
-    refactoring would be beneficial and some features could be backported from
-    the pro version. In 2011 Delphi should be released for Mac, Linux and Win64,
-    and we plan to support these platforms eventually. The underlying library is
-    being developed for .xlsx and we are looking forward to it.
 }
 
-\section{2. RUnit tests}{
-    There are more than 50 unit tests which should cover all aspects of the
-    package and ensure and maintain code quality. The tests also serve as an
-    extended reference going beyond the examples.
-
-    You can easily run the tests on your system, the RUnit test files are located
-    at:\itemize{
-        \item \code{R_HOME/library/xlsReadWrite/unitTest/runit*.R}
-        \item \code{R_HOME/library/xlsReadWrite/unitTest/execManually.R} (details)
-    }
-}
-
-\section{3. CRAN/pro versions}{
+\section{2. CRAN/pro versions}{
 
     Besides the regular xlsReadWrite package there is a special \code{CRAN}
     version.\cr
@@ -94,12 +77,35 @@
     So, why not check out \code{xlsReadWritePro} now and see for yourself?
 }
 
-\section{4. Download and compilation}{
+\section{3. RUnit tests}{
+    There are more than 50 unit tests which should cover every aspect of the
+    package and ensure and maintain code quality. The tests also serve as an
+    extended reference going beyond the examples.
+
+    You can easily run the tests on your system, the RUnit test files are located
+    at:\itemize{
+        \item \code{R_HOME/library/xlsReadWrite/unitTest/runit*.R}
+        \item \code{R_HOME/library/xlsReadWrite/unitTest/execManually.R} (exec details)
+    }
+}
+
+\section{4. Future plans}{
+    xlsReadWrite is mature and no big changes are planned. Certainly some internal
+    refactoring would be beneficial and some features could be backported from
+    the pro version.
+    
+    In 2011 Delphi should be released for Mac, Linux and Win64, and we plan to
+    support these platforms eventually. The underlying library is being developed
+    for .xlsx and we are looking forward to it (probably as a separate package).
+}
+
+\section{5. Download and compilation}{
 
     \tabular{rll}{
-        All resources:  \tab \tab  \url{http://dl.dropbox.com/u/2602516/swissrpkg/index.html}\cr
-        Github repo:    \tab \tab  \url{http://github.com/swissr/xlsReadWrite}\cr
-        CRAN:           \tab \tab  \url{http://cran.r-project.org/web/packages/xlsReadWrite/index.html}
+        Current version:  \tab \tab  \url{http://www.swissr.org/download}\cr
+        All resources:    \tab \tab  \url{http://dl.dropbox.com/u/2602516/swissrpkg/index.html}\cr
+        Github repo:      \tab \tab  \url{http://github.com/swissr/xlsReadWrite}\cr
+        CRAN:             \tab \tab  \url{http://cran.r-project.org/web/packages/xlsReadWrite/index.html}
     }
 
     \bold{Compilation}
@@ -117,10 +123,10 @@
     }
 }
 
-\section{5. Links and contact}{
+\section{6. Links and contact}{
 
     \tabular{rll}{
-        General info:  \tab \tab  \url{http://www.swissr.org} \cr
+        General info:  \tab \tab  \url{http://www.swissr.org}\cr
         Bugtracker:    \tab \tab  \url{http://dev.swissr.org/projects/xlsReadWrite}\cr
         Forum:         \tab \tab  \url{http://dev.swissr.org/projects/xlsReadWrite/boards}\cr
         Email:         \tab \tab  support at swissr.org\cr
