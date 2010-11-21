@@ -146,7 +146,7 @@ TYPE=txt
 DOCUFILE=xlsReadWrite-package
 rdconv:
 	@echo "### rdconv ###"
-	@$(RCMD) Rdconv -t $(TYPE) -o $(DEV)/man/out.$(TYPE) $(DEV)/man/$(DOCUFILE)
+	@$(RCMD) Rdconv -t $(TYPE) -o $(DEV)/man/out.$(TYPE) $(DEV)/man/$(DOCUFILE).Rd
 singledocu-dev:
 	@echo "### singledocu-dev ###"
 	@rm -f $(GEN)/$(PKG)/man/$(DOCUFILE).pdf
