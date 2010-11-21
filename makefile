@@ -69,7 +69,7 @@ release-reg: populate-rel build-reg
 	# update dropbox listing
 	@cd $(REL) && echo -e "# Listing of SwissR' swissrpkg dropbox folder\n# URL root: http://dl.dropbox.com/u/2602516/swissrpkg\n# URL text listing: http://dl.dropbox.com/u/2602516/swissrpkg/listing.txt\n# URL html listing: http://dl.dropbox.com/u/2602516/swissrpkg/index.html\n# More info at: http://www.swissr.org\n" > listing.txt && ls -1rRp >> listing.txt 
 	# generate html listing
-	@$(LISTINGTOOL) $(REL)/listing.txt $(LISTING)/index.html.template $(REL)/index.html
+	@$(MAKE) $(W) listing-rel
 
 
 ### cran (CRAN version) - build, check, release ###############################
@@ -107,7 +107,7 @@ release-cran: populate-rel build-cran
 	# update dropbox listing
 	@cd $(REL) && echo -e "=== Swissr dropbox ===\n(add folder/files to http://dl.dropbox.com/u/2602516/swissrpkg)\n" > listing.txt && ls -1rRp >> listing.txt 
 	# generate html listing
-	@$(LISTINGTOOL) $(REL)/listing.txt $(LISTING)/index.html.template $(REL)/index.html
+	@$(MAKE) $(W) listing-rel
 
 
 ### distribute and final test #################################################
@@ -215,6 +215,10 @@ populate-gen-cran:
 	@rm -f $(GEN)/$(PKG)/inst/unitTests/execLocal.R
 	# copy source file
 	@cp $(SRCC_DEV) $(GEN)/$(PKG)/src
+
+listing-rel:
+	@echo "### listing-rel ###"
+	@$(LISTINGTOOL) $(REL)/listing.txt $(LISTING)/index.html.template $(REL)/index.html
 populate-rel:
 	@echo "### populate-rel ###"
 	@mkdir -p $(RELDIRS)
