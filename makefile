@@ -69,7 +69,7 @@ release-reg: populate-rel build-reg
 	# update dropbox listing
 	@cd $(REL) && echo -e "# Listing of SwissR' swissrpkg dropbox folder\n# URL root: http://dl.dropbox.com/u/2602516/swissrpkg\n# URL text listing: http://dl.dropbox.com/u/2602516/swissrpkg/listing.txt\n# URL html listing: http://dl.dropbox.com/u/2602516/swissrpkg/index.html\n# More info at: http://www.swissr.org\n" > listing.txt && ls -1rRp >> listing.txt 
 	# generate html listing
-	$(LISTINGTOOL) $(REL)/listing.txt $(LISTING)/index.html.template $(REL)/index.html
+	@$(LISTINGTOOL) $(REL)/listing.txt $(LISTING)/index.html.template $(REL)/index.html
 
 
 ### cran (CRAN version) - build, check, release ###############################
@@ -107,7 +107,7 @@ release-cran: populate-rel build-cran
 	# update dropbox listing
 	@cd $(REL) && echo -e "=== Swissr dropbox ===\n(add folder/files to http://dl.dropbox.com/u/2602516/swissrpkg)\n" > listing.txt && ls -1rRp >> listing.txt 
 	# generate html listing
-	$(LISTINGTOOL) $(REL)/listing.txt $(LISTING)/index.html.template $(REL)/index.html
+	@$(LISTINGTOOL) $(REL)/listing.txt $(LISTING)/index.html.template $(REL)/index.html
 
 
 ### distribute and final test #################################################
@@ -124,9 +124,14 @@ distribute:
 	echo "Already up-to-date." ;\
 	fi
 	# push $(REL) to redmine.swissr (new console hack no longer necessary)
-	cd "$(REL)" && $(GIT) push
-	# update local dropbox from $(REL) - first commit any possible modifications
-	@cd "$(DROPSWISSRPKG)" && $(GIT) --git-dir=../../swissrpkg.git --work-tree=. commit -am "Commit updated files (push-release target)"
+	@cd "$(REL)" && $(GIT) push
+	# update local swissr dropbox (first commit modifications, i.e. file additions)
+	@cd "$(DROPSWISSRPKG)"; HASDIFF="`$(GIT) diff HEAD 2> $(NULL)`"; \
+    if (test "$$HASDIFF"); then \
+        $(GIT) --git-dir=../../swissrpkg.git --work-tree=. commit -am "Commit updated files (distribute target)"; \
+    else \
+	    echo "No modifications." ;\
+    fi
 	@cd "$(DROPSWISSRPKG)" && $(GIT) --git-dir=../../swissrpkg.git --work-tree=. pull origin master
 
 test-distributed:
