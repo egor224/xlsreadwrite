@@ -131,7 +131,7 @@
         Forum:         \tab \tab  \url{http://dev.swissr.org/projects/xlsReadWrite/boards}\cr
         Email:         \tab \tab  support at swissr.org\cr
     }
-    November 16, 2010 / Hans-Peter
+    November 21, 2010 / Hans-Peter
 }
 
 \keyword{package}

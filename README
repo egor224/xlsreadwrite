@@ -4,13 +4,15 @@ Description:
 
        1. Overview
 
-       2. RUnit tests
+       2. CRAN/pro versions
 
-       3. CRAN/pro versions
+       3. RUnit tests
 
-       4. Download and compilation
+       4. Future plans
 
-       5. Links and contact
+       5. Download and compilation
+
+       6. Links and contact
 
 1. Overview:
 
@@ -38,7 +40,7 @@ Description:
      proprietary 3rd party code (which means only our own code is, and
      can be, free). The package is written in Pascal, a very nice but
      rather obscure language in the R world.
-     *Other solutions and future*
+     *Other solutions*
 
      xlsReadWrite is not the only game in town, we know of the
      following packages (brackets indicate dependencies): _RODBC_
@@ -47,28 +49,7 @@ Description:
      least, you may use plain old _.csv_ files (none) or consider our
      own _xlsReadWritePro_ (none) shareware package.
 
-     xlsReadWrite is mature and no big changes are planned. Certainly
-     some internal refactoring would be beneficial and some features
-     could be backported from the pro version. In 2011 Delphi should be
-     released for Mac, Linux and Win64, and we plan to support these
-     platforms eventually. The underlying library is being developed
-     for .xlsx and we are looking forward to it.
-
-2. RUnit tests:
-
-     There are more than 50 unit tests which should cover all aspects
-     of the package and ensure and maintain code quality. The tests
-     also serve as an extended reference going beyond the examples.
-
-     You can easily run the tests on your system, the RUnit test files
-     are located at:
-
-        * 'R_HOME/library/xlsReadWrite/unitTest/runit*.R'
-
-        * 'R_HOME/library/xlsReadWrite/unitTest/execManually.R'
-          (details)
-
-3. CRAN/pro versions:
+2. CRAN/pro versions:
 
      Besides the regular xlsReadWrite package there is a special 'CRAN'
      version.
@@ -112,11 +93,37 @@ Description:
      is free and the two versions do coexist just fine.  So, why not
      check out 'xlsReadWritePro' now and see for yourself?
 
-4. Download and compilation:
+3. RUnit tests:
 
-       All resources:    <URL: http://dl.dropbox.com/u/2602516/swissrpkg/index.html>           
-         Github repo:    <URL: http://github.com/swissr/xlsReadWrite>                          
-                CRAN:    <URL: http://cran.r-project.org/web/packages/xlsReadWrite/index.html> 
+     There are more than 50 unit tests which should cover every aspect
+     of the package and ensure and maintain code quality. The tests
+     also serve as an extended reference going beyond the examples.
+
+     You can easily run the tests on your system, the RUnit test files
+     are located at:
+
+        * 'R_HOME/library/xlsReadWrite/unitTest/runit*.R'
+
+        * 'R_HOME/library/xlsReadWrite/unitTest/execManually.R' (exec
+          details)
+
+4. Future plans:
+
+     xlsReadWrite is mature and no big changes are planned. Certainly
+     some internal refactoring would be beneficial and some features
+     could be backported from the pro version.
+
+     In 2011 Delphi should be released for Mac, Linux and Win64, and we
+     plan to support these platforms eventually. The underlying library
+     is being developed for .xlsx and we are looking forward to it
+     (probably as a separate package).
+
+5. Download and compilation:
+
+       Current version:    <URL: http://www.swissr.org/download>                                 
+         All resources:    <URL: http://dl.dropbox.com/u/2602516/swissrpkg/index.html>           
+           Github repo:    <URL: http://github.com/swissr/xlsReadWrite>                          
+                  CRAN:    <URL: http://cran.r-project.org/web/packages/xlsReadWrite/index.html> 
       
      *Compilation*
 
@@ -140,11 +147,12 @@ Description:
 
        5. Alternatively compile/run project in the Delphi IDE.
 
-5. Links and contact:
+6. Links and contact:
 
        General info:    <URL: http://www.swissr.org>                              
          Bugtracker:    <URL: http://dev.swissr.org/projects/xlsReadWrite>        
               Forum:    <URL: http://dev.swissr.org/projects/xlsReadWrite/boards> 
               Email:    support at swissr.org                                     
       
-     November 16, 2010 / Hans-Peter
+     November 21, 2010 / Hans-Peter
+
