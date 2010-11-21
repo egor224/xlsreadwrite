@@ -1,9 +1,13 @@
+TODO
+rversion.mk
+
 __gen/*
 __misc/debug/*
 __misc/debug/out/*
 
 __misc/CHANGES
-TODO
+
+inst/unitTests/execLocal.R
 
 src/pas/xlsReadWrite.dproj*
 src/pas/xlsReadWrite.identcache
@@ -13,5 +17,3 @@ src/pas/xlsReadWrite.res
 *.dll
 *.dcu
 *.o
-
-rversion.mk
