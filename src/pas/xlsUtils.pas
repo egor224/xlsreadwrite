@@ -227,11 +227,15 @@ function ReplaceVersionAndCommit( const _s: string ): string;
   begin
     v:= ''; c:= '';
     descr:= ShlibPath() + '\..\DESCRIPTION';
-    comm:= ShlibPath + '\..\COMMIT';
     if not FileExists( descr ) then begin
-        { support debugging from Delphi }
-      descr:= ShlibPath() + '\..\..\DESCRIPTION';
-      comm:= ShlibPath() + '\..\..\inst\COMMIT';
+      descr:= ShlibPath() + '\..\..\inst\DESCRIPTION';    // skip architecture folder
+      if not FileExists( descr ) then begin
+        descr:= ShlibPath() + '\..\..\DESCRIPTION';       // support devel (skip pas folder)
+      end;
+    end;
+    comm:= ShlibPath + '\..\COMMIT';
+    if not FileExists( comm ) then begin
+      comm:= ShlibPath() + '\..\..\COMMIT';               // skip architecture folder
     end;
 
     if FileExists( descr ) then begin
@@ -243,26 +247,23 @@ function ReplaceVersionAndCommit( const _s: string ): string;
       finally
         Free();
       end;
-    end else begin
-      v:= '<version_info_missing>';
     end;
     if FileExists( comm ) then begin
       with TStringList.Create() do try
         LoadFromFile( comm );
         if Count > 0 then c:= Strings[0];
-        System.Delete( c, 11, 99 );
+          { only preserve the first 6 characters }
+        System.Delete( c, 7, 99 );
         if (Count > 1) and (Pos( 'dirty', Strings[1] ) > -1) then begin
-          c:= c + '-d';
+          c:= c + '-dirty)';
         end;
       finally
         Free();
       end;
-    end else begin
-      c:= '<commit_info_missing>';
     end;
 
-    if v = '' then v:= '<missing>';
-    if c = '' then c:= '<missing>';
+    if v = '' then v:= '<no DESCRIPTION file>';
+    if c = '' then c:= '<no COMMIT file>';
     result:= StringReplace( _s, '@version@', v, [] );
     result:= StringReplace( result, '@commit@', c, [] );
   end;

@@ -31,7 +31,7 @@ var
 
 const
   theStartupMsg =
-    'xlsReadWrite version @version@ (sha1: @commit@)' + TheLE +
+    'xlsReadWrite version @version@ (@commit@)' + TheLE +
     'Copyright (C) 2010 Hans-Peter Suter, Treetron, Switzerland.' + TheLE +
     '' + TheLE +
     'This package can be freely distributed and used for any' + TheLE +
