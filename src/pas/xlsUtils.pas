@@ -228,9 +228,9 @@ function ReplaceVersionAndCommit( const _s: string ): string;
     v:= ''; c:= '';
     descr:= ShlibPath() + '\..\DESCRIPTION';
     if not FileExists( descr ) then begin
-      descr:= ShlibPath() + '\..\..\inst\DESCRIPTION';    // skip architecture folder
+      descr:= ShlibPath() + '\..\..\DESCRIPTION';         // skip architecture folder
       if not FileExists( descr ) then begin
-        descr:= ShlibPath() + '\..\..\DESCRIPTION';       // support devel (skip pas folder)
+        descr:= ShlibPath() + '\..\..\inst\DESCRIPTION';  // support devel (skip pas folder)
       end;
     end;
     comm:= ShlibPath + '\..\COMMIT';
