@@ -38,8 +38,8 @@ LISTING=$(DEV)/__misc/genListing
 # dropbox swissrpkg directory
 DROPSWISSRPKG=/cygdrive/c/Users/Public/Dropboxen/DropboxSwissr/My Dropbox/Public/swissrpkg
 
-# temp directory (for final tests after distribution)
-TESTDIR=/cygdrive/c/Users/chappi/Documents/R/test
+# temp directory (final tests after distribution)
+CRANCHECK=/cygdrive/c/Users/chappi/Documents/R/test/crancheck
 
 
 ### FILES

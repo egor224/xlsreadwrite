@@ -134,6 +134,12 @@ distribute:
     fi
 	@cd "$(DROPSWISSRPKG)" && $(GIT) --git-dir=../../swissrpkg.git --work-tree=. pull origin master
 
+check-distributed-cran:
+	@rm -fr $(CRANCHECK)
+	@mkdir $(CRANCHECK)
+	@cp "$(DROPSWISSRPKG)/cran/src/$(PKG)_$(PKG_VERSION).tar.gz" $(CRANCHECK)
+	@cd $(CRANCHECK) && $(RCMD) check $(PKG)_$(PKG_VERSION).tar.gz
+
 test-distributed:
 # todo:
 # * get a certain package version from the swissrpkg folder and install
