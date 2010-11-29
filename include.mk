@@ -29,8 +29,7 @@ GENDIRS=$(addprefix $(GEN)/$(PKG)/, \
 # directories in release folder
 OSDIR=win32
 RELDIRS=$(addprefix $(REL)/, \
-    bin/$(OSDIR)/src bin/$(OSDIR)/$(R_MAJVER) \
-    cran/$(OSDIR)/src src)
+    bin/$(OSDIR)/src bin/$(OSDIR)/$(R_MAJVER) src)
 
 # listing directory (with generator and template)
 LISTING=$(DEV)/__misc/genListing

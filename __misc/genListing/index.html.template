@@ -77,10 +77,20 @@ div.bottom {position:relative;top:0px;color:#444444;background-color:#fadee2;pad
   </li>
   <li>other - brochure, help
     <ul>
-      <li><a href="<%CONST_ROOTURL%>/other/xlsReadWrite_Pro_Datasheet.pdf" target="_blank">xlsReadWrite_Pro_Datasheet.pdf</a></li>
-      <li>help
+      <li>docu
         <ul>
-          <li><a href="<%CONST_ROOTURL%>/other/help/00Index.html" target="_blank">00Index.html</a></li>
+          <li><a href="<%CONST_ROOTURL%>/other/docu/xlsReadWrite.pdf" target="_blank">xlsReadWrite.pdf</a></li>
+          <li><a href="<%CONST_ROOTURL%>/other/docu/xlsReadWritePro.pdf" target="_blank">xlsReadWritePro.pdf</a></li>
+        </ul>
+      </li>
+      <li>html-docu
+        <ul>
+          <li><a href="<%CONST_ROOTURL%>/other/html_docu/00Index.html" target="_blank">00Index.html</a></li>
+        </ul>
+      </li>
+      <li>brochure (outdated)
+        <ul>
+          <li><a href="<%CONST_ROOTURL%>/other/brochure/xlsReadWrite_Pro_Datasheet.pdf" target="_blank">xlsReadWrite_Pro_Datasheet.pdf</a></li>
         </ul>
       </li>
     </ul>

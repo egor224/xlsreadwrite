@@ -104,9 +104,7 @@ release-cran: populate-rel build-cran
 	# bin
 	@mv $(GEN)/bin/$(PKG)_$(PKG_VERSION).zip $(REL)/cran/$(OSDIR)/$(R_MAJVER)
 	@$(RSCRIPT) -e "library(tools);write(md5sum('$(REL)/cran/$(OSDIR)/$(R_MAJVER)/$(PKG)_$(PKG_VERSION).zip'), '$(REL)/cran/$(OSDIR)/$(R_MAJVER)/$(PKG)_$(PKG_VERSION).zip.md5.txt')"
-	# update dropbox listing
-	@cd $(REL) && echo -e "=== Swissr dropbox ===\n(add folder/files to http://dl.dropbox.com/u/2602516/swissrpkg)\n" > listing.txt && ls -1rRp >> listing.txt 
-	# generate html listing
+	# generate txt and html listing
 	@$(MAKE) $(W) listing-rel
 
 
@@ -119,6 +117,7 @@ distribute:
 	@HASDIFF="`cd "$(REL)" && $(GIT) diff HEAD 2> $(NULL)`" && if (test "$$HASDIFF"); then \
 	cd "$(REL)" ;\
 	$(GIT) add . ;\
+	$(GIT) add -u ;\
 	$(GIT) commit -m "Commit updated files (distribute target)" ;\
 	else \
 	echo "Already up-to-date." ;\
@@ -224,6 +223,9 @@ populate-gen-cran:
 
 listing-rel:
 	@echo "### listing-rel ###"
+	# generate txt listing
+	@cd $(REL) && echo -e "# Listing of SwissR' swissrpkg dropbox folder\n# URL root: http://dl.dropbox.com/u/2602516/swissrpkg\n# URL text listing: http://dl.dropbox.com/u/2602516/swissrpkg/listing.txt\n# URL html listing: http://dl.dropbox.com/u/2602516/swissrpkg/index.html\n# More info at: http://www.swissr.org\n" > listing.txt && ls -1rRp >> listing.txt 
+	# generate html listing
 	@$(LISTINGTOOL) $(REL)/listing.txt $(LISTING)/index.html.template $(REL)/index.html
 populate-rel:
 	@echo "### populate-rel ###"
