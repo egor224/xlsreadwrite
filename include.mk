@@ -79,12 +79,14 @@ ifneq (,$(findstring 2.12.,$(R_VERSION)))
 RTOOLS=/cygdrive/c/Program Files/R/Rtools212
 RBIN=/cygdrive/c/Program Files/R/R-$(R_VERSION)/bin/i386
 RARCH=i386
+NOARCH=--no-multiarch
   # set system path: perl not needed, cygwin has to be at the end!
 PATH:=$(RTOOLS)/bin:$(MINGWDIR):$(MIKTEXDIR):/cygdrive/c/cygwin/bin
 else
   # RTools211 (works for R2.9 - R2.11; do not install .dll's (use cygwin libs))
 RTOOLS=/cygdrive/c/Program Files (x86)/R/Rtools211
 RBIN=C:/Program Files (x86)/R/R-$(R_VERSION)/bin
+NOARCH=
   # set system path: cygwin has to be at the end!
 PATH:=$(RTOOLS)/bin:$(RTOOLS)/perl/bin:$(MIKTEXDIR):$(MINGWDIR):/cygdrive/c/cygwin/bin
 endif

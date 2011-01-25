@@ -22,7 +22,7 @@ all:
 
 check-reg: clean-gen populate-gen-reg
 	@echo "### check-reg ###"
-	@cd $(GEN) && $(RCMD) check $(flags) $(PKG)
+	@cd $(GEN) && $(RCMD) check $(NOARCH) $(flags) $(PKG)
 	@$(MAKE) $(W) clean-gen-src
 	@echo "### nach check-reg ###"
 
@@ -39,7 +39,7 @@ endif
 	@cd $(GEN) && $(RCMD) build $(PKG)
 	@cp $(GEN)/$(PKG)_$(PKG_VERSION).tar.gz $(GEN)/src/$(PKG)_$(PKG_VERSION).tar.gz
 	# bin
-	@cd $(GEN) && $(RCMD) INSTALL --library=lib --build $(PKG)_$(PKG_VERSION).tar.gz
+	@cd $(GEN) && $(RCMD) INSTALL --library=lib --build $(NOARCH) $(PKG)_$(PKG_VERSION).tar.gz
 	@mv $(GEN)/$(PKG)_$(PKG_VERSION).zip $(GEN)/bin/$(PKG)_$(PKG_VERSION).zip
 	# shlib
 	@cd $(GEN)/lib/$(PKG)/libs/$(RARCH) && zip $(PKG)_$(PKG_VERSION)_$(DLL).zip $(PKG).$(DLL) >/dev/null
@@ -93,7 +93,7 @@ endif
 	@cd $(GEN) && $(RCMD) build $(PKG)
 	@mv $(GEN)/$(PKG)_$(PKG_VERSION).tar.gz $(GEN)/src/$(PKG)_$(PKG_VERSION).tar.gz 
 	# bin
-	@cd $(GEN) && $(RCMD) build --auto-zip --binary $(PKG)
+	@cd $(GEN) && $(RCMD) INSTALL --library=lib --build $(NOARCH) $(PKG)_$(PKG_VERSION).tar.gz
 	@mv $(GEN)/$(PKG)_$(PKG_VERSION).zip $(GEN)/bin/$(PKG)_$(PKG_VERSION).zip
 
 release-cran: populate-rel build-cran
@@ -137,7 +137,7 @@ check-distributed-cran:
 	@rm -fr $(CRANCHECK)
 	@mkdir $(CRANCHECK)
 	@cp "$(DROPSWISSRPKG)/cran/src/$(PKG)_$(PKG_VERSION).tar.gz" $(CRANCHECK)
-	@cd $(CRANCHECK) && $(RCMD) check $(PKG)_$(PKG_VERSION).tar.gz
+	@cd $(CRANCHECK) && $(RCMD) check $(NOARCH) $(PKG)_$(PKG_VERSION).tar.gz
 
 test-distributed:
 # todo:
