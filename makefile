@@ -91,11 +91,11 @@ else
 endif
 	# src
 	@cd $(GEN) && $(RCMD) build $(PKG)
-	@mv $(GEN)/$(PKG)_$(PKG_VERSION).tar.gz $(GEN)/src/$(PKG)_$(PKG_VERSION).tar.gz 
+	@cp $(GEN)/$(PKG)_$(PKG_VERSION).tar.gz $(GEN)/src/$(PKG)_$(PKG_VERSION).tar.gz
 	# bin
 	@cd $(GEN) && $(RCMD) INSTALL --library=lib --build $(NOARCH) $(PKG)_$(PKG_VERSION).tar.gz
 	@mv $(GEN)/$(PKG)_$(PKG_VERSION).zip $(GEN)/bin/$(PKG)_$(PKG_VERSION).zip
-
+    
 release-cran: populate-rel build-cran
 	@echo "### release-cran ###"
 	# src
