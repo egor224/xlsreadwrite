@@ -7,7 +7,7 @@ __misc/debug/out/*
 
 __misc/CHANGES
 
-inst/unitTests/execLocal.R
+inst/unitTests/_manual_temp.R
 
 src/pas/xlsReadWrite.dproj*
 src/pas/xlsReadWrite.identcache
