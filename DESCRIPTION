@@ -1,7 +1,7 @@
 Package: xlsReadWrite
-Version: 1.5.3
+Version: 1.5.4
 Title: Read and write Excel files (.xls)
-Date: 2010-11-21
+Date: 2011-01-25
 Author: Hans-Peter Suter
 Maintainer: Hans-Peter Suter <support@swissr.org>
 Depends: R (>= 2.9.0)
