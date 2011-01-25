@@ -125,6 +125,8 @@ function VarAsBool(const _v: variant; _default: boolean; _navalue: integer): int
   end {VarAsBool};
 
 function VarAsInt(const _v: variant; _default: integer): integer;
+  const
+    minInt = Low( integer ) + 1;
   begin
     case VarType( _v ) of
       varShortInt,
@@ -139,7 +141,13 @@ function VarAsInt(const _v: variant; _default: integer): integer;
       varSingle,
       varDouble,
       varCurrency,
-      varDate:          result:= Trunc( _v );
+      varDate:          begin
+        if (_v > MaxInt) or (_v < minInt) then begin
+          raise EXlsReadWrite.CreateFmt('Value (%s) outside integer range (%d..%d)',
+              [FloatToStr(_v), minInt, MaxInt]);
+        end;
+        result:= Trunc( _v );
+      end;
 
       varOleStr,
       varString:        begin
